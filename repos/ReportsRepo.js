@@ -443,42 +443,32 @@ computeDouMonthlyData = async() => {
 
             console.log("### Sending email");
 
-            // await loggerMsisdnWiseReportWriter.writeRecords(finalResult);
-            // console.log("loggerMsisdnWiseReportWriter: ", loggerMsisdnWiseReportWriter);
-            //
-            let messageObj = {}, s3FilePath = null;
+            await loggerMsisdnWiseReportWriter.writeRecords(finalResult);
+            console.log("loggerMsisdnWiseReportWriter: ", loggerMsisdnWiseReportWriter);
+
+            let messageObj = {}, path = null;
             messageObj.from =  'paywall@dmdmax.com.pk';
             messageObj.to = ["muhammad.azam@dmdmax.com"];
             messageObj.subject = 'Complaint Data';
             messageObj.text = `This report contains the details of msisdns being sent us over email from Telenor`;
             messageObj.attachments = {
                 filename: randomReport,
-                localFilePath: randomReportFilePath,
-                s3FilePath: s3FilePath
+                path: path
             };
 
             let uploadRes = await uploadFileAtS3(randomReport);
             console.log("uploadRes: ", uploadRes);
             if (uploadRes.status) {
-                messageObj.attachments.s3FilePath = uploadRes.data.Location;
-                console.log("messageObj: ", messageObj);
-
+                messageObj.attachments.path = uploadRes.data.Location;
                 sendToQueue(messageObj);
             }
 
-
-            // let info = await transporter.sendMail({
-            //     from: 'paywall@dmdmax.com.pk',
-            //     to:  ["muhammad.azam@dmdmax.com"],
-            //     subject: `Complaint Data`, // Subject line
-            //     text: `This report contains the details of msisdns being sent us over email from Zara`,
-            //     attachments:[
-            //         {
-            //             filename: randomReport,
-            //             path: randomReportFilePath
-            //         }
-            //     ]
-            // });
+            fs.unlink(randomReportFilePath,function(err,data) {
+                if (err) {
+                    console.log("=> File not deleted[randomReportFilePath]");
+                }
+                console.log("=> File deleted [randomReportFilePath]");
+            });
         }
     }catch(e){
         console.log("### error - ", e);
@@ -567,19 +557,42 @@ getDailyData = async() => {
             console.log("### Sending email - QDfC");
             try {
                 await findingCsvWriter.writeRecords(finalResult);
-                let info = await transporter.sendMail({
-                    from: 'paywall@dmdmax.com.pk',
-                    to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"],
-                    subject: `Findings 24th March 2021 - Daily Package`,
-                    text: `Findings has been attached, please find attachment`,
-                    attachments:[
-                        {
-                            filename: findingCsv,
-                            path: findingCsvPath
-                        }
-                    ]
-                });
+                let messageObj = {}, path = null;
+                messageObj.from =  'paywall@dmdmax.com.pk';
+                messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+                messageObj.subject = 'Findings 24th March 2021 - Daily Package';
+                messageObj.text = `Findings has been attached, please find attachment`;
+                messageObj.attachments = {
+                    filename: findingCsv,
+                    path: path
+                };
 
+                let uploadRes = await uploadFileAtS3(findingCsv);
+                console.log("uploadRes: ", uploadRes);
+                if (uploadRes.status) {
+                    messageObj.attachments.path = uploadRes.data.Location;
+                    sendToQueue(messageObj);
+                }
+
+                // let info = await transporter.sendMail({
+                //     from: 'paywall@dmdmax.com.pk',
+                //     to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"],
+                //     subject: `Findings 24th March 2021 - Daily Package`,
+                //     text: `Findings has been attached, please find attachment`,
+                //     attachments:[
+                //         {
+                //             filename: findingCsv,
+                //             path: findingCsvPath
+                //         }
+                //     ]
+                // });
+
+                fs.unlink(findingCsvPath,function(err,data) {
+                    if (err) {
+                        console.log("=> File not deleted[findingCsvPath]");
+                    }
+                    console.log("=> File deleted [findingCsvPath]");
+                });
                 console.log("### Sending email - info: ", info);
             }catch (err) {
                 console.log("### Sending email - error - ", err);
@@ -628,17 +641,41 @@ getWeeklyData = async() => {
             console.log("### Sending email - QDfG");
             try {
                 await findingCsvWriter.writeRecords(finalResult);
-                let info = await transporter.sendMail({
-                    from: 'paywall@dmdmax.com.pk',
-                    to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"],
-                    subject: `Findings 24th March 2021 - Weekly Package`,
-                    text: `Findings has been attached, please find attachment`,
-                    attachments:[
-                        {
-                            filename: findingCsv,
-                            path: findingCsvPath
-                        }
-                    ]
+                let messageObj = {}, path = null;
+                messageObj.from =  'paywall@dmdmax.com.pk';
+                messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+                messageObj.subject = 'Findings 24th March 2021 - Weekly Package';
+                messageObj.text = `Findings has been attached, please find attachment`;
+                messageObj.attachments = {
+                    filename: findingCsv,
+                    path: path
+                };
+
+                let uploadRes = await uploadFileAtS3(findingCsv);
+                console.log("uploadRes: ", uploadRes);
+                if (uploadRes.status) {
+                    messageObj.attachments.path = uploadRes.data.Location;
+                    sendToQueue(messageObj);
+                }
+
+                // let info = await transporter.sendMail({
+                //     from: 'paywall@dmdmax.com.pk',
+                //     to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"],
+                //     subject: `Findings 24th March 2021 - Weekly Package`,
+                //     text: `Findings has been attached, please find attachment`,
+                //     attachments:[
+                //         {
+                //             filename: findingCsv,
+                //             path: findingCsvPath
+                //         }
+                //     ]
+                // });
+
+                fs.unlink(findingCsvPath,function(err,data) {
+                    if (err) {
+                        console.log("=> File not deleted[findingCsvPath]");
+                    }
+                    console.log("=> File deleted [findingCsvPath]");
                 });
 
                 console.log("### Sending email - info: ", info);
@@ -680,20 +717,44 @@ getMigrateUsers = async() => {
             console.log("### Sending email");
             try {
                 await migrateUsersCsvWriter.writeRecords(finalResult);
-                let info = await transporter.sendMail({
-                    from: 'paywall@dmdmax.com.pk',
-                    to:  ["farhan.ali@dmdmax.com"],
-                    subject: `Last 45 day migrated users`,
-                    text: `Migrated Users has been attached, please find attachment`,
-                    attachments:[
-                        {
-                            filename: migrateUserCsv,
-                            path: migrateUserCsvPath
-                        }
-                    ]
-                });
+                let messageObj = {}, path = null;
+                messageObj.from =  'paywall@dmdmax.com.pk';
+                messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+                messageObj.subject = 'Last 45 day migrated users';
+                messageObj.text = `Migrated Users has been attached, please find attachment`;
+                messageObj.attachments = {
+                    filename: migrateUserCsv,
+                    path: path
+                };
 
-                console.log("### Sending email - info: ", info);
+                let uploadRes = await uploadFileAtS3(migrateUserCsv);
+                console.log("uploadRes: ", uploadRes);
+                if (uploadRes.status) {
+                    messageObj.attachments.path = uploadRes.data.Location;
+                    sendToQueue(messageObj);
+                }
+
+
+                // let info = await transporter.sendMail({
+                //     from: 'paywall@dmdmax.com.pk',
+                //     to:  ["farhan.ali@dmdmax.com"],
+                //     subject: `Last 45 day migrated users`,
+                //     text: `Migrated Users has been attached, please find attachment`,
+                //     attachments:[
+                //         {
+                //             filename: migrateUserCsv,
+                //             path: migrateUserCsvPath
+                //         }
+                //     ]
+                // });
+
+                fs.unlink(migrateUserCsvPath,function(err,data) {
+                    if (err) {
+                        console.log("=> File not deleted[migrateUserCsvPath]");
+                    }
+                    console.log("=> File deleted [migrateUserCsvPath]");
+                });
+                console.log("### Sending email - info: ");
             }catch (err) {
                 console.log("### Sending email - error - ", err);
             }
@@ -803,20 +864,37 @@ getNextBillingDtm = async() => {
 
         console.log("### Sending email");
         await nextBillingDtmCsvWriter.writeRecords(finalResult);
-        let info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            to:  ["farhan.ali@dmdmax.com"],
-            subject: `Msisdns & Next Billing Timestamp - Comedy Daily`, // Subject line
-            text: `This report contains the details of msisdns & next billing timestamp for comedy daily`,
-            attachments:[
-                {
-                    filename: nextBillingDtmCsv,
-                    path: nextBillingDtmFilePath
-                }
-            ]
-        });
+        let messageObj = {}, path = null;
+        messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = 'Msisdns & Next Billing Timestamp - Comedy Daily';
+        messageObj.text = `This report contains the details of msisdns & next billing timestamp for comedy daily`;
+        messageObj.attachments = {
+            filename: nextBillingDtmCsv,
+            path: path
+        };
 
-        console.log("###  [nextBillingDtmFilePath][emailSent]",info);
+        let uploadRes = await uploadFileAtS3(nextBillingDtmCsv);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+
+        // let info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     to:  ["farhan.ali@dmdmax.com"],
+        //     subject: `Msisdns & Next Billing Timestamp - Comedy Daily`, // Subject line
+        //     text: `This report contains the details of msisdns & next billing timestamp for comedy daily`,
+        //     attachments:[
+        //         {
+        //             filename: nextBillingDtmCsv,
+        //             path: nextBillingDtmFilePath
+        //         }
+        //     ]
+        // });
+
+        console.log("###  [nextBillingDtmFilePath][emailSent]");
         fs.unlink(nextBillingDtmFilePath,function(err,data) {
             if (err) {
                 console.log("###  File not deleted[nextBillingDtmFilePath]");
@@ -865,25 +943,42 @@ getReportForHeOrWifi = async() => {
 
         console.log("### Sending email");
         await wifiOrHeReportWriter.writeRecords(finalResult);
-        let info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            to:  ["farhan.ali@dmdmax.com"],
-            subject: `OTP or HE`, // Subject line
-            text: `This report contains the details of msisdns being sent us over email from Zara`,
-            attachments:[
-                {
-                    filename: wifiOrHeReport,
-                    path: wifiOrHeReportFP
-                }
-            ]
-        });
+        let messageObj = {}, path = null;
+        messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = 'OTP or HE';
+        messageObj.text = `This report contains the details of msisdns being sent us over email from Telenor`;
+        messageObj.attachments = {
+            filename: wifiOrHeReport,
+            path: path
+        };
 
-        console.log("###  [randomReport][emailSent]",info);
+        let uploadRes = await uploadFileAtS3(wifiOrHeReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+
+        // let info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     to:  ["farhan.ali@dmdmax.com"],
+        //     subject: `OTP or HE`, // Subject line
+        //     text: `This report contains the details of msisdns being sent us over email from Zara`,
+        //     attachments:[
+        //         {
+        //             filename: wifiOrHeReport,
+        //             path: wifiOrHeReportFP
+        //         }
+        //     ]
+        // });
+
+        console.log("###  [randomReport][emailSent]");
         fs.unlink(wifiOrHeReportFP,function(err,data) {
             if (err) {
-                console.log("###  File not deleted[randomReport]");
+                console.log("###  File not deleted[wifiOrHeReportFP]");
             }
-            console.log("###  File deleted [randomReport]");
+            console.log("###  File deleted [wifiOrHeReportFP]");
         });
     }catch(e){
         console.log("### error - ", e);
@@ -1161,27 +1256,46 @@ dailyReport = async(mode = 'prod') => {
 
     try {
         csvWriter.writeRecords(resultToWriteToCsv).then(async (data) => {
-            var info = await transporter.sendMail({
-                from: 'paywall@dmdmax.com.pk', // sender address
-                //to:  ['farhan.ali@dmdmax.com'],
-                to:  ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com"], // list of receivers
-                subject: `Paywall Report`, // Subject ne
-                text: `PFA some basic stats for Paywall - ${(new Date()).toDateString()}`, // plain text bodyday
-                attachments:[
-                    {
-                        filename: paywallRevFileName,
-                        path: paywallRevFilePath
-                    }
-                ]
-            });
-            console.log("=> dailyReport 14",info);
+
+            await wifiOrHeReportWriter.writeRecords(finalResult);
+            let messageObj = {}, path = null;
+            messageObj.from =  'paywall@dmdmax.com.pk';
+            messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
+            messageObj.subject = 'Paywall Report';
+            messageObj.text = `PFA some basic stats for Paywall - ${(new Date()).toDateString()}`;
+            messageObj.attachments = {
+                filename: paywallRevFileName,
+                path: path
+            };
+
+            let uploadRes = await uploadFileAtS3(paywallRevFileName);
+            console.log("uploadRes: ", uploadRes);
+            if (uploadRes.status) {
+                messageObj.attachments.path = uploadRes.data.Location;
+                sendToQueue(messageObj);
+            }
+
+            // var info = await transporter.sendMail({
+            //     from: 'paywall@dmdmax.com.pk', // sender address
+            //     //to:  ['farhan.ali@dmdmax.com'],
+            //     to:  ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com"], // list of receivers
+            //     subject: `Paywall Report`, // Subject ne
+            //     text: `PFA some basic stats for Paywall - ${(new Date()).toDateString()}`, // plain text bodyday
+            //     attachments:[
+            //         {
+            //             filename: paywallRevFileName,
+            //             path: paywallRevFilePath
+            //         }
+            //     ]
+            // });
+            console.log("=> dailyReport 14");
             fs.unlink(paywallRevFilePath,function(err,data) {
                 if (err) {
                     console.log("=> [dailyReport]File not deleted");
                 }
                 console.log("=> [dailyReport]data");
             });
-            console.log("=> [dailyReport]info",info);
+            console.log("=> [dailyReport]info");
         }).catch(er => {
             console.log("=> [dailyReport]err",er)
         });
@@ -1259,20 +1373,36 @@ callBacksReport =async() => {
         ]);
 
         let write = await csvReportWriter.writeRecords(report);
-        var info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk', // sender address
-            // to:  ["paywall@dmdmax.com.pk"],
-            to:  ["paywall@dmdmax.com.pk","nauman@dmdmax.com","mikaeel@dmdmax.com"], // list of receivers
-            subject: `Callbacks Report`, // Subject line
-            text: `Callbacks sent with their TIDs and timestamps -  ${(new Date()).toDateString()}`, // plain text bodyday
-            attachments:[
-                {
-                    filename: paywallCallbackReport,
-                    path: paywallCallbackFilePath
-                }
-            ]
-        });
-        console.log("***> Report",info);
+        let messageObj = {}, path = null;
+        messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = 'Callbacks Report';
+        messageObj.text = `Callbacks sent with their TIDs and timestamps -  ${(new Date()).toDateString()}`;
+        messageObj.attachments = {
+            filename: paywallCallbackReport,
+            path: path
+        };
+
+        let uploadRes = await uploadFileAtS3(paywallCallbackReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+        // var info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk', // sender address
+        //     // to:  ["paywall@dmdmax.com.pk"],
+        //     to:  ["paywall@dmdmax.com.pk","nauman@dmdmax.com","mikaeel@dmdmax.com"], // list of receivers
+        //     subject: `Callbacks Report`, // Subject line
+        //     text: `Callbacks sent with their TIDs and timestamps -  ${(new Date()).toDateString()}`, // plain text bodyday
+        //     attachments:[
+        //         {
+        //             filename: paywallCallbackReport,
+        //             path: paywallCallbackFilePath
+        //         }
+        //     ]
+        // });
+        console.log("***> Report");
         fs.unlink(paywallCallbackFilePath,function(err,data) {
             if (err) {
                 console.log("***> File not deleted");
@@ -1294,24 +1424,59 @@ errorCountReport = async() => {
         
         await errorCountReportWriter.writeRecords(errorReport);
         await errorCountReportBySource.writeRecords(errorBySourceReport);
-        var info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk', // sender address
-            to:  ["farhan.ali@dmdmax.com"],
-            //to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"], // list of receivers
-            subject: `Daily Error Reports`, // Subject line
-            text: `This report (generated at ${(new Date()).toDateString()}) contains all error count stats from 23rd February 2020 onwards.`, // plain text bodyday
-            attachments:[
-                {
-                    filename: paywallErrorCountReport,
-                    path: paywallErrorCountFilePath
-                },
-                {
-                    filename: paywallErrorCountReportBySource,
-                    path: paywallErrorCountBySourceFilePath
-                }
-            ]
-        });
-        console.log("=> [errorCountReport][emailSent]",info);
+        let messageObj = {}, path = null;
+        messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = 'Daily Error Reports';
+        messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains all error count stats from 23rd February 2020 onwards.`;
+        messageObj.attachments = {
+            filename: paywallErrorCountReport,
+            path: path
+        };
+
+        messageObj.attachments = [
+            {
+                filename: paywallErrorCountReport,
+                path: path
+            },
+            {
+                filename: paywallErrorCountReportBySource,
+                path: path
+            }
+        ]
+
+        let uploadRes = await uploadFileAtS3(paywallErrorCountReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments[0].path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+        uploadRes = await uploadFileAtS3(paywallErrorCountReportBySource);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments[1].path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+
+        // var info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk', // sender address
+        //     to:  ["farhan.ali@dmdmax.com"],
+        //     //to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"], // list of receivers
+        //     subject: `Daily Error Reports`, // Subject line
+        //     text: `This report (generated at ${(new Date()).toDateString()}) contains all error count stats from 23rd February 2020 onwards.`, // plain text bodyday
+        //     attachments:[
+        //         {
+        //             filename: paywallErrorCountReport,
+        //             path: paywallErrorCountFilePath
+        //         },
+        //         {
+        //             filename: paywallErrorCountReportBySource,
+        //             path: paywallErrorCountBySourceFilePath
+        //         }
+        //     ]
+        // });
+        console.log("=> [errorCountReport][emailSent]");
         fs.unlink(paywallErrorCountFilePath,function(err,data) {
             if (err) {
                 console.log("File not deleted[errorCountReport]");
@@ -1332,21 +1497,38 @@ errorCountReport = async() => {
 dailyUnsubReport = async(from,to) => {
     try {
         let dailyUnsubReport = await billinghistoryRepo.dailyUnsubReport();
+
         await dailyUnsubReportWriter.writeRecords(dailyUnsubReport);
-        var info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk', // sender address
-            // to:  ["hamza@dmdmax.com"],
-            to:  ["paywall@dmdmax.com.pk"], // list of receivers
-            subject: `Daily Unsubscribed Users Report`, // Subject line
-            text: `This report (generated at ${(new Date()).toDateString()}) contains count of unsubscribed users.`, // plain text bodyday
-            attachments:[
-                {
-                    filename: paywallUnsubReport,
-                    path: paywallUnsubFilePath
-                }
-            ]
-        });
-        console.log("[dailyUnsubReport][emailSent]",info);
+        let messageObj = {}, path = null;
+        messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
+        messageObj.subject = 'Daily Unsubscribed Users Report';
+        messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of unsubscribed users.`;
+        messageObj.attachments = {
+            filename: paywallUnsubReport,
+            path: path
+        };
+
+        let uploadRes = await uploadFileAtS3(paywallUnsubReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+        // var info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk', // sender address
+        //     // to:  ["hamza@dmdmax.com"],
+        //     to:  ["paywall@dmdmax.com.pk"], // list of receivers
+        //     subject: `Daily Unsubscribed Users Report`, // Subject line
+        //     text: `This report (generated at ${(new Date()).toDateString()}) contains count of unsubscribed users.`, // plain text bodyday
+        //     attachments:[
+        //         {
+        //             filename: paywallUnsubReport,
+        //             path: paywallUnsubFilePath
+        //         }
+        //     ]
+        // });
+        console.log("[dailyUnsubReport][emailSent]");
         fs.unlink(paywallUnsubFilePath,function(err,data) {
             if (err) {
                 console.log("File not deleted[dailyUnsubReport]");
@@ -1378,22 +1560,38 @@ dailyNetAddition = async(from, to) => {
         }
 
         await dailyNetAdditionWriter.writeRecords(csvData);
+        let messageObj = {}, path = null;
+        messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = `Daily Net Additions - ${monthNames[from.getMonth()]}`;
+        messageObj.text = `This report contains daily net additions for the month of ${monthNames[from.getMonth()]}.`;
+        messageObj.attachments = {
+            filename: dailyNetAdditionCsv,
+            path: path
+        };
+
+        let uploadRes = await uploadFileAtS3(dailyNetAdditionCsv);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
         console.log("=> Daily Addition Report");
-        from = new Date(from);
-        let info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            to:  ["farhan.ali@dmdmax.com"],
-            // to:  ["paywall@dmdmax.com.pk", "zara.naqi@telenor.com.pk", "mikaeel@dmdmax.com", "khurram.javaid@telenor.com.pk", "junaid.basir@telenor.com.pk"], // list of receivers
-            subject: `Daily Net Additions - ${monthNames[from.getMonth()]}`,
-            text: `This report contains daily net additions for the month of ${monthNames[from.getMonth()]}.`,
-            attachments:[
-                {
-                    filename: dailyNetAdditionCsv,
-                    path: dailyNetAdditionFilePath
-                }
-            ]
-        });
-        console.log("=> [dailyNetAdditionCsv][emailSent]",info);
+        // from = new Date(from);
+        // let info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     to:  ["farhan.ali@dmdmax.com"],
+        //     // to:  ["paywall@dmdmax.com.pk", "zara.naqi@telenor.com.pk", "mikaeel@dmdmax.com", "khurram.javaid@telenor.com.pk", "junaid.basir@telenor.com.pk"], // list of receivers
+        //     subject: `Daily Net Additions - ${monthNames[from.getMonth()]}`,
+        //     text: `This report contains daily net additions for the month of ${monthNames[from.getMonth()]}.`,
+        //     attachments:[
+        //         {
+        //             filename: dailyNetAdditionCsv,
+        //             path: dailyNetAdditionFilePath
+        //         }
+        //     ]
+        // });
+        console.log("=> [dailyNetAdditionCsv][emailSent]");
         fs.unlink(dailyNetAdditionFilePath,function(err,data) {
             if (err) {
                 console.log("=> File not deleted[dailyNetAdditionCsv]");
@@ -1418,14 +1616,21 @@ avgTransactionPerCustomer = async(from, to) => {
 
         console.log("=> Avg. Transactions Per Customer Report");
         from = new Date(from);
-        let info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            to:  ["farhan.ali@dmdmax.com"],
-            // to:  ["paywall@dmdmax.com.pk", "zara.naqi@telenor.com.pk", "mikaeel@dmdmax.com", "khurram.javaid@telenor.com.pk", "junaid.basir@telenor.com.pk"], // list of receivers
-            subject: `Avg Transactions/Customer - ${monthNames[from.getMonth()]}`,
-            text: `Avg Transactions/Customer for the month of ${monthNames[from.getMonth()]} are ${avgTransactions}`,
-        });
-        console.log("=> [avgTransactionPerCustomer][emailSent]",info);
+        let messageObj = {};
+        messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = `Avg Transactions/Customer - ${monthNames[from.getMonth()]}`;
+        messageObj.text = `Avg Transactions/Customer for the month of ${monthNames[from.getMonth()]} are ${avgTransactions}`;
+
+        sendToQueue(messageObj);
+
+        // let info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     to:  ["farhan.ali@dmdmax.com"],
+        //     // to:  ["paywall@dmdmax.com.pk", "zara.naqi@telenor.com.pk", "mikaeel@dmdmax.com", "khurram.javaid@telenor.com.pk", "junaid.basir@telenor.com.pk"], // list of receivers
+        //     subject: `Avg Transactions/Customer - ${monthNames[from.getMonth()]}`,
+        //     text: `Avg Transactions/Customer for the month of ${monthNames[from.getMonth()]} are ${avgTransactions}`,
+        // });
+        console.log("=> [avgTransactionPerCustomer][emailSent]");
     } catch (error) {
         console.error("=> avgTransactionPerCustomer- error ", error);
     }
@@ -1444,13 +1649,21 @@ weeklyRevenue = async(weekFromArray, weekToArray, emailList) => {
             emailBody = emailBody.concat(`${weekFrom} - ${weekTo}:   ${revenue[0].total}\n`);
         }
 
-        let info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            to:  emailList,
-            subject: `Weekly Revenue Report - ${monthNames[weekFromArray[0].getMonth()]}`,
-            text: emailBody,
-        });
-        console.log("=> [weeklyRevenue][emailSent]",info);
+        let messageObj = {};
+        messageObj.to = emailList;
+        messageObj.subject = `Weekly Revenue Report - ${monthNames[weekFromArray[0].getMonth()]}`;
+        messageObj.text = emailBody;
+
+        sendToQueue(messageObj);
+
+        // let info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     to:  emailList,
+        //     subject: `Weekly Revenue Report - ${monthNames[weekFromArray[0].getMonth()]}`,
+        //     text: emailBody,
+        // });
+
+        console.log("=> [weeklyRevenue][emailSent]");
         
     } catch (error) {
         console.error("=> weeklyRevenue- error ", error);
@@ -1471,13 +1684,20 @@ weeklyTransactingCustomers = async(weekFromArray, weekToArray, emailList) => {
             emailBody = emailBody.concat(`${weekFrom} - ${weekTo}:   ${totalUniqueUsers[0].count}\n`);
         }
 
-        let info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            to:  emailList,
-            subject: `Weekly Transacting Customers - ${monthNames[weekFromArray[0].getMonth()]}`,
-            text: emailBody,
-        });
-        console.log("=> [weeklyTransactingCustomers][emailSent]",info);
+        let messageObj = {};
+        messageObj.to = emailList;
+        messageObj.subject = `Weekly Transacting Customers - ${monthNames[weekFromArray[0].getMonth()]}`;
+        messageObj.text = emailBody;
+
+        sendToQueue(messageObj);
+
+        // let info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     to:  emailList,
+        //     subject: `Weekly Transacting Customers - ${monthNames[weekFromArray[0].getMonth()]}`,
+        //     text: emailBody,
+        // });
+        console.log("=> [weeklyTransactingCustomers][emailSent]");
         
     } catch (error) {
         console.error("=> weeklyTransactingCustomers- error ", error);
@@ -1491,15 +1711,22 @@ dailyReturningUsers = async(from, to) => {
         console.log("=> DailyReturningUsers", dailyReturningUsers);
         let dailyReturningUsersCount = dailyReturningUsers[0].totalcount;
         console.log(`=> Daily Returning Users for ${to} are ${dailyReturningUsersCount}`);
-        
-        let info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            //to:  ["farhan.ali@dmdmax.com"],
-            to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"],
-            subject: `Daily Returning Users`,
-            text: `Daily returning users for the date ${to} are ${dailyReturningUsersCount}`,
-        });
-        console.log("=> [dailyReturningUsers][emailSent]",info);
+
+        let messageObj = {};
+        messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = `Daily Returning Users`;
+        messageObj.text = `Daily returning users for the date ${to} are ${dailyReturningUsersCount}`;
+
+        sendToQueue(messageObj);
+
+        // let info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     //to:  ["farhan.ali@dmdmax.com"],
+        //     to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"],
+        //     subject: `Daily Returning Users`,
+        //     text: `Daily returning users for the date ${to} are ${dailyReturningUsersCount}`,
+        // });
+        console.log("=> [dailyReturningUsers][emailSent]");
     } catch (error) {
         console.error("=> dailyReturningUsers- error ", error);
     }
@@ -1555,21 +1782,38 @@ dailyChannelWiseUnsub = async() => {
         });
 
         await dailyChannelWiseUnsubWriter.writeRecords(records);
-        console.log("=> done 3");
-        var info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk', // sender address
-            // to:  ["farhan.ali@dmdmax.com"],
-            to:  ["paywall@dmdmax.com.pk","nauman@dmdmax.com"], // list of receivers
-            subject: `Daily Source Wise Unsubscribed Users Report`, // Subject line
-            text: `This report (generated at ${(new Date()).toDateString()}) contains count of unsubscribed users with respect to source.\n\nNote: Expired By System column indicates those users expired by the system because their grace time is over and they still have no balance.`, // plain text bodyday
-            attachments:[
-                {
-                    filename: paywallChannelWiseUnsubReport,
-                    path: paywallChannelWiseUnsubReportFilePath
-                }
-            ]
-        });
-        console.log("=> [dailyChannelWiseUnsub][emailSent]",info);
+        let messageObj = {}, path = null;
+        messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = 'Daily Source Wise Unsubscribed Users Report';
+        messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of unsubscribed users with respect to source.\n\nNote: Expired By System column indicates those users expired by the system because their grace time is over and they still have no balance.`;
+        messageObj.attachments = {
+            filename: paywallChannelWiseUnsubReport,
+            path: path
+        };
+
+        let uploadRes = await uploadFileAtS3(paywallChannelWiseUnsubReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+
+        // console.log("=> done 3");
+        // var info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk', // sender address
+        //     // to:  ["farhan.ali@dmdmax.com"],
+        //     to:  ["paywall@dmdmax.com.pk","nauman@dmdmax.com"], // list of receivers
+        //     subject: `Daily Source Wise Unsubscribed Users Report`, // Subject line
+        //     text: `This report (generated at ${(new Date()).toDateString()}) contains count of unsubscribed users with respect to source.\n\nNote: Expired By System column indicates those users expired by the system because their grace time is over and they still have no balance.`, // plain text bodyday
+        //     attachments:[
+        //         {
+        //             filename: paywallChannelWiseUnsubReport,
+        //             path: paywallChannelWiseUnsubReportFilePath
+        //         }
+        //     ]
+        // });
+        console.log("=> [dailyChannelWiseUnsub][emailSent]");
         fs.unlink(paywallChannelWiseUnsubReportFilePath,function(err,data) {
             if (err) {
                 console.log("=> File not deleted[dailyChannelWiseUnsub]");
@@ -1617,21 +1861,37 @@ dailyChannelWiseTrialActivated = async() => {
         });
 
         await dailyChannelWiseTrialWriter.writeRecords(records);
+        let messageObj = {}, path = null;
+        messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = `Source Wise Trial Activated Report`, // plain text bodyday
+        messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of trials activated with respect to source.`;
+        messageObj.attachments = {
+            filename: paywallChannelWiseTrial,
+            path: path
+        };
 
-        var info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk', // sender address
-            // to:  ["paywall@dmdmax.com.pk"],
-            to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"], // list of receivers
-            subject: `Source Wise Trial Activated Report`, // Subject line
-            text: `This report (generated at ${(new Date()).toDateString()}) contains count of trials activated with respect to source.`, // plain text bodyday
-            attachments:[
-                {
-                    filename: paywallChannelWiseTrial,
-                    path: paywallChannelWiseTrialFilePath
-                }
-            ]
-        });
-        console.log("[dailyChannelWiseTrialActivated][emailSent]",info);
+        let uploadRes = await uploadFileAtS3(paywallChannelWiseTrial);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+
+        // var info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk', // sender address
+        //     // to:  ["paywall@dmdmax.com.pk"],
+        //     to:  ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com"], // list of receivers
+        //     subject: `Source Wise Trial Activated Report`, // Subject line
+        //     text: `This report (generated at ${(new Date()).toDateString()}) contains count of trials activated with respect to source.`, // plain text bodyday
+        //     attachments:[
+        //         {
+        //             filename: paywallChannelWiseTrial,
+        //             path: paywallChannelWiseTrialFilePath
+        //         }
+        //     ]
+        // });
+        console.log("[dailyChannelWiseTrialActivated][emailSent]");
         fs.unlink(paywallChannelWiseTrialFilePath,function(err,data) {
             if (err) {
                 console.log("File not deleted[paywallChannelWiseTrial]");
@@ -1665,14 +1925,22 @@ dailyTrialToBilledUsers = async() => {
         }
         console.log("=> sending email ", totalSum);
 
-        var info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            to:  ["paywall@dmdmax.com.pk", "nauman@dmdmax.com", "mikaeel@dmdmax.com"],
-            subject: 'Trial To Billed Users',
-            text: `This report (generated at ${(new Date()).toDateString()}) contains count of users who are directly billed after trial from ${dayBeforeYesterday} to ${yesterday}.\n\nTrial: ${dayBeforeYesterday}\nBilled: ${yesterday}\nCount: ${totalSum}`
-        });
+        let messageObj = {}, path = null;
+        messageObj.to = ["paywall@dmdmax.com.pk", "nauman@dmdmax.com", "mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = `Trial To Billed Users`; // plain text bodyday
+        messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of users who are directly billed after trial from ${dayBeforeYesterday} to ${yesterday}.\n\nTrial: ${dayBeforeYesterday}\nBilled: ${yesterday}\nCount: ${totalSum}`;
 
-        console.log("=> [trialToBilledUsers][emailSent]", info);
+        sendToQueue(messageObj);
+
+
+        // var info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     to:  ["paywall@dmdmax.com.pk", "nauman@dmdmax.com", "mikaeel@dmdmax.com"],
+        //     subject: 'Trial To Billed Users',
+        //     text: `This report (generated at ${(new Date()).toDateString()}) contains count of users who are directly billed after trial from ${dayBeforeYesterday} to ${yesterday}.\n\nTrial: ${dayBeforeYesterday}\nBilled: ${yesterday}\nCount: ${totalSum}`
+        // });
+
+        console.log("=> [trialToBilledUsers][emailSent]");
     } catch (error) {
         console.error(error);
     }
@@ -1701,20 +1969,37 @@ dailyFullAndPartialChargedUsers = async() => {
         });
 
         await csvFullAndPartialCharged.writeRecords(array);
-        var info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            // to:  ["farhan.ali@dmdmax.com"],
-            to:  ["paywall@dmdmax.com.pk",  "mikaeel@dmdmax.com", "nauman@dmdmax.com"], // list of receivers
-            subject: 'Full & Partial Charged Users',
-            text: `This report (generated at ${(new Date()).toDateString()}) contains count of full & partial charged users.`, // plain text bodyday
-            attachments:[
-                {
-                    filename: paywallFullAndPartialChargedReport,
-                    path: paywallFullAndPartialChargedReportFilePath
-                }
-            ]
-        });
-        console.log("=> [fullAndPartialChargedUsers][emailSent]", info);
+        let messageObj = {}, path = null;
+        messageObj.to = ["paywall@dmdmax.com.pk",  "mikaeel@dmdmax.com", "nauman@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = 'Full & Partial Charged Users',
+        messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of full & partial charged users.`, // plain text bodyday
+        messageObj.attachments = {
+            filename: paywallFullAndPartialChargedReport,
+            path: path
+        };
+
+        let uploadRes = await uploadFileAtS3(paywallFullAndPartialChargedReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+
+        // var info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     // to:  ["farhan.ali@dmdmax.com"],
+        //     to:  ["paywall@dmdmax.com.pk",  "mikaeel@dmdmax.com", "nauman@dmdmax.com"], // list of receivers
+        //     subject: 'Full & Partial Charged Users',
+        //     text: `This report (generated at ${(new Date()).toDateString()}) contains count of full & partial charged users.`, // plain text bodyday
+        //     attachments:[
+        //         {
+        //             filename: paywallFullAndPartialChargedReport,
+        //             path: paywallFullAndPartialChargedReportFilePath
+        //         }
+        //     ]
+        // });
+        console.log("=> [fullAndPartialChargedUsers][emailSent]");
         fs.unlink(paywallFullAndPartialChargedReportFilePath,function(err,data) {
             if (err) {
                 console.log("=> File not deleted");
@@ -1732,20 +2017,38 @@ dailyPageViews = async() => {
         pageViews.getPageViews(db).then(async(pvs) => {
             console.log("***=>", pvs);
             await csvAffiliatePvs.writeRecords(pvs);
-                var info = await transporter.sendMail({
-                from: 'paywall@dmdmax.com.pk',
-                // to:  ["hamza@dmdmax.com"],
-                to:  ["paywall@dmdmax.com.pk","nauman@dmdmax.com", "mikaeel@dmdmax.com"], // list of receivers
-                subject: 'Affiliate Page Views',
-                text: `This report (generated at ${(new Date()).toDateString()}) contains affiliate page views`, // plain text bodyday
-                attachments:[
-                    {
-                        filename: affiliatePvs,
-                        path: affiliatePvsFilePath
-                    }
-                ]
-            });
-            console.log("***=> [csvAffiliatePvs][emailSent]", info);
+            let messageObj = {}, path = null;
+            messageObj.from =  'paywall@dmdmax.com.pk';
+            messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com", "mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+            messageObj.subject = 'Affiliate Page Views',
+                messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains affiliate page views`, // plain text bodyday
+                messageObj.attachments = {
+                    filename: affiliatePvs,
+                    path: path
+                };
+
+            let uploadRes = await uploadFileAtS3(affiliatePvs);
+            console.log("uploadRes: ", uploadRes);
+            if (uploadRes.status) {
+                messageObj.attachments.path = uploadRes.data.Location;
+                sendToQueue(messageObj);
+            }
+
+
+                // var info = await transporter.sendMail({
+                // from: 'paywall@dmdmax.com.pk',
+                // // to:  ["hamza@dmdmax.com"],
+                // to:  ["paywall@dmdmax.com.pk","nauman@dmdmax.com", "mikaeel@dmdmax.com"], // list of receivers
+                // subject: 'Affiliate Page Views',
+                // text: `This report (generated at ${(new Date()).toDateString()}) contains affiliate page views`, // plain text bodyday
+                // attachments:[
+                //     {
+                //         filename: affiliatePvs,
+                //         path: affiliatePvsFilePath
+                //     }
+                // ]
+            // });
+            console.log("***=> [csvAffiliatePvs][emailSent]");
             fs.unlink(affiliatePvsFilePath,function(err,data) {
                 if (err) {
                     console.log("***=>File not deleted");
@@ -1764,20 +2067,38 @@ getTotalUserBaseTillDate = async(from, to) => {
     let result = await usersRepo.getTotalUserBaseTillDate(from, to);
     await csvTotalBase.writeRecords(result);
 
-    var info = await transporter.sendMail({
-        from: 'paywall@dmdmax.com.pk', // sender address
-        to:  ["paywall@dmdmax.com.pk", "mikaeel@dmdmax.com"],
-        //to:  ["paywall@dmdmax.com.pk","zara.naqi@telenor.com.pk","mikaeel@dmdmax.com"], // list of receivers
-        subject: `Paywall Total Base`, // Subject line
-        text: `This report contains total user base from ${new Date(from)} to ${new Date(to)}.`,
-        attachments:[
-            {
-                filename: paywallTotalBase,
-                path: paywallTotalBaseFilePath
-            }
-        ]
-    });
-    console.log("[totalBase][emailSent]",info);
+    let messageObj = {}, path = null;
+    messageObj.from =  'paywall@dmdmax.com.pk';
+    messageObj.to = ["paywall@dmdmax.com.pk", "mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+    messageObj.subject = 'Paywall Total Base',
+    messageObj.text = `This report contains total user base from ${new Date(from)} to ${new Date(to)}.`, // plain text bodyday
+    messageObj.attachments = {
+        filename: paywallTotalBase,
+        path: path
+    };
+
+    let uploadRes = await uploadFileAtS3(paywallTotalBase);
+    console.log("uploadRes: ", uploadRes);
+    if (uploadRes.status) {
+        messageObj.attachments.path = uploadRes.data.Location;
+        sendToQueue(messageObj);
+    }
+
+
+    // var info = await transporter.sendMail({
+    //     from: 'paywall@dmdmax.com.pk', // sender address
+    //     to:  ["paywall@dmdmax.com.pk", "mikaeel@dmdmax.com"],
+    //     //to:  ["paywall@dmdmax.com.pk","zara.naqi@telenor.com.pk","mikaeel@dmdmax.com"], // list of receivers
+    //     subject: `Paywall Total Base`, // Subject line
+    //     text: `This report contains total user base from ${new Date(from)} to ${new Date(to)}.`,
+    //     attachments:[
+    //         {
+    //             filename: paywallTotalBase,
+    //             path: paywallTotalBaseFilePath
+    //         }
+    //     ]
+    // });
+    console.log("[totalBase][emailSent]");
     fs.unlink(paywallTotalBaseFilePath,function(err,data) {
         if (err) {
             console.log("File not deleted[totalBase]");
@@ -1799,21 +2120,38 @@ getExpiredBase = async() => {
     console.log('=> preparing csv - ', finalResult);
 
     await csvExpiredBase.writeRecords(finalResult);
-    
-    console.log('=> sending email');
-    var info = await transporter.sendMail({
-        from: 'paywall@dmdmax.com.pk', // sender address
-        to:  ["muhammad.azam@dmdmax.com"],
-        subject: `5. Expired Base Msisdns`, // Subject line
-        text: `This report contains total expired base i.e 7th Feb to date.`,
-        attachments:[
-            {
-                filename: paywallExpiredBase,
-                path: paywallExpiredBaseFilePath
-            }
-        ]
-    });
-    console.log("=> [expiredBase][emailSent]",info);
+    let messageObj = {}, path = null;
+    messageObj.from =  'paywall@dmdmax.com.pk';
+    messageObj.to = ["muhammad.azam@dmdmax.com"];
+    messageObj.subject = '5. Expired Base Msisdns',
+        messageObj.text = `This report contains total expired base i.e 7th Feb to date.`, // plain text bodyday
+        messageObj.attachments = {
+            filename: paywallExpiredBase,
+            path: path
+        };
+
+    let uploadRes = await uploadFileAtS3(paywallExpiredBase);
+    console.log("uploadRes: ", uploadRes);
+    if (uploadRes.status) {
+        messageObj.attachments.path = uploadRes.data.Location;
+        sendToQueue(messageObj);
+    }
+
+
+    // console.log('=> sending email');
+    // var info = await transporter.sendMail({
+    //     from: 'paywall@dmdmax.com.pk', // sender address
+    //     to:  ["muhammad.azam@dmdmax.com"],
+    //     subject: `5. Expired Base Msisdns`, // Subject line
+    //     text: `This report contains total expired base i.e 7th Feb to date.`,
+    //     attachments:[
+    //         {
+    //             filename: paywallExpiredBase,
+    //             path: paywallExpiredBaseFilePath
+    //         }
+    //     ]
+    // });
+    console.log("=> [expiredBase][emailSent]");
     fs.unlink(paywallExpiredBaseFilePath,function(err,data) {
         if (err) {
             console.log("=> File not deleted[expiredBase]");
@@ -1860,21 +2198,38 @@ getInactiveBase = async(from, to) => {
     promise.then(async() => {
         console.log("*** ALL DONE");
         await csvInActiveBase.writeRecords(finalResult);
+        let messageObj = {}, path = null;
+        messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = 'Paywall InActive Base',
+        messageObj.text = `This report contains inactive base from ${new Date(from)} to ${new Date(to)}.\nInActive: Have not opened App/Web in last 7 days but are subscribed users`, // plain text bodyday
+        messageObj.attachments = {
+            filename: paywallInActiveBase,
+            path: path
+        };
 
-        var info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk', // sender address
-            to:  ["paywall@dmdmax.com.pk", "mikaeel@dmdmax.com"],
-            //to:  ["paywall@dmdmax.com.pk","zara.naqi@telenor.com.pk","mikaeel@dmdmax.com"], // list of receivers
-            subject: `Paywall InActive Base`, // Subject line
-            text: `This report contains inactive base from ${new Date(from)} to ${new Date(to)}.\nInActive: Have not opened App/Web in last 7 days but are subscribed users`,
-            attachments:[
-                {
-                    filename: paywallInActiveBase,
-                    path: paywallInActiveBaseFilePath
-                }
-            ]
-        });
-        console.log("*** [paywallInActiveBase][emailSent]",info);
+        let uploadRes = await uploadFileAtS3(paywallInActiveBase);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+
+
+        // var info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk', // sender address
+        //     to:  ["paywall@dmdmax.com.pk", "mikaeel@dmdmax.com"],
+        //     //to:  ["paywall@dmdmax.com.pk","zara.naqi@telenor.com.pk","mikaeel@dmdmax.com"], // list of receivers
+        //     subject: `Paywall InActive Base`, // Subject line
+        //     text: `This report contains inactive base from ${new Date(from)} to ${new Date(to)}.\nInActive: Have not opened App/Web in last 7 days but are subscribed users`,
+        //     attachments:[
+        //         {
+        //             filename: paywallInActiveBase,
+        //             path: paywallInActiveBaseFilePath
+        //         }
+        //     ]
+        // });
+        console.log("*** [paywallInActiveBase][emailSent]");
         fs.unlink(paywallInActiveBaseFilePath,function(err,data) {
             if (err) {
                 console.log("*** File not deleted[paywallInActiveBase]");
@@ -1889,21 +2244,37 @@ getUsersNotSubscribedAfterSubscribe = async() => {
         let result = await billinghistoryRepo.getUsersNotSubscribedAfterSubscribe();
         console.log("=> ALL DONE");
         await ActiveBaseWriter.writeRecords(result);
+        let messageObj = {}, path = null;
+        messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
+        messageObj.subject = 'Users who subscribed in Jul but did subscribe in Aug',
+            messageObj.text = `This report contains users who subscribed in Jul but did subscribe in Aug`, // plain text bodyday
+            messageObj.attachments = {
+                filename: ActiveBase,
+                path: path
+            };
 
-        var info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk', // sender address
-            to:  ["paywall@dmdmax.com.pk"],
-            subject: `Users who subscribed in Jul but did subscribe in Aug`,
-            text: `This report contains users who subscribed in Jul but did subscribe in Aug`,
-            attachments:[
-                {
-                    filename: ActiveBase,
-                    path: ActiveBaseFilePath
-                }
-            ]
-        });
+        let uploadRes = await uploadFileAtS3(ActiveBase);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
 
-        console.log("=> [ActiveBaseFilePath][emailSent]",info);
+
+        // var info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk', // sender address
+        //     to:  ["paywall@dmdmax.com.pk"],
+        //     subject: `Users who subscribed in Jul but did subscribe in Aug`,
+        //     text: `This report contains users who subscribed in Jul but did subscribe in Aug`,
+        //     attachments:[
+        //         {
+        //             filename: ActiveBase,
+        //             path: ActiveBaseFilePath
+        //         }
+        //     ]
+        // });
+
+        console.log("=> [ActiveBaseFilePath][emailSent]");
         fs.unlink(ActiveBaseFilePath,function(err,data) {
             if (err) {
                 console.log("=> File not deleted[ActiveBaseFilePath]");
@@ -1919,20 +2290,37 @@ getActiveBase = async(from, to) => {
     let result = await usersRepo.getActiveUsers(from, to);
     console.log("*** ALL DONE");
     await ActiveBaseWriter.writeRecords(result);
+    let messageObj = {}, path = null;
+    messageObj.from =  'paywall@dmdmax.com.pk';
+    messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
+    messageObj.subject = `Paywall Active Base`,
+        messageObj.text =  `This report contains active base from ${new Date(from)} to ${new Date(to)}.`
+        messageObj.attachments = {
+            filename: ActiveBase,
+            path: path
+        };
 
-    var info = await transporter.sendMail({
-        from: 'paywall@dmdmax.com.pk', // sender address
-        to:  ["paywall@dmdmax.com.pk"],
-        subject: `Paywall Active Base`, // Subject line
-        text: `This report contains active base from ${new Date(from)} to ${new Date(to)}.`,
-        attachments:[
-            {
-                filename: ActiveBase,
-                path: ActiveBaseFilePath
-            }
-        ]
-    });
-    console.log("*** [ActiveBaseFilePath][emailSent]",info);
+    let uploadRes = await uploadFileAtS3(ActiveBase);
+    console.log("uploadRes: ", uploadRes);
+    if (uploadRes.status) {
+        messageObj.attachments.path = uploadRes.data.Location;
+        sendToQueue(messageObj);
+    }
+
+
+    // var info = await transporter.sendMail({
+    //     from: 'paywall@dmdmax.com.pk', // sender address
+    //     to:  ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"],
+    //     subject: `Paywall Active Base`, // Subject line
+    //     text: `This report contains active base from ${new Date(from)} to ${new Date(to)}.`,
+    //     attachments:[
+    //         {
+    //             filename: ActiveBase,
+    //             path: ActiveBaseFilePath
+    //         }
+    //     ]
+    // });
+    console.log("*** [ActiveBaseFilePath][emailSent]");
     fs.unlink(ActiveBaseFilePath,function(err,data) {
         if (err) {
             console.log("*** File not deleted[ActiveBaseFilePath]");
@@ -1990,20 +2378,38 @@ generateUsersReportWithTrialAndBillingHistory = async(from, to) => {
 
     console.log("=> Sending email");
     await usersReportWithTrialAndBillingHistoryWriter.writeRecords(finalResult);
-    let info = await transporter.sendMail({
-        from: 'paywall@dmdmax.com.pk',
-        to:  ["farhan.ali@dmdmax.com"],
-        subject: `Users With Trial & Billing Details`, // Subject line
-        text: `This report contains affiliate users with trial and billing details from ${new Date(from)} to ${new Date(to)}.\nNote: code 0 indicates trial and code 1 indicates subscribed directly`,
-        attachments:[
-            {
-                filename: usersReportWithTrialAndBillingHistory,
-                path: usersReportWithTrialAndBillingHistoryFilePath
-            }
-        ]
-    });
+    let messageObj = {}, path = null;
+    messageObj.from =  'paywall@dmdmax.com.pk';
+    messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+    messageObj.subject = `Users With Trial & Billing Details`,
+    messageObj.text =  `This report contains affiliate users with trial and billing details from ${new Date(from)} to ${new Date(to)}.\nNote: code 0 indicates trial and code 1 indicates subscribed directly.`
+    messageObj.attachments = {
+        filename: usersReportWithTrialAndBillingHistory,
+        path: path
+    };
 
-    console.log("=> [usersReportWithTrialAndBillingHistory][emailSent]",info);
+    let uploadRes = await uploadFileAtS3(usersReportWithTrialAndBillingHistory);
+    console.log("uploadRes: ", uploadRes);
+    if (uploadRes.status) {
+        messageObj.attachments.path = uploadRes.data.Location;
+        sendToQueue(messageObj);
+    }
+
+
+    // let info = await transporter.sendMail({
+    //     from: 'paywall@dmdmax.com.pk',
+    //     to:  ["farhan.ali@dmdmax.com"],
+    //     subject: `Users With Trial & Billing Details`, // Subject line
+    //     text: `This report contains affiliate users with trial and billing details from ${new Date(from)} to ${new Date(to)}.\nNote: code 0 indicates trial and code 1 indicates subscribed directly`,
+    //     attachments:[
+    //         {
+    //             filename: usersReportWithTrialAndBillingHistory,
+    //             path: usersReportWithTrialAndBillingHistoryFilePath
+    //         }
+    //     ]
+    // });
+
+    console.log("=> [usersReportWithTrialAndBillingHistory][emailSent]");
     fs.unlink(usersReportWithTrialAndBillingHistoryFilePath,function(err,data) {
         if (err) {
             console.log("=> File not deleted[usersReportWithTrialAndBillingHistory]");
@@ -2092,21 +2498,38 @@ generateReportForAcquisitionSourceAndNoOfTimeUserBilled = async() => {
 
         console.log("### Sending email");
         await randomReportWriter.writeRecords(finalResult);
-        let info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            to:  ["muhammad.azam@dmdmax.com"],
-            // to:  ["farhan.ali@dmdmax.com"],
-            subject: `Complaint Data`, // Subject line
-            text: `This report contains the details of msisdns being sent us over email from Zara`,
-            attachments:[
-                {
-                    filename: randomReport,
-                    path: randomReportFilePath
-                }
-            ]
-        });
+        let messageObj = {}, path = null;
+        messageObj.to = ["muhammad.azam@dmdmax.com"];
+        messageObj.subject = `Complaint Data`,
+        messageObj.text =  `This report contains the details of msisdns being sent us over email from Telenor`
+        messageObj.attachments = {
+            filename: randomReport,
+            path: path
+        };
 
-        console.log("###  [randomReport][emailSent]",info);
+        let uploadRes = await uploadFileAtS3(randomReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+
+        // let info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     to:  ["muhammad.azam@dmdmax.com"],
+        //     // to:  ["farhan.ali@dmdmax.com"],
+        //     subject: `Complaint Data`, // Subject line
+        //     text: `This report contains the details of msisdns being sent us over email from Zara`,
+        //     attachments:[
+        //         {
+        //             filename: randomReport,
+        //             path: randomReportFilePath
+        //         }
+        //     ]
+        // });
+
+        console.log("###  [randomReport][emailSent]");
         fs.unlink(randomReportFilePath,function(err,data) {
             if (err) {
                 console.log("###  File not deleted[randomReport]");
@@ -2131,20 +2554,37 @@ getOnlySubscriberIds = async(source, fromDate, toDate) => {
 
         let fromDuplicate = new Date(fromDate);
 
-        let info = await transporter.sendMail({
-            from: 'paywall@dmdmax.com.pk',
-            to:  ["farhan.ali@dmdmax.com"],
-            subject: `Day-wise Charging Details For ${source} - ${monthNames[fromDuplicate.getMonth()]}`, // Subject line
-            text: `This report containing charging details of ${source}, day-wise for the month of ${monthNames[fromDuplicate.getMonth()]}`,
-            attachments:[
-                {
-                    filename: dateWiseChargingDetails,
-                    path: dateWiseChargingDetailsFilePath
-                }
-            ]
-        });
+        let messageObj = {}, path = null;
+        messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.subject = `Day-wise Charging Details For ${source} - ${monthNames[fromDuplicate.getMonth()]}`; // Subject line
+        messageObj.text =  `This report containing charging details of ${source}, day-wise for the month of ${monthNames[fromDuplicate.getMonth()]}`
+        messageObj.attachments = {
+            filename: dateWiseChargingDetails,
+            path: path
+        };
 
-        console.log("=> [dateWiseChargingDetails][emailSent]",info);
+        let uploadRes = await uploadFileAtS3(dateWiseChargingDetails);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            sendToQueue(messageObj);
+        }
+
+
+        // let info = await transporter.sendMail({
+        //     from: 'paywall@dmdmax.com.pk',
+        //     to:  ["farhan.ali@dmdmax.com"],
+        //     subject: `Day-wise Charging Details For ${source} - ${monthNames[fromDuplicate.getMonth()]}`, // Subject line
+        //     text: `This report containing charging details of ${source}, day-wise for the month of ${monthNames[fromDuplicate.getMonth()]}`,
+        //     attachments:[
+        //         {
+        //             filename: dateWiseChargingDetails,
+        //             path: dateWiseChargingDetailsFilePath
+        //         }
+        //     ]
+        // });
+
+        console.log("=> [dateWiseChargingDetails][emailSent]");
         fs.unlink(dateWiseChargingDetailsFilePath,function(err,data) {
             if (err) {
                 console.log("=> File not deleted[dateWiseChargingDetails]");
