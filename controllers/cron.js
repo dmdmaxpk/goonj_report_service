@@ -1,8 +1,8 @@
 const container = require("../configurations/container");
 const reportsService = require('../services/ReportsService');
 const billingMonitoringService = require('../services/BillingMonitoringService');
-
 const subscriptionRepository = container.resolve("subscriptionRepository");
+const helper = require('../helper/helper')
 
 exports.generateDailyReport = async (req,res) =>  {
     reportsService.generateDailyReport();
@@ -60,7 +60,15 @@ monitorRabbitMq = async() => {
 
     if(queuedCount >= 35000){
         // shoot email
-        await sendEmail(queuedCount);
+        // await sendEmail(queuedCount);
+
+        let messageObj = {};
+        // messageObj.to = ["paywall@dmdmax.com.pk"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
+        messageObj.subject = 'Current Queue Count';
+        messageObj.text = `Queued subscriptions count is ${queuedCount}, please check on priority`;
+        helper.sendToQueue(messageObj);
+
     }else{
         console.log("### Current queued subscriptions are ",queuedCount);
     }
@@ -82,7 +90,7 @@ sendEmail = async(queuedCount) => {
 
     await transporter.sendMail({
         from: 'paywall@dmdmax.com.pk',
-        to:  ["muhammad.azam@dmdmax.com"],
+        to:  ["paywall@dmdmax.com.pk"],
         subject: `Current Queue Count`,
         text: `Queued subscriptions count is ${queuedCount}, please check on priority`
     });
