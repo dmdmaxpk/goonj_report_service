@@ -2134,6 +2134,8 @@ getExpiredBase = async() => {
     console.log('=> preparing csv - ', finalResult);
 
     await csvExpiredBase.writeRecords(finalResult);
+    console.log('=> after writeRecords ');
+
     let messageObj = {}, path = null;
     // messageObj.to = ["muhammad.azam@dmdmax.com"];
     messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
@@ -2143,6 +2145,8 @@ getExpiredBase = async() => {
         filename: paywallExpiredBase,
         path: path
     };
+
+    console.log('=> messageObj ', messageObj);
 
     let uploadRes = await uploadFileAtS3(paywallExpiredBase);
     console.log("uploadRes: ", uploadRes);
