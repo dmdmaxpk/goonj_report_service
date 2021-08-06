@@ -24,7 +24,7 @@ class Helper {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    static sendToQueue = async(messageObj) => {
+    static sendToQueue(messageObj) {
         rabbitMq.addInQueue(config.queueNames.emailDispatcher, messageObj);
         return true;
     }
