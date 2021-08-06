@@ -1,4 +1,5 @@
 const reportsRepo = require('../repos/ReportsRepo');
+const helper = require('../helper/helper');
 
 generateDailyReport = async() => {
     console.log("=> Generating daily reports");
@@ -30,43 +31,43 @@ generateDailyReport = async() => {
 
     
     // Revenue report
-    // reportsRepo.dailyReport();
+    reportsRepo.dailyReport();
 
-    // await sleep(180*1000);
-    // reportsRepo.callBacksReport();
-
-    
-    // await sleep(180*1000);
-    // reportsRepo.dailyReturningUsers(from, to);
-    
-    // await sleep(180*1000);
-    // reportsRepo.dailyUnsubReport();
-
-    //await sleep(120*1000);
-    //reportsRepo.errorCountReport();
-    
-    
-    // await sleep(180*1000);
-    // reportsRepo.dailyFullAndPartialChargedUsers();
-    
-
-    // await sleep(120*1000);
-    // reportsRepo.dailyTrialToBilledUsers();
-    
-    
-    // await sleep(180*1000);
-    // reportsRepo.dailyChannelWiseUnsub();
+    await sleep(180*1000);
+    reportsRepo.callBacksReport();
 
     
-    // await sleep(180*1000);
+    await sleep(180*1000);
+    reportsRepo.dailyReturningUsers(from, to);
+    
+    await sleep(180*1000);
+    reportsRepo.dailyUnsubReport();
+
+    await sleep(120*1000);
+    reportsRepo.errorCountReport();
+    
+    
+    await sleep(180*1000);
+    reportsRepo.dailyFullAndPartialChargedUsers();
+    
+
+    await sleep(120*1000);
+    reportsRepo.dailyTrialToBilledUsers();
+    
+    
+    await sleep(180*1000);
+    reportsRepo.dailyChannelWiseUnsub();
+
+    
+    await sleep(180*1000);
     reportsRepo.dailyChannelWiseTrialActivated();
 
 
-    // await sleep(180*1000);
-    // reportsRepo.dailyPageViews();
+    await sleep(180*1000);
+    reportsRepo.dailyPageViews();
 
-    //await sleep(120*1000);
-    //affiliateReportsRepo.gdnReport(to, today);
+    await sleep(120*1000);
+    affiliateReportsRepo.gdnReport(to, today);
 }
 
 generateEveryThreeDaysReports =  async() => {
@@ -155,11 +156,11 @@ generateRandomReports =  async() => {
     // reportsRepo.expireBaseAndBlackList();
     // reportsRepo.expireBaseAndBlackListOrCreate();
     // reportsRepo.getExpiredMsisdn();
-    reportsRepo.getDailyData();
+    // reportsRepo.getDailyData();
     // reportsRepo.getWeeklyData();
     // reportsRepo.getMigrateUsers();
     // reportsRepo.computeLoggerDataMsisdnWise();
-    // reportsRepo.computeDouMonthlyData();
+    reportsRepo.computeDouMonthlyData();
 }
 
 billingInLastHour = async() => {
@@ -168,13 +169,21 @@ billingInLastHour = async() => {
         console.log('billingCountThisHour',billingCountThisHour);
         if(billingCountThisHour < 50){
             // Shoot an email
-            var info = await transporter.sendMail({
-                from: ['paywall@dmdmax.com.pk'], // sender address
-                to:  ["paywall@dmdmax.com.pk"], // list of receivers
-                subject: `Billing Count for this hour`, // Subject line
-                text: `Number of billing and graced count for this hour(${new Date()}) is ${billingCountThisHour}. `, // plain text bodyday
-            });
-            console.log("[billingInLastHour][EmailSent][info]",info);
+            // var info = await transporter.sendMail({
+            //     from: ['paywall@dmdmax.com.pk'], // sender address
+            //     to:  ["paywall@dmdmax.com.pk"], // list of receivers
+            //     subject: `Billing Count for this hour`, // Subject line
+            //     text: `Number of billing and graced count for this hour(${new Date()}) is ${billingCountThisHour}. `, // plain text bodyday
+            // });
+
+            let messageObj = {};
+            // messageObj.to = ["paywall@dmdmax.com.pk"];
+            messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
+            messageObj.subject = 'Billing Count for this hour';
+            messageObj.text = `Number of billing and graced count for this hour(${new Date()}) is ${billingCountThisHour}. `;
+            helper.sendToQueue(messageObj);
+
+            console.log("[billingInLastHour][EmailSent][info]");
         }
     }catch(err) {
         console.log(err);

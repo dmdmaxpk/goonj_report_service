@@ -1,3 +1,9 @@
+const fs = require('fs');
+const FormData = require('form-data');
+const config = require('../config');
+const RabbitMq = require('../rabbit/RabbitMq');
+const rabbitMq = new RabbitMq().getInstance();
+
 class Helper {
     static getCurrentDate() {
         let now = new Date();
@@ -16,6 +22,11 @@ class Helper {
 
     static timeout(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    static sendToQueue = async(messageObj) => {
+        rabbitMq.addInQueue(config.queueNames.emailDispatcher, messageObj);
+        return true;
     }
 }
 

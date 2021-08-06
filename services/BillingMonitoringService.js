@@ -1,6 +1,7 @@
 const container = require('../configurations/container');
 const billingHistoryRepo = container.resolve("billingHistoryRepository");
-var nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
+const helper = require('../helper/helper');
 
 var transporter = nodemailer.createTransport({
     host: "mail.dmdmax.com.pk",
@@ -18,13 +19,21 @@ billingInLastHour = async() => {
         console.log('billingCountThisHour',billingCountThisHour);
         if(billingCountThisHour < 50){
             // Shoot an email
-            var info = await transporter.sendMail({
-                from: ['paywall@dmdmax.com.pk'], // sender address
-                to:  ["paywall@dmdmax.com.pk"], // list of receivers
-                subject: `Billing Count for this hour`, // Subject line
-                text: `Number of billing and graced count for this hour(${new Date()}) is ${billingCountThisHour}. `, // plain text bodyday
-            });
-            console.log("[billingInLastHour][EmailSent][info]",info);
+            // var info = await transporter.sendMail({
+            //     from: ['paywall@dmdmax.com.pk'], // sender address
+            //     to:  ["paywall@dmdmax.com.pk"], // list of receivers
+            //     subject: `Billing Count for this hour`, // Subject line
+            //     text: `Number of billing and graced count for this hour(${new Date()}) is ${billingCountThisHour}. `, // plain text bodyday
+            // });
+
+            let messageObj = {};
+            // messageObj.to = ["paywall@dmdmax.com.pk"];
+            messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
+            messageObj.subject = 'Billing Count for this hour';
+            messageObj.text = `Number of billing and graced count for this hour(${new Date()}) is ${billingCountThisHour}. `;
+            helper.sendToQueue(messageObj);
+
+            console.log("[billingInLastHour][EmailSent][info]");
         }
     }catch(err) {
         console.log(err);

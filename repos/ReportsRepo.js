@@ -448,7 +448,7 @@ computeDouMonthlyData = async() => {
 
             let messageObj = {}, path = null;
             messageObj.from =  'paywall@dmdmax.com.pk';
-            messageObj.to = ["muhammad.azam@dmdmax.com"];
+            messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
             messageObj.subject = 'Complaint Data';
             messageObj.text = `This report contains the details of msisdns being sent us over email from Telenor`;
             messageObj.attachments = {
@@ -559,7 +559,8 @@ getDailyData = async() => {
                 await findingCsvWriter.writeRecords(finalResult);
                 let messageObj = {}, path = null;
                 messageObj.from =  'paywall@dmdmax.com.pk';
-                messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+                // messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+                messageObj.to = ["muhammad.azam@dmdmax.com","farhan.ali@dmdmax.com"];
                 messageObj.subject = 'Findings 24th March 2021 - Daily Package';
                 messageObj.text = `Findings has been attached, please find attachment`;
                 messageObj.attachments = {
@@ -643,7 +644,8 @@ getWeeklyData = async() => {
                 await findingCsvWriter.writeRecords(finalResult);
                 let messageObj = {}, path = null;
                 messageObj.from =  'paywall@dmdmax.com.pk';
-                messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+                // messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+                messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
                 messageObj.subject = 'Findings 24th March 2021 - Weekly Package';
                 messageObj.text = `Findings has been attached, please find attachment`;
                 messageObj.attachments = {
@@ -719,7 +721,8 @@ getMigrateUsers = async() => {
                 await migrateUsersCsvWriter.writeRecords(finalResult);
                 let messageObj = {}, path = null;
                 messageObj.from =  'paywall@dmdmax.com.pk';
-                messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+                // messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+                messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
                 messageObj.subject = 'Last 45 day migrated users';
                 messageObj.text = `Migrated Users has been attached, please find attachment`;
                 messageObj.attachments = {
@@ -865,7 +868,8 @@ getNextBillingDtm = async() => {
         console.log("### Sending email");
         await nextBillingDtmCsvWriter.writeRecords(finalResult);
         let messageObj = {}, path = null;
-        messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = 'Msisdns & Next Billing Timestamp - Comedy Daily';
         messageObj.text = `This report contains the details of msisdns & next billing timestamp for comedy daily`;
         messageObj.attachments = {
@@ -944,7 +948,8 @@ getReportForHeOrWifi = async() => {
         console.log("### Sending email");
         await wifiOrHeReportWriter.writeRecords(finalResult);
         let messageObj = {}, path = null;
-        messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = 'OTP or HE';
         messageObj.text = `This report contains the details of msisdns being sent us over email from Telenor`;
         messageObj.attachments = {
@@ -1260,7 +1265,8 @@ dailyReport = async(mode = 'prod') => {
             await wifiOrHeReportWriter.writeRecords(finalResult);
             let messageObj = {}, path = null;
             messageObj.from =  'paywall@dmdmax.com.pk';
-            messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
+            // messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
+            messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
             messageObj.subject = 'Paywall Report';
             messageObj.text = `PFA some basic stats for Paywall - ${(new Date()).toDateString()}`;
             messageObj.attachments = {
@@ -1374,7 +1380,8 @@ callBacksReport =async() => {
 
         let write = await csvReportWriter.writeRecords(report);
         let messageObj = {}, path = null;
-        messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = 'Callbacks Report';
         messageObj.text = `Callbacks sent with their TIDs and timestamps -  ${(new Date()).toDateString()}`;
         messageObj.attachments = {
@@ -1425,7 +1432,8 @@ errorCountReport = async() => {
         await errorCountReportWriter.writeRecords(errorReport);
         await errorCountReportBySource.writeRecords(errorBySourceReport);
         let messageObj = {}, path = null;
-        messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = 'Daily Error Reports';
         messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains all error count stats from 23rd February 2020 onwards.`;
         messageObj.attachments = {
@@ -1500,7 +1508,8 @@ dailyUnsubReport = async(from,to) => {
 
         await dailyUnsubReportWriter.writeRecords(dailyUnsubReport);
         let messageObj = {}, path = null;
-        messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = 'Daily Unsubscribed Users Report';
         messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of unsubscribed users.`;
         messageObj.attachments = {
@@ -1561,7 +1570,8 @@ dailyNetAddition = async(from, to) => {
 
         await dailyNetAdditionWriter.writeRecords(csvData);
         let messageObj = {}, path = null;
-        messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = `Daily Net Additions - ${monthNames[from.getMonth()]}`;
         messageObj.text = `This report contains daily net additions for the month of ${monthNames[from.getMonth()]}.`;
         messageObj.attachments = {
@@ -1617,7 +1627,8 @@ avgTransactionPerCustomer = async(from, to) => {
         console.log("=> Avg. Transactions Per Customer Report");
         from = new Date(from);
         let messageObj = {};
-        messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = `Avg Transactions/Customer - ${monthNames[from.getMonth()]}`;
         messageObj.text = `Avg Transactions/Customer for the month of ${monthNames[from.getMonth()]} are ${avgTransactions}`;
 
@@ -1650,7 +1661,8 @@ weeklyRevenue = async(weekFromArray, weekToArray, emailList) => {
         }
 
         let messageObj = {};
-        messageObj.to = emailList;
+        // messageObj.to = emailList;
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = `Weekly Revenue Report - ${monthNames[weekFromArray[0].getMonth()]}`;
         messageObj.text = emailBody;
 
@@ -1685,7 +1697,8 @@ weeklyTransactingCustomers = async(weekFromArray, weekToArray, emailList) => {
         }
 
         let messageObj = {};
-        messageObj.to = emailList;
+        // messageObj.to = emailList;
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = `Weekly Transacting Customers - ${monthNames[weekFromArray[0].getMonth()]}`;
         messageObj.text = emailBody;
 
@@ -1713,7 +1726,8 @@ dailyReturningUsers = async(from, to) => {
         console.log(`=> Daily Returning Users for ${to} are ${dailyReturningUsersCount}`);
 
         let messageObj = {};
-        messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = `Daily Returning Users`;
         messageObj.text = `Daily returning users for the date ${to} are ${dailyReturningUsersCount}`;
 
@@ -1783,7 +1797,8 @@ dailyChannelWiseUnsub = async() => {
 
         await dailyChannelWiseUnsubWriter.writeRecords(records);
         let messageObj = {}, path = null;
-        messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = 'Daily Source Wise Unsubscribed Users Report';
         messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of unsubscribed users with respect to source.\n\nNote: Expired By System column indicates those users expired by the system because their grace time is over and they still have no balance.`;
         messageObj.attachments = {
@@ -1862,8 +1877,9 @@ dailyChannelWiseTrialActivated = async() => {
 
         await dailyChannelWiseTrialWriter.writeRecords(records);
         let messageObj = {}, path = null;
-        messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
-        messageObj.subject = `Source Wise Trial Activated Report`, // plain text bodyday
+        // messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
+        messageObj.subject = `Source Wise Trial Activated Report` // plain text bodyday
         messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of trials activated with respect to source.`;
         messageObj.attachments = {
             filename: paywallChannelWiseTrial,
@@ -1926,7 +1942,8 @@ dailyTrialToBilledUsers = async() => {
         console.log("=> sending email ", totalSum);
 
         let messageObj = {}, path = null;
-        messageObj.to = ["paywall@dmdmax.com.pk", "nauman@dmdmax.com", "mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["paywall@dmdmax.com.pk", "nauman@dmdmax.com", "mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = `Trial To Billed Users`; // plain text bodyday
         messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of users who are directly billed after trial from ${dayBeforeYesterday} to ${yesterday}.\n\nTrial: ${dayBeforeYesterday}\nBilled: ${yesterday}\nCount: ${totalSum}`;
 
@@ -1970,9 +1987,10 @@ dailyFullAndPartialChargedUsers = async() => {
 
         await csvFullAndPartialCharged.writeRecords(array);
         let messageObj = {}, path = null;
-        messageObj.to = ["paywall@dmdmax.com.pk",  "mikaeel@dmdmax.com", "nauman@dmdmax.com","muhammad.azam@dmdmax.com"];
-        messageObj.subject = 'Full & Partial Charged Users',
-        messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of full & partial charged users.`, // plain text bodyday
+        // messageObj.to = ["paywall@dmdmax.com.pk",  "mikaeel@dmdmax.com", "nauman@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
+        messageObj.subject = 'Full & Partial Charged Users';
+        messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of full & partial charged users.`; // plain text bodyday
         messageObj.attachments = {
             filename: paywallFullAndPartialChargedReport,
             path: path
@@ -2014,14 +2032,16 @@ dailyFullAndPartialChargedUsers = async() => {
 dailyPageViews = async() => {
     console.log("***=> sending email")
     pageViews.connect().then(async(db) => {
+
         pageViews.getPageViews(db).then(async(pvs) => {
             console.log("***=>", pvs);
             await csvAffiliatePvs.writeRecords(pvs);
             let messageObj = {}, path = null;
             messageObj.from =  'paywall@dmdmax.com.pk';
-            messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com", "mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
-            messageObj.subject = 'Affiliate Page Views',
-                messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains affiliate page views`, // plain text bodyday
+            // messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com", "mikaeel@dmdmax.com"];
+            messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
+            messageObj.subject = 'Affiliate Page Views';
+                messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains affiliate page views`; // plain text bodyday
                 messageObj.attachments = {
                     filename: affiliatePvs,
                     path: path
@@ -2069,7 +2089,8 @@ getTotalUserBaseTillDate = async(from, to) => {
 
     let messageObj = {}, path = null;
     messageObj.from =  'paywall@dmdmax.com.pk';
-    messageObj.to = ["paywall@dmdmax.com.pk", "mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+    // messageObj.to = ["paywall@dmdmax.com.pk", "mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+    messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
     messageObj.subject = 'Paywall Total Base',
     messageObj.text = `This report contains total user base from ${new Date(from)} to ${new Date(to)}.`, // plain text bodyday
     messageObj.attachments = {
@@ -2122,7 +2143,8 @@ getExpiredBase = async() => {
     await csvExpiredBase.writeRecords(finalResult);
     let messageObj = {}, path = null;
     messageObj.from =  'paywall@dmdmax.com.pk';
-    messageObj.to = ["muhammad.azam@dmdmax.com"];
+    // messageObj.to = ["muhammad.azam@dmdmax.com"];
+    messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
     messageObj.subject = '5. Expired Base Msisdns',
         messageObj.text = `This report contains total expired base i.e 7th Feb to date.`, // plain text bodyday
         messageObj.attachments = {
@@ -2199,7 +2221,8 @@ getInactiveBase = async(from, to) => {
         console.log("*** ALL DONE");
         await csvInActiveBase.writeRecords(finalResult);
         let messageObj = {}, path = null;
-        messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = 'Paywall InActive Base',
         messageObj.text = `This report contains inactive base from ${new Date(from)} to ${new Date(to)}.\nInActive: Have not opened App/Web in last 7 days but are subscribed users`, // plain text bodyday
         messageObj.attachments = {
@@ -2245,7 +2268,8 @@ getUsersNotSubscribedAfterSubscribe = async() => {
         console.log("=> ALL DONE");
         await ActiveBaseWriter.writeRecords(result);
         let messageObj = {}, path = null;
-        messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = 'Users who subscribed in Jul but did subscribe in Aug',
             messageObj.text = `This report contains users who subscribed in Jul but did subscribe in Aug`, // plain text bodyday
             messageObj.attachments = {
@@ -2292,7 +2316,8 @@ getActiveBase = async(from, to) => {
     await ActiveBaseWriter.writeRecords(result);
     let messageObj = {}, path = null;
     messageObj.from =  'paywall@dmdmax.com.pk';
-    messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
+    // messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
+    messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
     messageObj.subject = `Paywall Active Base`,
         messageObj.text =  `This report contains active base from ${new Date(from)} to ${new Date(to)}.`
         messageObj.attachments = {
@@ -2499,7 +2524,8 @@ generateReportForAcquisitionSourceAndNoOfTimeUserBilled = async() => {
         console.log("### Sending email");
         await randomReportWriter.writeRecords(finalResult);
         let messageObj = {}, path = null;
-        messageObj.to = ["muhammad.azam@dmdmax.com"];
+        // messageObj.to = ["muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
         messageObj.subject = `Complaint Data`,
         messageObj.text =  `This report contains the details of msisdns being sent us over email from Telenor`
         messageObj.attachments = {
