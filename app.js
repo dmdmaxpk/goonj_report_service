@@ -19,8 +19,8 @@ mongoose.connection.on('error', err => console.error(`Error: ${err.message}`));
 const app = express();
 
 // Middlewares
-app.use(bodyParser.json({limit: '5120kb'}));  //5MB
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit: '50mb'})); // parse application/vnd.api+json as json
+app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 
 // Import routes
 app.use('/', require('./routes/index'));

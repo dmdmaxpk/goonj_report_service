@@ -447,7 +447,6 @@ computeDouMonthlyData = async() => {
             console.log("loggerMsisdnWiseReportWriter: ", loggerMsisdnWiseReportWriter);
 
             let messageObj = {}, path = null;
-            messageObj.from =  'paywall@dmdmax.com.pk';
             messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
             messageObj.subject = 'Complaint Data';
             messageObj.text = `This report contains the details of msisdns being sent us over email from Telenor`;
@@ -558,7 +557,6 @@ getDailyData = async() => {
             try {
                 await findingCsvWriter.writeRecords(finalResult);
                 let messageObj = {}, path = null;
-                messageObj.from =  'paywall@dmdmax.com.pk';
                 // messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
                 messageObj.to = ["muhammad.azam@dmdmax.com","farhan.ali@dmdmax.com"];
                 messageObj.subject = 'Findings 24th March 2021 - Daily Package';
@@ -643,7 +641,6 @@ getWeeklyData = async() => {
             try {
                 await findingCsvWriter.writeRecords(finalResult);
                 let messageObj = {}, path = null;
-                messageObj.from =  'paywall@dmdmax.com.pk';
                 // messageObj.to = ["paywall@dmdmax.com.pk","mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
                 messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
                 messageObj.subject = 'Findings 24th March 2021 - Weekly Package';
@@ -720,7 +717,6 @@ getMigrateUsers = async() => {
             try {
                 await migrateUsersCsvWriter.writeRecords(finalResult);
                 let messageObj = {}, path = null;
-                messageObj.from =  'paywall@dmdmax.com.pk';
                 // messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
                 messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
                 messageObj.subject = 'Last 45 day migrated users';
@@ -1264,7 +1260,6 @@ dailyReport = async(mode = 'prod') => {
 
             await wifiOrHeReportWriter.writeRecords(finalResult);
             let messageObj = {}, path = null;
-            messageObj.from =  'paywall@dmdmax.com.pk';
             // messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
             messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
             messageObj.subject = 'Paywall Report';
@@ -2037,7 +2032,6 @@ dailyPageViews = async() => {
             console.log("***=>", pvs);
             await csvAffiliatePvs.writeRecords(pvs);
             let messageObj = {}, path = null;
-            messageObj.from =  'paywall@dmdmax.com.pk';
             // messageObj.to = ["paywall@dmdmax.com.pk","nauman@dmdmax.com", "mikaeel@dmdmax.com"];
             messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
             messageObj.subject = 'Affiliate Page Views';
@@ -2088,7 +2082,6 @@ getTotalUserBaseTillDate = async(from, to) => {
     await csvTotalBase.writeRecords(result);
 
     let messageObj = {}, path = null;
-    messageObj.from =  'paywall@dmdmax.com.pk';
     // messageObj.to = ["paywall@dmdmax.com.pk", "mikaeel@dmdmax.com","muhammad.azam@dmdmax.com"];
     messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
     messageObj.subject = 'Paywall Total Base',
@@ -2142,15 +2135,14 @@ getExpiredBase = async() => {
 
     await csvExpiredBase.writeRecords(finalResult);
     let messageObj = {}, path = null;
-    messageObj.from =  'paywall@dmdmax.com.pk';
     // messageObj.to = ["muhammad.azam@dmdmax.com"];
     messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
-    messageObj.subject = '5. Expired Base Msisdns',
-        messageObj.text = `This report contains total expired base i.e 7th Feb to date.`, // plain text bodyday
-        messageObj.attachments = {
-            filename: paywallExpiredBase,
-            path: path
-        };
+    messageObj.subject = '5. Expired Base Msisdns';
+    messageObj.text = `This report contains total expired base i.e 7th Feb to date.`; // plain text bodyday
+    messageObj.attachments = {
+        filename: paywallExpiredBase,
+        path: path
+    };
 
     let uploadRes = await uploadFileAtS3(paywallExpiredBase);
     console.log("uploadRes: ", uploadRes);
@@ -2315,7 +2307,6 @@ getActiveBase = async(from, to) => {
     console.log("*** ALL DONE");
     await ActiveBaseWriter.writeRecords(result);
     let messageObj = {}, path = null;
-    messageObj.from =  'paywall@dmdmax.com.pk';
     // messageObj.to = ["paywall@dmdmax.com.pk","muhammad.azam@dmdmax.com"];
     messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
     messageObj.subject = `Paywall Active Base`,
@@ -2404,7 +2395,6 @@ generateUsersReportWithTrialAndBillingHistory = async(from, to) => {
     console.log("=> Sending email");
     await usersReportWithTrialAndBillingHistoryWriter.writeRecords(finalResult);
     let messageObj = {}, path = null;
-    messageObj.from =  'paywall@dmdmax.com.pk';
     messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
     messageObj.subject = `Users With Trial & Billing Details`,
     messageObj.text =  `This report contains affiliate users with trial and billing details from ${new Date(from)} to ${new Date(to)}.\nNote: code 0 indicates trial and code 1 indicates subscribed directly.`
