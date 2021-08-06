@@ -385,7 +385,9 @@ uploadFileAtS3 = async (file) => {
             method: 'post',
             url: config.goonj_core_baseurl + '/upload/s3',
             headers: formData.getHeaders(),
-            data: formData
+            data: formData,
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
         }).then(function(response){
             console.log('response.data: ', response.data);
             resolve(response.data);
