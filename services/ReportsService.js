@@ -66,8 +66,8 @@ generateDailyReport = async() => {
     await sleep(180*1000);
     reportsRepo.dailyPageViews();
 
-    await sleep(120*1000);
-    affiliateReportsRepo.gdnReport(to, today);
+    // await sleep(120*1000);
+    // affiliateReportsRepo.gdnReport(to, today);
 }
 
 generateEveryThreeDaysReports =  async() => {
