@@ -32,7 +32,7 @@ const rabbitMq = new RabbitMq().getInstance();
 let { port } = config;
 app.listen(port, () => {
     console.log(`APP running on port ${port}`);
-    rabbitMq.initServer(config.queueNames.emailDispatcher, (error, response) => {
+    rabbitMq.initServer((error, response) => {
         if(error){
             console.error(error)
         }else{

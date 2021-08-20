@@ -7,7 +7,7 @@ class RabbitMq {
         this.channel = null;
     }
 
-    initServer(queue_name, callback) {
+    initServer(callback) {
         this.createConnection((err,connection) => {
             if (err) {
                 console.log('Error while connection to RabbitMq: ', err);
@@ -20,7 +20,6 @@ class RabbitMq {
                         callback(error);
                     } else {
                         this.channel = channel;
-                        this.createQueue(queue_name, true);
                         callback(null, 'connected');
                     }
                 });

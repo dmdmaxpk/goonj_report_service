@@ -32,7 +32,7 @@ const goonj_core_baseurl = 'http://localhost:3000';
 
 const rabbitMqConnectionString = 'amqp://127.0.0.1';
 const queueNames = {
-    emailDispatcher: 'emailDispatcher',
+    emailDispatcher: 'emailDispatcher'
 }
 let config = {
     development: {
