@@ -1,4 +1,5 @@
 const express = require('express');
+const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
@@ -21,6 +22,7 @@ const app = express();
 // Middlewares
 app.use(bodyParser.json({limit: '50mb'})); // parse application/vnd.api+json as json
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
+app.use(logger('dev'));
 
 // Import routes
 app.use('/', require('./routes/index'));
