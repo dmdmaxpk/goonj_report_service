@@ -24,11 +24,8 @@ const codes = {
     code_otp_not_found: 17
 }
 
-const core_service = 'http://localhost:3000';
-const tp_ep_core_service = 'http://localhost:3001';
-const message_service = 'http://localhost:3003';
-const subscription_service = 'http://localhost:3004';
-const goonj_core_baseurl = 'http://localhost:3000';
+const message_service = 'http://10.0.1.76:3003';
+const goonj_core_baseurl = 'http://10.0.1.76:3000';
 
 const rabbitMqConnectionString = 'amqp://127.0.0.1';
 const queueNames = {
@@ -40,11 +37,8 @@ let config = {
         mongoDB: 'mongodb://10.0.1.76:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
-        core_service: core_service,
         message_service: message_service,
         goonj_core_baseurl: goonj_core_baseurl,
-        tp_ep_core_service: tp_ep_core_service,
-        subscription_service: subscription_service,
         rabbitMqConnectionString: rabbitMqConnectionString
     },
     staging: {
@@ -52,11 +46,8 @@ let config = {
         mongoDB: 'mongodb://10.0.1.76:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
-        core_service: core_service,
         message_service: message_service,
         goonj_core_baseurl: goonj_core_baseurl,
-        tp_ep_core_service: tp_ep_core_service,
-        subscription_service: subscription_service,
         rabbitMqConnectionString: rabbitMqConnectionString
     },
     production: {
@@ -64,11 +55,8 @@ let config = {
         mongoDB: 'mongodb://10.0.1.76:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
-        core_service: core_service,
         message_service: message_service,
         goonj_core_baseurl: goonj_core_baseurl,
-        tp_ep_core_service: tp_ep_core_service,
-        subscription_service: subscription_service,
         rabbitMqConnectionString: rabbitMqConnectionString
     }
 };
