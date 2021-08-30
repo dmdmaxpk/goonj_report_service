@@ -34,7 +34,7 @@ const queueNames = {
 let config = {
     development: {
         port: 3009,
-        mongoDB: 'mongodb://10.0.1.76:27017/goonjpaywall',
+        mongoDB: 'mongodb://10.0.1.76:27017/goonj_billing_history',
         codes: codes,
         queueNames: queueNames,
         message_service: message_service,
@@ -43,7 +43,7 @@ let config = {
     },
     staging: {
         port: 3009,
-        mongoDB: 'mongodb://10.0.1.76:27017/goonjpaywall',
+        mongoDB: 'mongodb://10.0.1.76:27017/goonj_billing_history',
         codes: codes,
         queueNames: queueNames,
         message_service: message_service,
@@ -52,7 +52,7 @@ let config = {
     },
     production: {
         port: 3009,
-        mongoDB: 'mongodb://10.0.1.76:27017/goonjpaywall',
+        mongoDB: 'mongodb://10.0.1.76:27017/goonj_billing_history',
         codes: codes,
         queueNames: queueNames,
         message_service: message_service,
