@@ -20,7 +20,7 @@ class RabbitMq {
                         callback(error);
                     } else {
                         this.channel = channel;
-                        this.createQueue(queue_name, true);
+                        // this.createQueue(queue_name, true);
                         callback(null, 'connected');
                     }
                 });
