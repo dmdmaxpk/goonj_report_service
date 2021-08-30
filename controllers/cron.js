@@ -59,14 +59,14 @@ monitorRabbitMq = async() => {
     let queuedCount = await subscriptionRepository.getQueuedCount();
     console.log('queuedCount: ', queuedCount);
 
-    if(queuedCount >= 35000){
+    // if(queuedCount >= 35000){
         let messageObj = {};
         // messageObj.to = ["paywall@dmdmax.com.pk"];
         messageObj.to = ["muhammad.azam@dmdmax.com"];
         messageObj.subject = 'Current Queue Count';
         messageObj.text = `Queued subscriptions count is ${queuedCount}, please check on priority`;
         helper.sendToQueue(messageObj);
-    }else{
-        console.log("### Current queued subscriptions are ",queuedCount);
-    }
+    // }else{
+    //     console.log("### Current queued subscriptions are ",queuedCount);
+    // }
 }
