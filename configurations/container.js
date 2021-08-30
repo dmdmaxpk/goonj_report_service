@@ -4,7 +4,6 @@ const container = awilix.createContainer({
 });
 
 // Repositories
-const SubscriberRepository = require('../repos/SubscriberRepo');
 const SubscriptionRepository = require('../repos/SubscriptionRepo');
 const BillingHistoryRepository = require('../repos/BillingHistoryRepo');
 const UserRepository = require('../repos/UserRepo');
@@ -14,7 +13,6 @@ container.register({
     // userController: by instantiating a class.
 
     // Repositories
-    subscriberRepository: awilix.asClass(SubscriberRepository).singleton(),
     subscriptionRepository: awilix.asClass(SubscriptionRepository).singleton(),
     billingHistoryRepository: awilix.asClass(BillingHistoryRepository).singleton(),
     userRepository: awilix.asClass(UserRepository).singleton(),

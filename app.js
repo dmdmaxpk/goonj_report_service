@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 require('./models/User');
 require('./models/OTP');
 require('./models/ViewLog');
-require('./models/Subscriber');
 require('./models/Subscription');
 require('./models/BillingHistory');
 

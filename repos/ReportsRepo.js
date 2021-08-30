@@ -14,7 +14,6 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 const billinghistoryRepo = container.resolve('billingHistoryRepository');
 const subscriptionRepo = container.resolve('subscriptionRepository');
-const subscriberRepo = container.resolve('subscriberRepository');
 
 const usersRepo = container.resolve('userRepository');
 const viewLogsRepo = require('../repos/ViewLogRepo');
@@ -2363,8 +2362,8 @@ generateUsersReportWithTrialAndBillingHistory = async(from, to) => {
     
     for(let i = 0; i < affMidsSubscriptions.length; i++){
         console.log("=> fetching data for affiliate mid ",affMidsSubscriptions[i]._id);
-        let subscriber_ids = affMidsSubscriptions[i].subscriber_ids;
-        let result = await billinghistoryRepo.getBillingDataForSpecificSubscriberIds(subscriber_ids);
+        let user_ids = affMidsSubscriptions[i].user_ids;
+        let result = await billinghistoryRepo.getBillingDataForSpecificSubscriberIds(user_ids);
         
         for(let j = 0; j < result.length; j++){
             console.log("=> user_id", result[j].user_id);
@@ -2463,51 +2462,48 @@ generateReportForAcquisitionSourceAndNoOfTimeUserBilled = async() => {
                         singObject.dou = 0;
                     }
 
-                    let subscriber = await subscriberRepo.getSubscriberByUserId(user._id);
-                    if(subscriber){
-                        let subscriptions = await subscriptionRepo.getAllSubscriptions(subscriber._id);
-                        if(subscriptions && subscriptions.length > 0){
-                            let addedDtm = subscriptions[0].added_dtm;
-                            let subsCount = subscriptions.length;
+                    let subscriptions = await subscriptionRepo.getAllSubscriptions(user._id);
+                    if(subscriptions && subscriptions.length > 0){
+                        let addedDtm = subscriptions[0].added_dtm;
+                        let subsCount = subscriptions.length;
 
-                            // let totalSuccessTransactions = 0;
+                        // let totalSuccessTransactions = 0;
 
-                            // for(let sub = 0; sub < subscriptions.length; sub++){
-                            //     totalSuccessTransactions += subscriptions[sub].total_successive_bill_counts;
-                            // }
+                        // for(let sub = 0; sub < subscriptions.length; sub++){
+                        //     totalSuccessTransactions += subscriptions[sub].total_successive_bill_counts;
+                        // }
 
-                            // let totalSuccessTransactionsInDec = await billinghistoryRepo.numberOfTransactionsOfSpecificSubscriber(subscriber._id, inputData[i][1] + "T00:00:00.000Z", inputData[i][1] + "T23:59:59.000Z");
-                            let totalSuccessTransactionsInDec = await billinghistoryRepo.numberOfTransactionsOfSpecificSubscriber(subscriber._id, "2021-01-01T00:00:00.000Z", "2021-04-26T00:00:00.000Z");
-                            let totalSuccessTransactions = totalSuccessTransactionsInDec.length > 0 ? totalSuccessTransactionsInDec[0].count : 0;
+                        // let totalSuccessTransactionsInDec = await billinghistoryRepo.numberOfTransactionsOfSpecificSubscriber(subscriber._id, inputData[i][1] + "T00:00:00.000Z", inputData[i][1] + "T23:59:59.000Z");
 
-                            singObject.subs_count = subsCount;
-                            singObject.acquisition_date = addedDtm;
-                            singObject.act_date = inputData[i][1];
-                            singObject.number_of_success_charging = totalSuccessTransactions;
+                        // let totalSuccessTransactionsInDec = await billinghistoryRepo.numberOfTransactionsOfSpecificSubscriber(subscriber._id, "2021-01-01T00:00:00.000Z", "2021-04-26T00:00:00.000Z");
+                        let totalSuccessTransactionsInDec = await billinghistoryRepo.numberOfTransactionsOfSpecificSubscriber(user._id, "2021-01-01T00:00:00.000Z", "2021-04-26T00:00:00.000Z");
+                        let totalSuccessTransactions = totalSuccessTransactionsInDec.length > 0 ? totalSuccessTransactionsInDec[0].count : 0;
 
-                            if(subscriptions[0].affiliate_mid){
-                                singObject.acquisition_source = subscriptions[0].affiliate_mid;
-                                singObject.affiliate_unique_transaction_id = subscriptions[0].affiliate_unique_transaction_id;
-                            }else{
-                                singObject.acquisition_source = subscriptions[0].source;
-                                singObject.affiliate_unique_transaction_id = subscriptions[0].affiliate_unique_transaction_id;
-                            }
+                        singObject.subs_count = subsCount;
+                        singObject.acquisition_date = addedDtm;
+                        singObject.act_date = inputData[i][1];
+                        singObject.number_of_success_charging = totalSuccessTransactions;
 
-                            let otp = await otpRepo.getOtp(inputData[i]);
-                            if(otp && otp.verified === true){
-                                singObject.source = "otp";
-                            }else{
-                                singObject.source = "he";
-                            }
-
-                            finalResult.push(singObject);
-                            console.log("### Done ", i);
-
+                        if(subscriptions[0].affiliate_mid){
+                            singObject.acquisition_source = subscriptions[0].affiliate_mid;
+                            singObject.affiliate_unique_transaction_id = subscriptions[0].affiliate_unique_transaction_id;
                         }else{
-                            console.log("### No subscriptions found for", inputData[i][0]);
+                            singObject.acquisition_source = subscriptions[0].source;
+                            singObject.affiliate_unique_transaction_id = subscriptions[0].affiliate_unique_transaction_id;
                         }
+
+                        let otp = await otpRepo.getOtp(inputData[i]);
+                        if(otp && otp.verified === true){
+                            singObject.source = "otp";
+                        }else{
+                            singObject.source = "he";
+                        }
+
+                        finalResult.push(singObject);
+                        console.log("### Done ", i);
+
                     }else{
-                        console.log("### No subscriber found for", inputData[i][0]);
+                        console.log("### No subscriptions found for", inputData[i][0]);
                     }
                 }else{
                     console.log("### No user found for", inputData[i][0]);
@@ -2622,7 +2618,7 @@ getOnlySubscriberIds = async(source, fromDate, toDate) => {
 getArray = async(records) => {
     let ids = [];
     for(let i = 0; i < records.length; i++){
-        ids.push(records[i].subscriber_id);
+        ids.push(records[i].user_id);
     }
     return ids;
 }

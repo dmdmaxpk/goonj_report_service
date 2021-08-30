@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
 class UserRepository {
-    constructor({subscriberRepository,subscriptionRepository}){
-        this.subscriberRepo = subscriberRepository;
+    constructor({subscriptionRepository}){
         this.subscriptionRepo = subscriptionRepository;
     }
 
@@ -20,9 +19,8 @@ class UserRepository {
 
     async getUserBySubscriptionId (subscription_id)  {
         let subscription = await this.subscriptionRepo.getSubscription(subscription_id);
-        let subscriber = await this.subscriberRepo.getSubscriber(subscription.subscriber_id);
-        if(subscriber){
-            let user = this.getUserById(subscriber.user_id);
+        if(subscription){
+            let user = this.getUserById(subscription.user_id);
             return user;
         }
         return undefined;

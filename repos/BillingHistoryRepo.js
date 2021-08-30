@@ -6,11 +6,11 @@ class BillingHistoryRepository {
     constructor(){
     }
 
-    async getBillingDataForSpecificSubscriberIds(subscriber_ids){
+    async getBillingDataForSpecificSubscriberIds(user_ids){
         let result = await BillingHistory.aggregate([
             { 
                 $match:{ 
-                    "subscriber_id": {$in : subscriber_ids},
+                    "user_id": {$in : user_ids},
                     $or: [{"billing_status": 'Success'}, {"billing_status": 'trial'}]
                 }
             }
@@ -28,7 +28,7 @@ class BillingHistoryRepository {
                     {billing_dtm:{$gt: new Date(from)}}, 
                     {billing_dtm:{$lt: new Date(to)}},
                 ],
-                subscriber_id: {$in: input},
+                user_id: {$in: input},
                 billing_status: "Success"
             }
         },{
@@ -67,8 +67,8 @@ class BillingHistoryRepository {
         },
                 $lookup:{
                            from: "billinghistories",
-                           localField: "subscriber_id",
-                           foreignField: "subscriber_id",
+                           localField: "user_id",
+                           foreignField: "user_id",
                            as: "histories"
                          }
             }, { 
@@ -120,8 +120,8 @@ class BillingHistoryRepository {
                 },
                  $lookup:{
                             from: "billinghistories",
-                            localField: "subscriber_id",
-                            foreignField: "subscriber_id",
+                            localField: "user_id",
+                            foreignField: "user_id",
                             as: "histories"
                           }
              }, { 
@@ -238,11 +238,11 @@ class BillingHistoryRepository {
         return result;
     }
 
-    async numberOfTransactionsOfSpecificSubscriber(subscriber_id, from, to) {
+    async numberOfTransactionsOfSpecificSubscriber(user_id, from, to) {
         let result = await BillingHistory.aggregate([
             {
                 $match:{
-                    "subscriber_id": subscriber_id,
+                    "user_id": user_id,
                     "billing_status": "Success",
                     $and: [
                         {billing_dtm:{$gte:new Date(from)}}, 

@@ -6,7 +6,6 @@ const billingHistorySchema = new Schema({
     //Generating shortid instead of uuid
     _id: { type: ShortId, len: 45, retries: 8 },
     user_id: { type:ShortId, required: true, index: true },
-    subscriber_id: { type:ShortId, required: true, index: true },
     subscription_id: { type:ShortId,  index: true },
     paywall_id: { type:ShortId, required: true, index: true },
     package_id: { type: String },
