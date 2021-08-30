@@ -1,4 +1,5 @@
 const express = require('express');
+const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
@@ -20,6 +21,7 @@ const app = express();
 // Middlewares
 app.use(bodyParser.json({limit: '50mb'})); // parse application/vnd.api+json as json
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
+app.use(logger('dev'));
 
 // Import routes
 app.use('/', require('./routes/index'));
@@ -31,7 +33,7 @@ const rabbitMq = new RabbitMq().getInstance();
 let { port } = config;
 app.listen(port, () => {
     console.log(`APP running on port ${port}`);
-    rabbitMq.initServer(config.queueNames.emailDispatcher, (error, response) => {
+    rabbitMq.initServer((error, response) => {
         if(error){
             console.error(error)
         }else{
