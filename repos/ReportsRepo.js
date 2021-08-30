@@ -20,9 +20,7 @@ const viewLogsRepo = require('../repos/ViewLogRepo');
 const pageViews = require('../controllers/PageViews');
 const otpRepo = require('../repos/OTPRepo');
 const config = require('../config');
-
-const RabbitMq = require('../rabbit/RabbitMq');
-const rabbitMq = new RabbitMq().getInstance();
+const helper = require("../helper/helper");
 
 let currentDate = null;
 currentDate = getCurrentDate();
@@ -397,11 +395,6 @@ uploadFileAtS3 = async (file) => {
     });
 }
 
-sendToQueue = async(messageObj) => {
-    rabbitMq.addInQueue(config.queueNames.emailDispatcher, messageObj);
-    return true;
-}
-
 computeDouMonthlyData = async() => {
     console.log("=> computeDouMonthlyData");
 
@@ -460,7 +453,7 @@ computeDouMonthlyData = async() => {
             console.log("uploadRes: ", uploadRes);
             if (uploadRes.status) {
                 messageObj.attachments.path = uploadRes.data.Location;
-                sendToQueue(messageObj);
+                helper.sendToQueue(messageObj);
             }
 
             fs.unlink(randomReportFilePath,function(err,data) {
@@ -571,7 +564,7 @@ getDailyData = async() => {
                 console.log("uploadRes: ", uploadRes);
                 if (uploadRes.status) {
                     messageObj.attachments.path = uploadRes.data.Location;
-                    sendToQueue(messageObj);
+                    helper.sendToQueue(messageObj);
                 }
 
                 // let info = await transporter.sendMail({
@@ -655,7 +648,7 @@ getWeeklyData = async() => {
                 console.log("uploadRes: ", uploadRes);
                 if (uploadRes.status) {
                     messageObj.attachments.path = uploadRes.data.Location;
-                    sendToQueue(messageObj);
+                    helper.sendToQueue(messageObj);
                 }
 
                 // let info = await transporter.sendMail({
@@ -731,7 +724,7 @@ getMigrateUsers = async() => {
                 console.log("uploadRes: ", uploadRes);
                 if (uploadRes.status) {
                     messageObj.attachments.path = uploadRes.data.Location;
-                    sendToQueue(messageObj);
+                    helper.sendToQueue(messageObj);
                 }
 
 
@@ -878,7 +871,7 @@ getNextBillingDtm = async() => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 
@@ -958,7 +951,7 @@ getReportForHeOrWifi = async() => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 
@@ -1274,7 +1267,7 @@ dailyReport = async(mode = 'prod') => {
             console.log("uploadRes: ", uploadRes);
             if (uploadRes.status) {
                 messageObj.attachments.path = uploadRes.data.Location;
-                sendToQueue(messageObj);
+                helper.sendToQueue(messageObj);
             }
 
             // var info = await transporter.sendMail({
@@ -1389,7 +1382,7 @@ callBacksReport =async() => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
         // var info = await transporter.sendMail({
@@ -1452,14 +1445,14 @@ errorCountReport = async() => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments[0].path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
         uploadRes = await uploadFileAtS3(paywallErrorCountReportBySource);
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments[1].path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 
@@ -1517,7 +1510,7 @@ dailyUnsubReport = async(from,to) => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
         // var info = await transporter.sendMail({
@@ -1579,7 +1572,7 @@ dailyNetAddition = async(from, to) => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
         console.log("=> Daily Addition Report");
@@ -1628,7 +1621,7 @@ avgTransactionPerCustomer = async(from, to) => {
         messageObj.subject = `Avg Transactions/Customer - ${monthNames[from.getMonth()]}`;
         messageObj.text = `Avg Transactions/Customer for the month of ${monthNames[from.getMonth()]} are ${avgTransactions}`;
 
-        sendToQueue(messageObj);
+        helper.sendToQueue(messageObj);
 
         // let info = await transporter.sendMail({
         //     from: 'paywall@dmdmax.com.pk',
@@ -1662,7 +1655,7 @@ weeklyRevenue = async(weekFromArray, weekToArray, emailList) => {
         messageObj.subject = `Weekly Revenue Report - ${monthNames[weekFromArray[0].getMonth()]}`;
         messageObj.text = emailBody;
 
-        sendToQueue(messageObj);
+        helper.sendToQueue(messageObj);
 
         // let info = await transporter.sendMail({
         //     from: 'paywall@dmdmax.com.pk',
@@ -1698,7 +1691,7 @@ weeklyTransactingCustomers = async(weekFromArray, weekToArray, emailList) => {
         messageObj.subject = `Weekly Transacting Customers - ${monthNames[weekFromArray[0].getMonth()]}`;
         messageObj.text = emailBody;
 
-        sendToQueue(messageObj);
+        helper.sendToQueue(messageObj);
 
         // let info = await transporter.sendMail({
         //     from: 'paywall@dmdmax.com.pk',
@@ -1727,7 +1720,7 @@ dailyReturningUsers = async(from, to) => {
         messageObj.subject = `Daily Returning Users`;
         messageObj.text = `Daily returning users for the date ${to} are ${dailyReturningUsersCount}`;
 
-        sendToQueue(messageObj);
+        helper.sendToQueue(messageObj);
 
         // let info = await transporter.sendMail({
         //     from: 'paywall@dmdmax.com.pk',
@@ -1806,7 +1799,7 @@ dailyChannelWiseUnsub = async() => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 
@@ -1886,7 +1879,7 @@ dailyChannelWiseTrialActivated = async() => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 
@@ -1943,7 +1936,7 @@ dailyTrialToBilledUsers = async() => {
         messageObj.subject = `Trial To Billed Users`; // plain text bodyday
         messageObj.text = `This report (generated at ${(new Date()).toDateString()}) contains count of users who are directly billed after trial from ${dayBeforeYesterday} to ${yesterday}.\n\nTrial: ${dayBeforeYesterday}\nBilled: ${yesterday}\nCount: ${totalSum}`;
 
-        sendToQueue(messageObj);
+        helper.sendToQueue(messageObj);
 
 
         // var info = await transporter.sendMail({
@@ -1996,7 +1989,7 @@ dailyFullAndPartialChargedUsers = async() => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 
@@ -2046,7 +2039,7 @@ dailyPageViews = async() => {
             console.log("uploadRes: ", uploadRes);
             if (uploadRes.status) {
                 messageObj.attachments.path = uploadRes.data.Location;
-                sendToQueue(messageObj);
+                helper.sendToQueue(messageObj);
             }
 
 
@@ -2096,7 +2089,7 @@ getTotalUserBaseTillDate = async(from, to) => {
     console.log("uploadRes: ", uploadRes);
     if (uploadRes.status) {
         messageObj.attachments.path = uploadRes.data.Location;
-        sendToQueue(messageObj);
+        helper.sendToQueue(messageObj);
     }
 
 
@@ -2153,7 +2146,7 @@ getExpiredBase = async() => {
     console.log("uploadRes: ", uploadRes);
     if (uploadRes.status) {
         messageObj.attachments.path = uploadRes.data.Location;
-        sendToQueue(messageObj);
+        helper.sendToQueue(messageObj);
     }
 
 
@@ -2231,7 +2224,7 @@ getInactiveBase = async(from, to) => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 
@@ -2278,7 +2271,7 @@ getUsersNotSubscribedAfterSubscribe = async() => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 
@@ -2325,7 +2318,7 @@ getActiveBase = async(from, to) => {
     console.log("uploadRes: ", uploadRes);
     if (uploadRes.status) {
         messageObj.attachments.path = uploadRes.data.Location;
-        sendToQueue(messageObj);
+        helper.sendToQueue(messageObj);
     }
 
 
@@ -2412,7 +2405,7 @@ generateUsersReportWithTrialAndBillingHistory = async(from, to) => {
     console.log("uploadRes: ", uploadRes);
     if (uploadRes.status) {
         messageObj.attachments.path = uploadRes.data.Location;
-        sendToQueue(messageObj);
+        helper.sendToQueue(messageObj);
     }
 
 
@@ -2529,7 +2522,7 @@ generateReportForAcquisitionSourceAndNoOfTimeUserBilled = async() => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 
@@ -2585,7 +2578,7 @@ getOnlySubscriberIds = async(source, fromDate, toDate) => {
         console.log("uploadRes: ", uploadRes);
         if (uploadRes.status) {
             messageObj.attachments.path = uploadRes.data.Location;
-            sendToQueue(messageObj);
+            helper.sendToQueue(messageObj);
         }
 
 

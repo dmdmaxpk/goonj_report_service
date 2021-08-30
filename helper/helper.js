@@ -1,8 +1,5 @@
-const fs = require('fs');
-const FormData = require('form-data');
 const config = require('../config');
-const RabbitMq = require('../rabbit/RabbitMq');
-const rabbitMq = new RabbitMq().getInstance();
+const axios = require("axios");
 
 class Helper {
     static getCurrentDate() {
@@ -25,7 +22,17 @@ class Helper {
     }
 
     static sendToQueue(messageObj) {
-        rabbitMq.addInQueue(config.queueNames.emailDispatcher, messageObj);
+        axios({
+            method: 'post',
+            url: config.message_service + '/message/email',
+            data: messageObj,
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
+        }).then(function(response){
+            console.log('response.data: ', response.data);
+        }).catch(function(err){
+            console.log('err: ', err);
+        });
         return true;
     }
 }
