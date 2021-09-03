@@ -2,6 +2,7 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const axios = require('axios');
 
 // Import database models
 require('./models/User');
@@ -28,9 +29,7 @@ app.use('/', require('./routes/index'));
 
 
 var CronJob = require('cron').CronJob;
-var job = new CronJob('15 19 * * *', function() {
-    console.log('paywall daily reporting cron: ' + (new Date()));
-
+var job = new CronJob('23 19 * * *', function() {
     axios.get(config.base_path + "/cron/generateDailyReport")
         .then(function(response){
             console.log('paywall daily - response.data: ', response.data);
@@ -38,8 +37,9 @@ var job = new CronJob('15 19 * * *', function() {
         .catch(function(err){
             console.log('paywall daily - err: ', err);
         });
-}, null, true, 'America/Los_Angeles');
+}, null, true, 'Asia/Karachi');
 job.start();
+
 
 const RabbitMq = require('./rabbit/RabbitMq');
 const rabbitMq = new RabbitMq().getInstance();
