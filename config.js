@@ -24,7 +24,7 @@ const codes = {
     code_otp_not_found: 17
 }
 
-const base_path = 'http://localhost:3011/';
+const base_path = 'http://localhost:3011';
 const message_service = 'http://10.0.1.76:3003';
 const goonj_core_baseurl = 'http://10.0.1.76:3000';
 

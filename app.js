@@ -29,7 +29,7 @@ app.use('/', require('./routes/index'));
 
 
 var CronJob = require('cron').CronJob;
-var job = new CronJob('23 19 * * *', function() {
+var job = new CronJob('25 19 * * *', function() {
     axios.get(config.base_path + "/cron/generateDailyReport")
         .then(function(response){
             console.log('paywall daily - response.data: ', response.data);
