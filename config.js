@@ -33,7 +33,7 @@ const queueNames = {
 }
 let config = {
     development: {
-        port: 3009,
+        port: 3011,
         mongoDB: 'mongodb://10.0.1.88:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
@@ -42,7 +42,7 @@ let config = {
         rabbitMqConnectionString: rabbitMqConnectionString
     },
     staging: {
-        port: 3009,
+        port: 3011,
         mongoDB: 'mongodb://10.0.1.88:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
@@ -51,7 +51,7 @@ let config = {
         rabbitMqConnectionString: rabbitMqConnectionString
     },
     production: {
-        port: 3009,
+        port: 3011,
         mongoDB: 'mongodb://10.0.1.88:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
