@@ -61,8 +61,8 @@ monitorRabbitMq = async() => {
 
     // if(queuedCount >= 35000){
         let messageObj = {};
-        // messageObj.to = ["paywall@dmdmax.com.pk"];
-        messageObj.to = ["muhammad.azam@dmdmax.com"];
+        messageObj.to = ["paywall@dmdmax.com.pk"];
+        // messageObj.to = ["muhammad.azam@dmdmax.com"];
         messageObj.subject = 'Current Queue Count';
         messageObj.text = `Queued subscriptions count is ${queuedCount}, please check on priority`;
         helper.sendToQueue(messageObj);

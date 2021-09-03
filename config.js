@@ -24,6 +24,7 @@ const codes = {
     code_otp_not_found: 17
 }
 
+const base_path = 'http://localhost:3011/';
 const message_service = 'http://10.0.1.76:3003';
 const goonj_core_baseurl = 'http://10.0.1.76:3000';
 
@@ -34,6 +35,7 @@ const queueNames = {
 let config = {
     development: {
         port: 3011,
+        base_path: base_path,
         mongoDB: 'mongodb://localhost:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
@@ -43,6 +45,7 @@ let config = {
     },
     staging: {
         port: 3011,
+        base_path: base_path,
         mongoDB: 'mongodb://localhost:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
@@ -52,6 +55,7 @@ let config = {
     },
     production: {
         port: 3011,
+        base_path: base_path,
         mongoDB: 'mongodb://localhost:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,

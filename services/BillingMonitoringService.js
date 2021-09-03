@@ -27,8 +27,8 @@ billingInLastHour = async() => {
             // });
 
             let messageObj = {};
-            // messageObj.to = ["paywall@dmdmax.com.pk"];
-            messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
+            messageObj.to = ["paywall@dmdmax.com.pk"];
+            // messageObj.to = ["muhammad.azam@dmdmax.com", "farhan.ali@dmdmax.com"];
             messageObj.subject = 'Billing Count for this hour';
             messageObj.text = `Number of billing and graced count for this hour(${new Date()}) is ${billingCountThisHour}. `;
             helper.sendToQueue(messageObj);

@@ -4,6 +4,9 @@ const helper = require('../helper/helper');
 generateDailyReport = async() => {
     console.log("=> Generating daily reports");
 
+    return;
+
+
     //Yesterday
     var to = new Date();
     to.setDate(to.getDate() - 1);
@@ -43,8 +46,8 @@ generateDailyReport = async() => {
     await sleep(180*1000);
     reportsRepo.dailyUnsubReport();
 
-    await sleep(120*1000);
-    reportsRepo.errorCountReport();
+    // await sleep(120*1000);
+    // reportsRepo.errorCountReport();
     
     
     await sleep(180*1000);

@@ -26,6 +26,21 @@ app.use(logger('dev'));
 // Import routes
 app.use('/', require('./routes/index'));
 
+
+var CronJob = require('cron').CronJob;
+var job = new CronJob('15 19 * * *', function() {
+    console.log('paywall daily reporting cron: ' + (new Date()));
+
+    axios.get(config.base_path + "/cron/generateDailyReport")
+        .then(function(response){
+            console.log('paywall daily - response.data: ', response.data);
+        })
+        .catch(function(err){
+            console.log('paywall daily - err: ', err);
+        });
+}, null, true, 'America/Los_Angeles');
+job.start();
+
 const RabbitMq = require('./rabbit/RabbitMq');
 const rabbitMq = new RabbitMq().getInstance();
 

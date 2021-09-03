@@ -62,10 +62,10 @@ class BillingHistoryRepository {
     async errorCountReportBySource ()  {
         console.time("errorCountReportBySource");
        let result = await Subscription.aggregate([ {
-        $match:{
-            added_dtm: {$gte: new Date("2020-06-10T00:00:00.000Z")}
-        },
-                $lookup:{
+            $match:{
+                added_dtm: {$gte: new Date("2020-06-10T00:00:00.000Z")}
+            }},
+           {$lookup:{
                            from: "billinghistories",
                            localField: "user_id",
                            foreignField: "user_id",
