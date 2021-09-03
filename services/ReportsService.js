@@ -4,9 +4,6 @@ const helper = require('../helper/helper');
 generateDailyReport = async() => {
     console.log("=> Generating daily reports");
 
-    return;
-
-
     //Yesterday
     var to = new Date();
     to.setDate(to.getDate() - 1);
