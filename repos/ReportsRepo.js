@@ -1261,8 +1261,8 @@ dailyReport = async(mode = 'prod') => {
         csvWriter.writeRecords(resultToWriteToCsv).then(async (data) => {
 
             let messageObj = {}, path = null;
-            messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
-            // messageObj.to = ["muhammad.azam@dmdmax.com","nauman@dmdmax.com"];
+            // messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
+            messageObj.to = ["muhammad.azam@dmdmax.com"];
             messageObj.subject = 'Paywall Report';
             messageObj.text = `PFA some basic stats for Paywall from ${(new Date()).toDateString()} to ${(new Date()).toDateString()}`;
             messageObj.attachments = {
