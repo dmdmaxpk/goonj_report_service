@@ -16,6 +16,7 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const billinghistoryRepo = container.resolve('billingHistoryRepository');
 const subscriptionRepo = container.resolve('subscriptionRepository');
 
+const loggerMsisdnRepo = require('../repos/LoggerMsisdnRepo');
 const usersRepo = container.resolve('userRepository');
 const viewLogsRepo = require('../repos/ViewLogRepo');
 const pageViews = require('../controllers/PageViews');
@@ -239,11 +240,19 @@ const randomReportWriter = createCsvWriter({
     ]
 });
 
-const loggerMsisdnWiseReportWriter = createCsvWriter({
+const loggerMsisdnWiseMonthlyReportWriter = createCsvWriter({
     path: randomReportFilePath,
     header: [
         {id: 'msisdn', title: 'Msisdn'},
         {id: 'month', title: 'Month'},
+        {id: 'watchTime', title: 'Watch Time (SEC)'}
+    ]
+});
+
+const loggerMsisdnWiseReportWriter = createCsvWriter({
+    path: randomReportFilePath,
+    header: [
+        {id: 'msisdn', title: 'Msisdn'},
         {id: 'watchTime', title: 'Watch Time (SEC)'}
     ]
 });
@@ -438,8 +447,8 @@ computeDouMonthlyData = async() => {
 
             console.log("### Sending email");
 
-            await loggerMsisdnWiseReportWriter.writeRecords(finalResult);
-            console.log("loggerMsisdnWiseReportWriter: ", loggerMsisdnWiseReportWriter);
+            await loggerMsisdnWiseMonthlyReportWriter.writeRecords(finalResult);
+            console.log("loggerMsisdnWiseMonthlyReportWriter: ", loggerMsisdnWiseMonthlyReportWriter);
 
             let messageObj = {}, path = null;
             messageObj.to = ["muhammad.azam@dmdmax.com","nauman@dmdmax.com"];
@@ -2617,6 +2626,174 @@ getOnlySubscriberIds = async(source, fromDate, toDate) => {
     
 }
 
+computeLoggerBitratesDataMsisdnWise = async() => {
+    console.log("=> computeLoggerBitratesDataMsisdnWise");
+
+    let finalResult = [];
+    try{
+        var jsonPath = path.join(__dirname, '..', 'msisdns.txt');
+        let inputData = await readFileSync(jsonPath);
+        console.log("### Input Data Length: ", inputData.length);
+
+        let startDate = '2021-01-01T00:00:00.000Z';
+        let endDate = '2021-01-31T00:00:00.000Z';
+
+        let dbConnection = await loggerMsisdnRepo.connect();
+        console.log('dbConnection: ', dbConnection);
+
+        for(let i = 0; i < inputData.length; i++){
+            if(inputData[i] && inputData[i].length === 11){
+
+                console.log("### Request for msisdn: ", inputData[i], i);
+                let records = await loggerMsisdnRepo.computeBitratesMonthlyData(inputData[i], startDate, endDate, dbConnection);
+                console.log('### records: ', records);
+                if(records.length > 0){
+                    for (let record of records) {
+                        let singObject = { msisdn: inputData[i] }
+                        singObject.month = "0" + record._id.logMonth + "-2021";
+                        singObject.watchTime = record.totalBitRates * 5;
+
+                        finalResult.push(singObject);
+                        console.log('### Done: ')
+                    }
+                }
+                else{
+                    console.log("### Data not found: ");
+                }
+            }else{
+                console.log("### Invalid number or number length: ");
+            }
+        }
+
+        console.log("### Finally: ", finalResult.length);
+
+        if (finalResult.length > 0){
+
+            console.log("### Sending email");
+            await loggerMsisdnWiseMonthlyReportWriter.writeRecords(finalResult);
+            let messageObj = {}, path = null;
+            messageObj.to = ["muhammad.azam@dmdmax.com"];
+            messageObj.subject = `Complaint Data`;
+            messageObj.text =  `This report contains the details of msisdns being sent us over email from Danish.`
+            messageObj.attachments = {
+                filename: randomReport,
+                path: path
+            };
+
+            let uploadRes = await uploadFileAtS3(ActiveBase);
+            console.log("uploadRes: ", uploadRes);
+            if (uploadRes.status) {
+                messageObj.attachments.path = uploadRes.data.Location;
+                helper.sendToQueue(messageObj);
+            }
+
+            // let info = await transporter.sendMail({
+            //     from: 'paywall@dmdmax.com.pk',
+            //     to:  ["muhammad.azam@dmdmax.com"],
+            //     subject: `Complaint Data`, // Subject line
+            //     text: `This report contains the details of msisdns being sent us over email from Zara`,
+            //     attachments:[
+            //         {
+            //             filename: randomReport,
+            //             path: randomReportFilePath
+            //         }
+            //     ]
+            // });
+        }
+
+        fs.unlink(randomReportFilePath,function(err,data) {
+            if (err) {
+                console.log("###  File not deleted[randomReport]");
+            }
+            console.log("###  File deleted [randomReport]");
+        });
+    }catch(e){
+        console.log("### error - ", e);
+    }
+}
+
+computeLoggerTotalHoursDataMsisdnWise = async() => {
+    console.log("=> computeLoggerTotalHoursDataMsisdnWise");
+
+    let finalResult = [];
+    try{
+        var jsonPath = path.join(__dirname, '..', 'msisdns.txt');
+        let inputData = await readFileSync(jsonPath);
+        console.log("### Input Data Length: ", inputData.length);
+
+        let dbConnection = await loggerMsisdnRepo.connect();
+        for(let i = 0; i < inputData.length; i++){
+
+            let singObject = { msisdn: inputData[i] };
+            if(inputData[i] && inputData[i].length === 11){
+                console.log("### Request for msisdn: ", inputData[i], i);
+                let records = await loggerMsisdnRepo.computeTotalBitratesData(inputData[i], dbConnection);
+                console.log('### records: ', records);
+                if(records.length > 0){
+                    for (let record of records) {
+                        singObject.watchTime = (record.totalBitRates * 5) + singObject.watchTime;
+                    }
+                }
+                else{
+                    console.log("### Data not found: ");
+                    singObject.watchTime = 0;
+                }
+            }else{
+                singObject.watchTime = 0;
+                console.log("### Invalid number or number length: ");
+            }
+
+            finalResult.push(singObject);
+            console.log('### Done: ')
+        }
+
+        console.log("### Finally: ", finalResult);
+
+        if (finalResult.length > 0){
+
+            console.log("### Sending email");
+            await loggerMsisdnWiseReportWriter.writeRecords(finalResult);
+            let messageObj = {}, path = null;
+            messageObj.to = ["muhammad.azam@dmdmax.com"];
+            messageObj.subject = `Complaint Data`;
+            messageObj.text =  `This report contains the details of msisdns being sent us over email from Danish.`
+            messageObj.attachments = {
+                filename: randomReport,
+                path: path
+            };
+
+            let uploadRes = await uploadFileAtS3(randomReport);
+            console.log("uploadRes: ", uploadRes);
+            if (uploadRes.status) {
+                messageObj.attachments.path = uploadRes.data.Location;
+                helper.sendToQueue(messageObj);
+            }
+
+            // let info = await transporter.sendMail({
+            //     from: 'paywall@dmdmax.com.pk',
+            //     to:  ["muhammad.azam@dmdmax.com"],
+            //     subject: `Complaint Data`, // Subject line
+            //     text: `This report contains the details of msisdns being sent us over email from Zara`,
+            //     attachments:[
+            //         {
+            //             filename: randomReport,
+            //             path: randomReportFilePath
+            //         }
+            //     ]
+            // });
+        }
+
+        fs.unlink(randomReportFilePath,function(err,data) {
+            if (err) {
+                console.log("###  File not deleted[randomReport]");
+            }
+            console.log("###  File deleted [randomReport]");
+        });
+    }catch(e){
+        console.log("### error - ", e);
+    }
+}
+
 getArray = async(records) => {
     let ids = [];
     for(let i = 0; i < records.length; i++){
@@ -2656,5 +2833,7 @@ module.exports = {
     getUsersNotSubscribedAfterSubscribe: getUsersNotSubscribedAfterSubscribe,
     generateUsersReportWithTrialAndBillingHistory:generateUsersReportWithTrialAndBillingHistory,
     generateReportForAcquisitionSourceAndNoOfTimeUserBilled:generateReportForAcquisitionSourceAndNoOfTimeUserBilled,
-    computeDouMonthlyData:computeDouMonthlyData
+    computeDouMonthlyData:computeDouMonthlyData,
+    computeLoggerBitratesDataMsisdnWise:computeLoggerBitratesDataMsisdnWise,
+    computeLoggerTotalHoursDataMsisdnWise:computeLoggerTotalHoursDataMsisdnWise
 }
