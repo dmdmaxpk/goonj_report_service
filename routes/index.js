@@ -8,4 +8,6 @@ router.use('/cron',    require('./cron'));
 
 router.use('/history',    require('./historyRoutes'));
 
+router.use('/report',    require('./reportRoutes'));
+
 module.exports = router;
