@@ -6,6 +6,21 @@ class BillingHistoryRepository {
     constructor(){
     }
 
+    async getExpiryHistory(user_id) {
+        let result = await BillingHistory.aggregate([{             
+            $match:{ 
+                "user_id": user_id,
+                $or:[
+                    {"billing_status" : "expired"}, 
+                    {"billing_status" : "unsubscribe-request-recieved"}, 
+                    {"billing_status" : "unsubscribe-request-received-and-expired"}
+                ]
+            }
+        }]);
+        console.log("expired history", result);
+        return result;
+    }
+
     async getBillingDataForSpecificSubscriberIds(user_ids){
         let result = await BillingHistory.aggregate([
             { 
