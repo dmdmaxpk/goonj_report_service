@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const BillingHistory = mongoose.model('BillingHistory');
 const Subscription = mongoose.model('Subscription');
+const moment = require('moment');
 
 class BillingHistoryRepository {
     constructor(){
