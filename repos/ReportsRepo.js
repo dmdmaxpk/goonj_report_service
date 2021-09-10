@@ -2725,13 +2725,15 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
         for(let i = 0; i < inputData.length; i++){
 
             let singObject = { msisdn: inputData[i] };
+            singObject.watchTime = 0;
             if(inputData[i] && inputData[i].length === 11){
                 console.log("### Request for msisdn: ", inputData[i], i);
                 let records = await loggerMsisdnRepo.computeTotalBitratesData(inputData[i], dbConnection);
                 console.log('### records: ', records);
                 if(records.length > 0){
                     for (let record of records) {
-                        singObject.watchTime = (record.totalBitRates * 5) + singObject.watchTime;
+                        console.log('record.totalBitRates: ', record.totalBitRates);
+                        singObject.watchTime = Number((Number(record.totalBitRates) * 5)) + Number(singObject.watchTime);
                     }
                 }
                 else{
@@ -2769,18 +2771,18 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
                 helper.sendToQueue(messageObj);
             }
 
-            // let info = await transporter.sendMail({
-            //     from: 'paywall@dmdmax.com.pk',
-            //     to:  ["muhammad.azam@dmdmax.com"],
-            //     subject: `Complaint Data`, // Subject line
-            //     text: `This report contains the details of msisdns being sent us over email from Zara`,
-            //     attachments:[
-            //         {
-            //             filename: randomReport,
-            //             path: randomReportFilePath
-            //         }
-            //     ]
-            // });
+            let info = await transporter.sendMail({
+                from: 'paywall@dmdmax.com.pk',
+                to:  ["muhammad.azam@dmdmax.com"],
+                subject: `Complaint Data`, // Subject line
+                text: `This report contains the details of msisdns being sent us over email from Zara`,
+                attachments:[
+                    {
+                        filename: randomReport,
+                        path: randomReportFilePath
+                    }
+                ]
+            });
         }
 
         fs.unlink(randomReportFilePath,function(err,data) {
@@ -2789,6 +2791,43 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
             }
             console.log("###  File deleted [randomReport]");
         });
+    }catch(e){
+        console.log("### error - ", e);
+    }
+}
+
+computeWatchHoursByViewLogs = async() => {
+    console.log("=> computeWatchHoursByViewLogs");
+
+    try{
+        let from = new Date('2021-08-01T00:00:00.000Z');
+        let to = new Date('2021-08-10T23:59:59.000Z');
+        let payingUsers = await billinghistoryRepo.getPayingUserEngagement(from, to);
+
+        console.log('payingUsers: ', payingUsers.length);
+
+        if(payingUsers.length > 0) {
+            let watchTime = 0, watchViewCount = 0;
+            let dbConnection = await loggerMsisdnRepo.connect();
+            for(let i = 0; i < payingUsers.length; i++){
+
+                console.log("### Request for msisdn: ", payingUsers[i], i);
+                let records = await loggerMsisdnRepo.computeTotalBitratesData(payingUsers[i], dbConnection);
+                console.log('### records: ', records);
+                if(records.length > 0){
+                    for (let record of records) {
+                        watchTime = (record.totalBitRates * 5) + watchTime;
+                        watchViewCount = watchViewCount + 1;
+                    }
+                }
+                else{
+                    console.log("### Data not found: ");
+                }
+            }
+
+            console.log('watchTime: ', watchTime);
+            console.log('watchViewCount: ', watchViewCount);
+        }
     }catch(e){
         console.log("### error - ", e);
     }
@@ -2835,5 +2874,6 @@ module.exports = {
     generateReportForAcquisitionSourceAndNoOfTimeUserBilled:generateReportForAcquisitionSourceAndNoOfTimeUserBilled,
     computeDouMonthlyData:computeDouMonthlyData,
     computeLoggerBitratesDataMsisdnWise:computeLoggerBitratesDataMsisdnWise,
-    computeLoggerTotalHoursDataMsisdnWise:computeLoggerTotalHoursDataMsisdnWise
+    computeWatchHoursByViewLogs:computeWatchHoursByViewLogs,
+    computeLoggerTotalHoursDataMsisdnWise:computeLoggerTotalHoursDataMsisdnWise,
 }

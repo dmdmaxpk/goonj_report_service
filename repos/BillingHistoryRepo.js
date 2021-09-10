@@ -597,6 +597,59 @@ class BillingHistoryRepository {
             console.log("###", err);
         }
     }
+
+    async getPayingUserEngagement(startDate, endDate)  {
+        console.log('getPayingUserEngagement: ', startDate, endDate);
+
+        try{
+            return await BillingHistory.aggregate([
+                {
+                    $match:{
+                        "billing_status": "Success",
+                        $and:[{billing_dtm:{$gte:new Date(startDate)}}, {billing_dtm:{$lte:new Date(endDate)}}]
+                    }
+                },{
+                    $group:{
+                        _id: {user_id: "$user_id", msisdn: "$msisdn"}
+                    }
+                },{
+                    $lookup:{
+                        from: "viewlogs",
+                        let: {user_id: "$_id.user_id", msisdn: "$_id.msisdn"},
+                        pipeline:[
+                            { $match: {
+                                $expr: {
+                                    $and:[
+                                        {$eq: ["$user_id", "$$user_id"]},
+                                        {$and: [
+                                                {$gte: ["$added_dtm", new Date(startDate)]},
+                                                {$lte: ["$added_dtm", new Date(endDate)]}
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }},
+                            {$limit: 1},
+                            {$project:{
+                                msisdn: "$$msisdn",
+                            }}
+                        ],
+                        as: "user_data"
+                    }
+                },{
+                    $unwind: "$user_data"
+                },{
+                    $project:{
+                        "_id": 0,
+                        "msisdn": "$user_data.msisdn"
+                    }
+                }
+            ]);
+
+        }catch(err){
+            console.log("###", err);
+        }
+    }
 }
 
 module.exports = BillingHistoryRepository;
