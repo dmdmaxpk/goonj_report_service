@@ -602,7 +602,7 @@ class BillingHistoryRepository {
         console.log('getPayingUserEngagement: ', startDate, endDate);
 
         try{
-            return await BillingHistory.aggregate([
+            let result = await BillingHistory.aggregate([
                 {
                     $match:{
                         "billing_status": "Success",
@@ -646,6 +646,9 @@ class BillingHistoryRepository {
                 }
             ]);
 
+            console.log('result: ', result);
+
+            return result;
         }catch(err){
             console.log("###", err);
         }
