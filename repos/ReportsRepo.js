@@ -246,14 +246,14 @@ const doubleChargeReport = createCsvWriter({
     path: randomReportFilePath,
     header: [
         {id: 'msisdn', title: 'Msisdn'},
-        {id: '1', title: '1'},
-        {id: '5', title: '5'},
-        {id: '8', title: '8'},
-        {id: '11', title: '11'},
-        {id: '14', title: '14'},
-        {id: '17', title: '17'},
-        {id: "20",title: "20" },
-        {id: "22",title: "22" },
+        {id: 'cycle_1', title: 'cycle_1'},
+        {id: 'cycle_5', title: 'cycle_5'},
+        {id: 'cycle_8', title: 'cycle_8'},
+        {id: 'cycle_11', title: 'cycle_11'},
+        {id: 'cycle_14', title: 'cycle_14'},
+        {id: 'cycle_17', title: 'cycle_17'},
+        {id: "cycle_20",title: "cycle_20" },
+        {id: "cycle_22",title: "cycle_22" },
     ]
 });
 
@@ -2878,35 +2878,35 @@ computeDoubleChargeUsers = async () => {
                 for (let obj of history.history){
                     let hour = obj.hour;
                     if(hour >= 1 && hour < 5){
-                        finalObj.cycle = '1';
+                        finalObj.cycle_1 = '1';
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 5 && hour < 8){
-                        finalObj.cycle = '5';
+                        finalObj.cycle_5 = '5';
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 8 && hour < 11){
-                        finalObj.cycle = '8';
+                        finalObj.cycle_8 = '8';
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 11 && hour < 14){
-                        finalObj.cycle = '11';
+                        finalObj.cycle_11 = '11';
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 14 && hour < 17){
-                        finalObj.cycle = '14';
+                        finalObj.cycle_14 = '14';
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 17 && hour < 20){
-                        finalObj.cycle = '17';
+                        finalObj.cycle_17 = '17';
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 20 && hour < 22){
-                        finalObj.cycle = '20';
+                        finalObj.cycle_20 = '20';
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 22){
-                        finalObj.cycle = '22';
+                        finalObj.cycle_22 = '22';
                         finalObj.amount = obj.price;
                     }
                 }
