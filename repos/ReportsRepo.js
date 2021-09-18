@@ -2874,6 +2874,15 @@ computeDoubleChargeUsers = async () => {
             let history = histories[i];
             console.log('history: ', history);
             let finalObj = {};
+            finalObj.cycle_1 = '';
+            finalObj.cycle_5 = '';
+            finalObj.cycle_8 = '';
+            finalObj.cycle_11 = '';
+            finalObj.cycle_14 = '';
+            finalObj.cycle_17 = '';
+            finalObj.cycle_20 = '';
+            finalObj.cycle_22 = '';
+
             finalObj.msisdn = history._id;
             if (history.history.length > 0){
                 for (let obj of history.history){
