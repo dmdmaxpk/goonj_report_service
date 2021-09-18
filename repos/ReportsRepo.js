@@ -2923,7 +2923,7 @@ computeDoubleChargeUsers = async () => {
         console.log("### Sending email");
         await doubleChargeReport.writeRecords(finalResult);
         let messageObj = {}, path = null;
-        messageObj.to = ["muhammad.azam@dmdmax.com, nauman@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com", "azam.arid1144@gmail.com", "nauman@dmdmax.com"];
         messageObj.subject = `Double Charge`;
         messageObj.text =  `Double charge details`;
         messageObj.attachments = {
