@@ -2859,7 +2859,7 @@ computeWatchHoursByViewLogs = async() => {
 
 computeDoubleChargeUsers = async () => {
     let from = '2021-09-18T00:00:00.000Z';
-    let to = '2021-09-18T01:59:59.000Z';
+    let to = '2021-09-18T23:59:59.000Z';
 
     const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
     console.log('computeDoubleChargeUsers: ');
@@ -2881,28 +2881,28 @@ computeDoubleChargeUsers = async () => {
 
                     let hour = Number(obj.hour);
                     if(hour >= 0 && hour < 5){
-                        finalObj.cycle_1 =  ' '+ String(finalObj.cycle_1) + ", " + String(obj.price)
+                        finalObj.cycle_1 = finalObj.cycle_1 ? String(finalObj.cycle_1) + ", " + String(obj.price) : String(obj.price);
                     }
                     if(hour >= 5 && hour < 8){
-                        finalObj.cycle_5 =  ' '+ String(finalObj.cycle_5) + ", " + String(obj.price)
+                        finalObj.cycle_5 = finalObj.cycle_5 ? String(finalObj.cycle_5) + ", " + String(obj.price) : String(obj.price);
                     }
                     if(hour >= 8 && hour < 11){
-                        finalObj.cycle_8 =  ' '+ String(finalObj.cycle_8) + ", " + String(obj.price)
+                        finalObj.cycle_8 = finalObj.cycle_8 ? String(finalObj.cycle_8) + ", " + String(obj.price) : String(obj.price);
                     }
                     if(hour >= 11 && hour < 14){
-                        finalObj.cycle_11 =  ' '+ String(finalObj.cycle_11) + ", " + String(obj.price)
+                        finalObj.cycle_11 = finalObj.cycle_11 ? String(finalObj.cycle_11) + ", " + String(obj.price) : String(obj.price);
                     }
                     if(hour >= 14 && hour < 17){
-                        finalObj.cycle_14 =  ' '+ String(finalObj.cycle_14) + ", " + String(obj.price)
+                        finalObj.cycle_14 = finalObj.cycle_14 ? String(finalObj.cycle_14) + ", " + String(obj.price) : String(obj.price);
                     }
                     if(hour >= 17 && hour < 20){
-                        finalObj.cycle_17 =  ' '+ String(finalObj.cycle_17) + ", " + String(obj.price)
+                        finalObj.cycle_17 = finalObj.cycle_17 ? String(finalObj.cycle_17) + ", " + String(obj.price) : String(obj.price);
                     }
                     if(hour >= 20 && hour < 22){
-                        finalObj.cycle_20 =  ' '+ String(finalObj.cycle_20) + ", " + String(obj.price)
+                        finalObj.cycle_20 = finalObj.cycle_20 ? String(finalObj.cycle_20) + ", " + String(obj.price) : String(obj.price);
                     }
                     if(hour >= 22){
-                        finalObj.cycle_22 =  ' '+ String(finalObj.cycle_22) + ", " + String(obj.price)
+                        finalObj.cycle_22 = finalObj.cycle_22 ? String(finalObj.cycle_22) + ", " + String(obj.price) : String(obj.price);
                     }
                 }
             }
