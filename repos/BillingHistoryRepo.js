@@ -18,6 +18,46 @@ class BillingHistoryRepository {
         return result;
     }
 
+
+    async getTodaySuccessfulBilling(from, to){
+
+        console.log('getTodaySuccessfulBilling - from and to : ', from, to);
+        let result = await BillingHistory.aggregate([
+            { $match:{
+                "billing_status": "Success",
+                $and:[
+                    {billing_dtm:{$gte: new Date(from)}},
+                    {billing_dtm:{$lte: new Date(to)}},
+                ],
+            }},
+            { $project:{
+                price: "$price",
+                msisdn: "$msisdn",
+                hour: { "$hour" : "$billing_dtm"},
+            }},
+            { $project:{
+                hour: "$hour",
+                price: "$price",
+                msisdn: "$msisdn"
+            }},
+            {$group:{
+                _id: "$msisdn",
+                history: { $push:  { price: "$price", hour: "$hour"}}
+            }},
+            {$project: {
+                msisdn: "$_id.msisdn",
+                history: "$history",
+                sizeOfHistory: {$size: "$history"}
+            }},
+            { $match: {
+                "sizeOfHistory": {$gt: 1}
+            }}
+        ]);
+        console.log('result: ', result);
+
+        return result;
+    }
+
     async getChargingDetails(input, from, to){
         console.log("=> billinghistory - getChargingDetails - ",input.length);
         let data = await BillingHistory.aggregate([
@@ -606,16 +646,17 @@ class BillingHistoryRepository {
                 {
                     $match:{
                         "billing_status": "Success",
+                        "source": "app",
                         $and:[{billing_dtm:{$gte:new Date(startDate)}}, {billing_dtm:{$lte:new Date(endDate)}}]
                     }
                 },{
                     $group:{
-                        _id: {user_id: "$user_id", msisdn: "$msisdn"}
+                        _id: {user_id: "$user_id"}
                     }
                 },{
                     $lookup:{
                         from: "viewlogs",
-                        let: {user_id: "$_id.user_id", msisdn: "$_id.msisdn"},
+                        let: {user_id: "$_id.user_id"},
                         pipeline:[
                             { $match: {
                                 $expr: {
@@ -629,10 +670,7 @@ class BillingHistoryRepository {
                                     ]
                                 }
                             }},
-                            {$limit: 1},
-                            {$project:{
-                                msisdn: "$$msisdn",
-                            }}
+                            {$limit: 1}
                         ],
                         as: "user_data"
                     }

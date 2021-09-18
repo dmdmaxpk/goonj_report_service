@@ -240,6 +240,23 @@ const randomReportWriter = createCsvWriter({
     ]
 });
 
+const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
+
+const doubleChargeReport = createCsvWriter({
+    path: randomReportFilePath,
+    header: [
+        {id: 'msisdn', title: 'Msisdn'},
+        {id: '1', title: '1'},
+        {id: '5', title: '5'},
+        {id: '8', title: '8'},
+        {id: '11', title: '11'},
+        {id: '14', title: '14'},
+        {id: '17', title: '17'},
+        {id: "20",title: "20" },
+        {id: "22",title: "22" },
+    ]
+});
+
 const loggerMsisdnWiseMonthlyReportWriter = createCsvWriter({
     path: randomReportFilePath,
     header: [
@@ -2771,18 +2788,18 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
                 helper.sendToQueue(messageObj);
             }
 
-            let info = await transporter.sendMail({
-                from: 'paywall@dmdmax.com.pk',
-                to:  ["muhammad.azam@dmdmax.com"],
-                subject: `Complaint Data`, // Subject line
-                text: `This report contains the details of msisdns being sent us over email from Zara`,
-                attachments:[
-                    {
-                        filename: randomReport,
-                        path: randomReportFilePath
-                    }
-                ]
-            });
+            // let info = await transporter.sendMail({
+            //     from: 'paywall@dmdmax.com.pk',
+            //     to:  ["muhammad.azam@dmdmax.com"],
+            //     subject: `Complaint Data`, // Subject line
+            //     text: `This report contains the details of msisdns being sent us over email from Zara`,
+            //     attachments:[
+            //         {
+            //             filename: randomReport,
+            //             path: randomReportFilePath
+            //         }
+            //     ]
+            // });
         }
 
         fs.unlink(randomReportFilePath,function(err,data) {
@@ -2800,36 +2817,123 @@ computeWatchHoursByViewLogs = async() => {
     console.log("=> computeWatchHoursByViewLogs");
 
     try{
-        let from = new Date('2021-08-01T00:00:00.000Z');
-        let to = new Date('2021-08-10T23:59:59.000Z');
-        let payingUsers = await billinghistoryRepo.getPayingUserEngagement(from, to);
+        let from = '2021-08-01T00:00:00.000Z';
+        let to = '2021-08-31T23:59:59.000Z';
+        // let payingUsers = await billinghistoryRepo.getPayingUserEngagement(from, to);
+        //
+        // console.log('payingUsers: ', payingUsers.length);
+        //
+        // if(payingUsers.length > 0) {
 
-        console.log('payingUsers: ', payingUsers.length);
-
-        if(payingUsers.length > 0) {
             let watchTime = 0, watchViewCount = 0;
             let dbConnection = await loggerMsisdnRepo.connect();
-            for(let i = 0; i < payingUsers.length; i++){
 
-                console.log("### Request for msisdn: ", payingUsers[i], i);
-                let records = await loggerMsisdnRepo.computeTotalBitratesData(payingUsers[i], dbConnection);
+            let jsonPath = path.join(__dirname, '..', 'msisdns.txt');
+            let msisdnList = await readFileSync(jsonPath);
+            console.log("### msisdnList Length: ", msisdnList.length);
+
+            for(let i = 0; i < msisdnList.length; i++){
+
+                console.log("### Request for msisdn: ", msisdnList[i], i);
+                let records = await loggerMsisdnRepo.computeTotalBitratesData(msisdnList[i], from, to, dbConnection);
                 console.log('### records: ', records);
                 if(records.length > 0){
                     for (let record of records) {
                         watchTime = (record.totalBitRates * 5) + watchTime;
-                        watchViewCount = watchViewCount + 1;
+                        watchViewCount = watchViewCount + record.totalBitratesCount;
                     }
                 }
                 else{
-                    console.log("### Data not found: ");
+                    console.log("### Data not found: ", msisdnList[i]);
                 }
             }
 
-            console.log('watchTime: ', watchTime);
+            console.log('watchTime: ', Number(watchTime / 3600));
             console.log('watchViewCount: ', watchViewCount);
-        }
+        // }
     }catch(e){
         console.log("### error - ", e);
+    }
+}
+
+computeDoubleChargeUsers = async () => {
+    let from = '2021-09-18T00:00:00.000Z';
+    let to = '2021-09-18T23:59:59.000Z';
+
+    const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
+    console.log('computeDoubleChargeUsers: ');
+
+    let finalResult = [];
+
+    let histories = await billinghistoryRepo.getTodaySuccessfulBilling(from, to);
+    console.log('histories: ', histories.length);
+
+    if(histories.length > 0){
+        for (let i = 0; i<histories.length; i++){
+            let history = histories[i];
+            console.log('history: ', history);
+            let finalObj = {};
+            finalObj.msisdn = history._id;
+            if (history.history.length > 0){
+                for (let obj of history.history){
+                    let hour = obj.hour;
+                    if(hour >= 1 && hour < 5){
+                        finalObj.cycle = '1';
+                        finalObj.amount = obj.price;
+                    }
+                    else if(hour >= 5 && hour < 8){
+                        finalObj.cycle = '5';
+                        finalObj.amount = obj.price;
+                    }
+                    else if(hour >= 8 && hour < 11){
+                        finalObj.cycle = '8';
+                        finalObj.amount = obj.price;
+                    }
+                    else if(hour >= 11 && hour < 14){
+                        finalObj.cycle = '11';
+                        finalObj.amount = obj.price;
+                    }
+                    else if(hour >= 14 && hour < 17){
+                        finalObj.cycle = '14';
+                        finalObj.amount = obj.price;
+                    }
+                    else if(hour >= 17 && hour < 20){
+                        finalObj.cycle = '17';
+                        finalObj.amount = obj.price;
+                    }
+                    else if(hour >= 20 && hour < 22){
+                        finalObj.cycle = '20';
+                        finalObj.amount = obj.price;
+                    }
+                    else if(hour >= 22){
+                        finalObj.cycle = '22';
+                        finalObj.amount = obj.price;
+                    }
+                }
+            }
+
+            console.log('finalObj: ', finalObj);
+            finalResult.push(finalObj);
+        }
+    }
+
+    if(finalResult.length > 0){
+        console.log("### Sending email");
+        await doubleChargeReport.writeRecords(finalResult);
+        let messageObj = {}, path = null;
+        messageObj.to = ["muhammad.azam@dmdmax.com"];
+        messageObj.subject = `Double Charge`;
+        messageObj.text =  `Double charge details`;
+        messageObj.attachments = {
+            filename: randomReport,
+            path: path
+        };
+
+        let uploadRes = await uploadFileAtS3(randomReport);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
+        }
     }
 }
 
@@ -2876,4 +2980,5 @@ module.exports = {
     computeLoggerBitratesDataMsisdnWise:computeLoggerBitratesDataMsisdnWise,
     computeWatchHoursByViewLogs:computeWatchHoursByViewLogs,
     computeLoggerTotalHoursDataMsisdnWise:computeLoggerTotalHoursDataMsisdnWise,
+    computeDoubleChargeUsers:computeDoubleChargeUsers,
 }

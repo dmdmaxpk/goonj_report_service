@@ -160,7 +160,8 @@ generateRandomReports =  async() => {
     // reportsRepo.computeLoggerBitratesDataMsisdnWise();
     // reportsRepo.computeLoggerTotalHoursDataMsisdnWise();
     // reportsRepo.computeDouMonthlyData();
-    reportsRepo.computeWatchHoursByViewLogs();
+    // reportsRepo.computeWatchHoursByViewLogs();
+    reportsRepo.computeDoubleChargeUsers();
 }
 
 billingInLastHour = async() => {
