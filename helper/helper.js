@@ -2,6 +2,12 @@ const config = require('../config');
 const axios = require("axios");
 
 class Helper {
+    static setDateWithTimezone(date){
+        let newDate = date.toLocaleString("en-US", {timeZone: "Asia/Karachi"});
+        newDate = new Date(newDate);
+        return newDate;
+    }
+    
     static getCurrentDate() {
         let now = new Date();
         let strDateTime = [
