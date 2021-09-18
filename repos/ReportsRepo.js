@@ -2915,24 +2915,24 @@ computeDoubleChargeUsers = async () => {
     console.log('finalResult: ', finalResult);
 
 
-    // if(finalResult.length > 0){
-    //     console.log("### Sending email");
-    //     await doubleChargeReport.writeRecords(finalResult);
-    //     let messageObj = {}, path = null;
-    //     messageObj.to = ["muhammad.azam@dmdmax.com", "azam.arid1144@gmail.com", "nauman@dmdmax.com"];
-    //     messageObj.subject = `Double Charge`;
-    //     messageObj.text =  `Double charge details`;
-    //     messageObj.attachments = {
-    //         filename: randomReport,
-    //         path: path
-    //     };
-    //
-    //     let uploadRes = await uploadFileAtS3(randomReport);
-    //     if (uploadRes.status) {
-    //         messageObj.attachments.path = uploadRes.data.Location;
-    //         helper.sendToQueue(messageObj);
-    //     }
-    // }
+    if(finalResult.length > 0){
+        console.log("### Sending email");
+        await doubleChargeReport.writeRecords(finalResult);
+        let messageObj = {}, path = null;
+        messageObj.to = ["azam.arid1144@gmail.com"];
+        messageObj.subject = `Double Charge`;
+        messageObj.text =  `Double charge details`;
+        messageObj.attachments = {
+            filename: randomReport,
+            path: path
+        };
+
+        let uploadRes = await uploadFileAtS3(randomReport);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
+        }
+    }
 }
 
 getArray = async(records) => {
