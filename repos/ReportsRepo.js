@@ -2859,7 +2859,7 @@ computeWatchHoursByViewLogs = async() => {
 
 computeDoubleChargeUsers = async () => {
     let from = '2021-09-18T00:00:00.000Z';
-    let to = '2021-09-18T23:59:59.000Z';
+    let to = '2021-09-18T02:59:59.000Z';
 
     const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
     console.log('computeDoubleChargeUsers: ');
@@ -2869,23 +2869,6 @@ computeDoubleChargeUsers = async () => {
     let histories = await billinghistoryRepo.getTodaySuccessfulBilling(from, to);
     console.log('histories: ', histories.length);
 
-
-    const doubleChargeReport = createCsvWriter({
-
-        path: randomReportFilePath,
-        header: [
-            {id: 'msisdn', title: 'Msisdn'},
-            {id: 'cycle_1', title: 'cycle_1'},
-            {id: 'cycle_5', title: 'cycle_5'},
-            {id: 'cycle_8', title: 'cycle_8'},
-            {id: 'cycle_11', title: 'cycle_11'},
-            {id: 'cycle_14', title: 'cycle_14'},
-            {id: 'cycle_17', title: 'cycle_17'},
-            {id: "cycle_20",title: "cycle_20" },
-            {id: "cycle_22",title: "cycle_22" },
-        ]
-    });
-
     if(histories.length > 0){
         for (let i = 0; i<histories.length; i++){
             let history = histories[i];
@@ -2894,38 +2877,32 @@ computeDoubleChargeUsers = async () => {
             finalObj.msisdn = history._id;
             if (history.history.length > 0){
                 for (let obj of history.history){
+                    console.log('obj: ', obj);
+
                     let hour = obj.hour;
                     if(hour >= 1 && hour < 5){
                         finalObj.cycle_1 = obj.price
-                        finalObj.amount = obj.price;
                     }
                     else if(hour >= 5 && hour < 8){
                         finalObj.cycle_5 = obj.price;
-                        finalObj.amount = obj.price;
                     }
                     else if(hour >= 8 && hour < 11){
                         finalObj.cycle_8 = obj.price;
-                        finalObj.amount = obj.price;
                     }
                     else if(hour >= 11 && hour < 14){
                         finalObj.cycle_11 = obj.price;
-                        finalObj.amount = obj.price;
                     }
                     else if(hour >= 14 && hour < 17){
                         finalObj.cycle_14 = obj.price;
-                        finalObj.amount = obj.price;
                     }
                     else if(hour >= 17 && hour < 20){
                         finalObj.cycle_17 = obj.price;
-                        finalObj.amount = obj.price;
                     }
                     else if(hour >= 20 && hour < 22){
                         finalObj.cycle_20 = obj.price;
-                        finalObj.amount = obj.price;
                     }
                     else if(hour >= 22){
                         finalObj.cycle_22 = obj.price;
-                        finalObj.amount = obj.price;
                     }
                 }
             }
@@ -2938,24 +2915,24 @@ computeDoubleChargeUsers = async () => {
     console.log('finalResult: ', finalResult);
 
 
-    if(finalResult.length > 0){
-        console.log("### Sending email");
-        await doubleChargeReport.writeRecords(finalResult);
-        let messageObj = {}, path = null;
-        messageObj.to = ["muhammad.azam@dmdmax.com", "azam.arid1144@gmail.com", "nauman@dmdmax.com"];
-        messageObj.subject = `Double Charge`;
-        messageObj.text =  `Double charge details`;
-        messageObj.attachments = {
-            filename: randomReport,
-            path: path
-        };
-
-        let uploadRes = await uploadFileAtS3(randomReport);
-        if (uploadRes.status) {
-            messageObj.attachments.path = uploadRes.data.Location;
-            helper.sendToQueue(messageObj);
-        }
-    }
+    // if(finalResult.length > 0){
+    //     console.log("### Sending email");
+    //     await doubleChargeReport.writeRecords(finalResult);
+    //     let messageObj = {}, path = null;
+    //     messageObj.to = ["muhammad.azam@dmdmax.com", "azam.arid1144@gmail.com", "nauman@dmdmax.com"];
+    //     messageObj.subject = `Double Charge`;
+    //     messageObj.text =  `Double charge details`;
+    //     messageObj.attachments = {
+    //         filename: randomReport,
+    //         path: path
+    //     };
+    //
+    //     let uploadRes = await uploadFileAtS3(randomReport);
+    //     if (uploadRes.status) {
+    //         messageObj.attachments.path = uploadRes.data.Location;
+    //         helper.sendToQueue(messageObj);
+    //     }
+    // }
 }
 
 getArray = async(records) => {
