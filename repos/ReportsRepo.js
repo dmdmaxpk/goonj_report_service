@@ -243,6 +243,7 @@ const randomReportWriter = createCsvWriter({
 const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
 
 const doubleChargeReport = createCsvWriter({
+
     path: randomReportFilePath,
     header: [
         {id: 'msisdn', title: 'Msisdn'},
