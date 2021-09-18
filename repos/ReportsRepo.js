@@ -2869,6 +2869,23 @@ computeDoubleChargeUsers = async () => {
     let histories = await billinghistoryRepo.getTodaySuccessfulBilling(from, to);
     console.log('histories: ', histories.length);
 
+
+    const doubleChargeReport = createCsvWriter({
+
+        path: randomReportFilePath,
+        header: [
+            {id: 'msisdn', title: 'Msisdn'},
+            {id: 'cycle_1', title: 'cycle_1'},
+            {id: 'cycle_5', title: 'cycle_5'},
+            {id: 'cycle_8', title: 'cycle_8'},
+            {id: 'cycle_11', title: 'cycle_11'},
+            {id: 'cycle_14', title: 'cycle_14'},
+            {id: 'cycle_17', title: 'cycle_17'},
+            {id: "cycle_20",title: "cycle_20" },
+            {id: "cycle_22",title: "cycle_22" },
+        ]
+    });
+
     if(histories.length > 0){
         for (let i = 0; i<histories.length; i++){
             let history = histories[i];
@@ -2879,35 +2896,35 @@ computeDoubleChargeUsers = async () => {
                 for (let obj of history.history){
                     let hour = obj.hour;
                     if(hour >= 1 && hour < 5){
-                        finalObj.cycle_1 = '1';
+                        finalObj.cycle_1 = obj.price
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 5 && hour < 8){
-                        finalObj.cycle_5 = '5';
+                        finalObj.cycle_5 = obj.price;
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 8 && hour < 11){
-                        finalObj.cycle_8 = '8';
+                        finalObj.cycle_8 = obj.price;
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 11 && hour < 14){
-                        finalObj.cycle_11 = '11';
+                        finalObj.cycle_11 = obj.price;
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 14 && hour < 17){
-                        finalObj.cycle_14 = '14';
+                        finalObj.cycle_14 = obj.price;
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 17 && hour < 20){
-                        finalObj.cycle_17 = '17';
+                        finalObj.cycle_17 = obj.price;
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 20 && hour < 22){
-                        finalObj.cycle_20 = '20';
+                        finalObj.cycle_20 = obj.price;
                         finalObj.amount = obj.price;
                     }
                     else if(hour >= 22){
-                        finalObj.cycle_22 = '22';
+                        finalObj.cycle_22 = obj.price;
                         finalObj.amount = obj.price;
                     }
                 }
@@ -2919,6 +2936,7 @@ computeDoubleChargeUsers = async () => {
     }
 
     console.log('finalResult: ', finalResult);
+
 
     if(finalResult.length > 0){
         console.log("### Sending email");
