@@ -2868,73 +2868,75 @@ computeDoubleChargeUsers = async () => {
     let histories = await billinghistoryRepo.getTodaySuccessfulBilling(from, to);
     console.log('histories: ', histories.length);
 
-    if(histories.length > 0){
-        for (let i = 0; i<histories.length; i++){
-            let history = histories[i];
-            console.log('history: ', history);
-            let finalObj = {};
-            finalObj.msisdn = history._id;
-            if (history.history.length > 0){
-                for (let obj of history.history){
-                    let hour = obj.hour;
-                    if(hour >= 1 && hour < 5){
-                        finalObj.cycle = '1';
-                        finalObj.amount = obj.price;
-                    }
-                    else if(hour >= 5 && hour < 8){
-                        finalObj.cycle = '5';
-                        finalObj.amount = obj.price;
-                    }
-                    else if(hour >= 8 && hour < 11){
-                        finalObj.cycle = '8';
-                        finalObj.amount = obj.price;
-                    }
-                    else if(hour >= 11 && hour < 14){
-                        finalObj.cycle = '11';
-                        finalObj.amount = obj.price;
-                    }
-                    else if(hour >= 14 && hour < 17){
-                        finalObj.cycle = '14';
-                        finalObj.amount = obj.price;
-                    }
-                    else if(hour >= 17 && hour < 20){
-                        finalObj.cycle = '17';
-                        finalObj.amount = obj.price;
-                    }
-                    else if(hour >= 20 && hour < 22){
-                        finalObj.cycle = '20';
-                        finalObj.amount = obj.price;
-                    }
-                    else if(hour >= 22){
-                        finalObj.cycle = '22';
-                        finalObj.amount = obj.price;
-                    }
-                }
-            }
-
-            console.log('finalObj: ', finalObj);
-            finalResult.push(finalObj);
-        }
-    }
-
-    if(finalResult.length > 0){
-        console.log("### Sending email");
-        await doubleChargeReport.writeRecords(finalResult);
-        let messageObj = {}, path = null;
-        messageObj.to = ["muhammad.azam@dmdmax.com"];
-        messageObj.subject = `Double Charge`;
-        messageObj.text =  `Double charge details`;
-        messageObj.attachments = {
-            filename: randomReport,
-            path: path
-        };
-
-        let uploadRes = await uploadFileAtS3(randomReport);
-        if (uploadRes.status) {
-            messageObj.attachments.path = uploadRes.data.Location;
-            helper.sendToQueue(messageObj);
-        }
-    }
+    // if(histories.length > 0){
+    //     for (let i = 0; i<histories.length; i++){
+    //         let history = histories[i];
+    //         console.log('history: ', history);
+    //         let finalObj = {};
+    //         finalObj.msisdn = history._id;
+    //         if (history.history.length > 0){
+    //             for (let obj of history.history){
+    //                 let hour = obj.hour;
+    //                 if(hour >= 1 && hour < 5){
+    //                     finalObj.cycle = '1';
+    //                     finalObj.amount = obj.price;
+    //                 }
+    //                 else if(hour >= 5 && hour < 8){
+    //                     finalObj.cycle = '5';
+    //                     finalObj.amount = obj.price;
+    //                 }
+    //                 else if(hour >= 8 && hour < 11){
+    //                     finalObj.cycle = '8';
+    //                     finalObj.amount = obj.price;
+    //                 }
+    //                 else if(hour >= 11 && hour < 14){
+    //                     finalObj.cycle = '11';
+    //                     finalObj.amount = obj.price;
+    //                 }
+    //                 else if(hour >= 14 && hour < 17){
+    //                     finalObj.cycle = '14';
+    //                     finalObj.amount = obj.price;
+    //                 }
+    //                 else if(hour >= 17 && hour < 20){
+    //                     finalObj.cycle = '17';
+    //                     finalObj.amount = obj.price;
+    //                 }
+    //                 else if(hour >= 20 && hour < 22){
+    //                     finalObj.cycle = '20';
+    //                     finalObj.amount = obj.price;
+    //                 }
+    //                 else if(hour >= 22){
+    //                     finalObj.cycle = '22';
+    //                     finalObj.amount = obj.price;
+    //                 }
+    //             }
+    //         }
+    //
+    //         console.log('finalObj: ', finalObj);
+    //         finalResult.push(finalObj);
+    //     }
+    // }
+    //
+    // console.log('finalResult: ', finalResult);
+    //
+    // if(finalResult.length > 0){
+    //     console.log("### Sending email");
+    //     await doubleChargeReport.writeRecords(finalResult);
+    //     let messageObj = {}, path = null;
+    //     messageObj.to = ["muhammad.azam@dmdmax.com"];
+    //     messageObj.subject = `Double Charge`;
+    //     messageObj.text =  `Double charge details`;
+    //     messageObj.attachments = {
+    //         filename: randomReport,
+    //         path: path
+    //     };
+    //
+    //     let uploadRes = await uploadFileAtS3(randomReport);
+    //     if (uploadRes.status) {
+    //         messageObj.attachments.path = uploadRes.data.Location;
+    //         helper.sendToQueue(messageObj);
+    //     }
+    // }
 }
 
 getArray = async(records) => {
