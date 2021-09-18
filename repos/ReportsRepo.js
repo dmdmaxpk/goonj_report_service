@@ -2859,7 +2859,7 @@ computeWatchHoursByViewLogs = async() => {
 
 computeDoubleChargeUsers = async () => {
     let from = '2021-09-18T00:00:00.000Z';
-    let to = '2021-09-18T23:59:59.000Z';
+    let to = '2021-09-18T01:59:59.000Z';
 
     const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
     console.log('computeDoubleChargeUsers: ');
