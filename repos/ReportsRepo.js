@@ -2859,11 +2859,7 @@ computeWatchHoursByViewLogs = async() => {
 
 computeDoubleChargeUsers = async () => {
     let from = '2021-09-18T00:00:00.000Z';
-    let to = '2021-09-18T01:59:59.000Z';
-
-    const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
-    console.log('computeDoubleChargeUsers: ');
-
+    let to = '2021-09-18T23:59:59.000Z';
     let finalResult = [];
 
     let histories = await billinghistoryRepo.getTodaySuccessfulBilling(from, to);
@@ -2877,8 +2873,6 @@ computeDoubleChargeUsers = async () => {
             finalObj.msisdn = history._id;
             if (history.history.length > 0){
                 for (let obj of history.history){
-                    console.log('obj: ', obj);
-
                     let hour = Number(obj.hour);
                     if(hour >= 0 && hour < 5){
                         finalObj.cycle_1 = finalObj.cycle_1 ? String(finalObj.cycle_1) + ", " + String(obj.price) : String(obj.price);
@@ -2912,27 +2906,24 @@ computeDoubleChargeUsers = async () => {
         }
     }
 
-    console.log('finalResult: ', finalResult);
+    if(finalResult.length > 0){
+        console.log("### Sending email");
+        await doubleChargeReport.writeRecords(finalResult);
+        let messageObj = {}, path = null;
+        messageObj.to = ["azam.arid1144@gmail.com"];
+        messageObj.subject = `Double Charge`;
+        messageObj.text =  `Double charge details`;
+        messageObj.attachments = {
+            filename: randomReport,
+            path: path
+        };
 
-
-    // if(finalResult.length > 0){
-    //     console.log("### Sending email");
-    //     await doubleChargeReport.writeRecords(finalResult);
-    //     let messageObj = {}, path = null;
-    //     messageObj.to = ["azam.arid1144@gmail.com"];
-    //     messageObj.subject = `Double Charge`;
-    //     messageObj.text =  `Double charge details`;
-    //     messageObj.attachments = {
-    //         filename: randomReport,
-    //         path: path
-    //     };
-    //
-    //     let uploadRes = await uploadFileAtS3(randomReport);
-    //     if (uploadRes.status) {
-    //         messageObj.attachments.path = uploadRes.data.Location;
-    //         helper.sendToQueue(messageObj);
-    //     }
-    // }
+        let uploadRes = await uploadFileAtS3(randomReport);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
+        }
+    }
 }
 
 getArray = async(records) => {
