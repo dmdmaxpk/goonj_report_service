@@ -2879,29 +2879,30 @@ computeDoubleChargeUsers = async () => {
                 for (let obj of history.history){
                     console.log('obj: ', obj);
 
-                    let hour = obj.hour;
+                    let hour = Number(obj.hour);
+
                     if(hour >= 1 && hour < 5){
                         finalObj.cycle_1 = obj.price
                     }
-                    else if(hour >= 5 && hour < 8){
+                    if(hour >= 5 && hour < 8){
                         finalObj.cycle_5 = obj.price;
                     }
-                    else if(hour >= 8 && hour < 11){
+                    if(hour >= 8 && hour < 11){
                         finalObj.cycle_8 = obj.price;
                     }
-                    else if(hour >= 11 && hour < 14){
+                    if(hour >= 11 && hour < 14){
                         finalObj.cycle_11 = obj.price;
                     }
-                    else if(hour >= 14 && hour < 17){
+                    if(hour >= 14 && hour < 17){
                         finalObj.cycle_14 = obj.price;
                     }
-                    else if(hour >= 17 && hour < 20){
+                    if(hour >= 17 && hour < 20){
                         finalObj.cycle_17 = obj.price;
                     }
-                    else if(hour >= 20 && hour < 22){
+                    if(hour >= 20 && hour < 22){
                         finalObj.cycle_20 = obj.price;
                     }
-                    else if(hour >= 22){
+                    if(hour >= 22){
                         finalObj.cycle_22 = obj.price;
                     }
                 }
