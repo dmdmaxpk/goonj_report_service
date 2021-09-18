@@ -2859,7 +2859,7 @@ computeWatchHoursByViewLogs = async() => {
 
 computeDoubleChargeUsers = async () => {
     let from = '2021-09-18T00:00:00.000Z';
-    let to = '2021-09-18T02:59:59.000Z';
+    let to = '2021-09-18T23:59:59.000Z';
 
     const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
     console.log('computeDoubleChargeUsers: ');
@@ -2880,7 +2880,6 @@ computeDoubleChargeUsers = async () => {
                     console.log('obj: ', obj);
 
                     let hour = Number(obj.hour);
-
                     if(hour >= 0 && hour < 5){
                         finalObj.cycle_1 = finalObj.hasOwnProperty('cycle_1') ? String(finalObj.cycle_1) + ", " + String(obj.price) : String(obj.price);
                     }
