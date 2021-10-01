@@ -1075,16 +1075,19 @@ dailyReport = async(mode = 'prod') => {
 
     try{
         console.log("=> dailyReport");
-        let today = new Date();
-        let myToday = new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0);
+        // let today = new Date();
+        // let myToday = new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0);
+        //
+        // let dayBeforeYesterday = new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0);
+        // dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 1);
+        // // let reportStartDate = new Date("2020-09-15T00:00:00.672Z");
+        //
+        // let reportStartDate  = _.clone(today);
+        // reportStartDate.setDate(reportStartDate.getDate() - 7);
+        // reportStartDate.setHours(0, 0, 0);
 
-        let dayBeforeYesterday = new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0);
-        dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 1);
-        // let reportStartDate = new Date("2020-09-15T00:00:00.672Z");
-
-        let reportStartDate  = _.clone(today);
-        reportStartDate.setDate(reportStartDate.getDate() - 7);
-        reportStartDate.setHours(0, 0, 0);
+        let myToday = new Date("2021-09-01T00:00:00.000Z");
+        let reportStartDate = new Date("2021-10-01T00:00:00.000Z");
 
         console.log("=> myToday: ", myToday);
         console.log("=> reportStartDate: ", reportStartDate);
@@ -1288,8 +1291,8 @@ dailyReport = async(mode = 'prod') => {
         csvWriter.writeRecords(resultToWriteToCsv).then(async (data) => {
 
             let messageObj = {}, path = null;
-            messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
-            // messageObj.to = ["muhammad.azam@dmdmax.com"];
+            // messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
+            messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
             messageObj.subject = 'Paywall Report';
             messageObj.text = `PFA some basic stats for Paywall from ${(new Date()).toDateString()} to ${(new Date()).toDateString()}`;
             messageObj.attachments = {
@@ -2818,8 +2821,8 @@ computeWatchHoursByViewLogs = async() => {
     console.log("=> computeWatchHoursByViewLogs");
 
     try{
-        let from = '2021-08-01T00:00:00.000Z';
-        let to = '2021-08-31T23:59:59.000Z';
+        let from = '2021-07-01T00:00:00.000Z';
+        let to = '2021-07-31T23:59:59.000Z';
         // let payingUsers = await billinghistoryRepo.getPayingUserEngagement(from, to);
         //
         // console.log('payingUsers: ', payingUsers.length);

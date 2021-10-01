@@ -33,36 +33,36 @@ generateDailyReport = async() => {
     // Revenue report
     reportsRepo.dailyReport();
 
-    await sleep(180*1000);
-    reportsRepo.callBacksReport();
-
-    await sleep(180*1000);
-    reportsRepo.dailyReturningUsers(from, to);
-
-    await sleep(180*1000);
-    reportsRepo.dailyUnsubReport();
-
+    // await sleep(180*1000);
+    // reportsRepo.callBacksReport();
+    //
+    // await sleep(180*1000);
+    // reportsRepo.dailyReturningUsers(from, to);
+    //
+    // await sleep(180*1000);
+    // reportsRepo.dailyUnsubReport();
+    //
+    // // await sleep(120*1000);
+    // // reportsRepo.errorCountReport();
+    //
+    // await sleep(180*1000);
+    // reportsRepo.dailyFullAndPartialChargedUsers();
+    //
+    //
     // await sleep(120*1000);
-    // reportsRepo.errorCountReport();
-
-    await sleep(180*1000);
-    reportsRepo.dailyFullAndPartialChargedUsers();
-
-
-    await sleep(120*1000);
-    reportsRepo.dailyTrialToBilledUsers();
-
-
-    await sleep(180*1000);
-    reportsRepo.dailyChannelWiseUnsub();
-
-
-    await sleep(180*1000);
-    reportsRepo.dailyChannelWiseTrialActivated();
-
-
-    await sleep(180*1000);
-    reportsRepo.dailyPageViews();
+    // reportsRepo.dailyTrialToBilledUsers();
+    //
+    //
+    // await sleep(180*1000);
+    // reportsRepo.dailyChannelWiseUnsub();
+    //
+    //
+    // await sleep(180*1000);
+    // reportsRepo.dailyChannelWiseTrialActivated();
+    //
+    //
+    // await sleep(180*1000);
+    // reportsRepo.dailyPageViews();
 
     // await sleep(120*1000);
     // affiliateReportsRepo.gdnReport(to, today);
@@ -160,8 +160,8 @@ generateRandomReports =  async() => {
     // reportsRepo.computeLoggerBitratesDataMsisdnWise();
     // reportsRepo.computeLoggerTotalHoursDataMsisdnWise();
     // reportsRepo.computeDouMonthlyData();
-    // reportsRepo.computeWatchHoursByViewLogs();
-    reportsRepo.computeDoubleChargeUsers();
+    reportsRepo.computeWatchHoursByViewLogs();
+    // reportsRepo.computeDoubleChargeUsers();
 }
 
 billingInLastHour = async() => {
