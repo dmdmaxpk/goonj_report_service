@@ -1084,7 +1084,7 @@ dailyReport = async(mode = 'prod') => {
     let reportStartDate  = _.clone(today);
     reportStartDate.setDate(reportStartDate.getDate() - 7);
     reportStartDate.setHours(0, 0, 0);
-    //
+
     // let myToday = new Date("2021-10-01T00:00:00.000Z");
     // let reportStartDate = new Date("2021-09-01T00:00:00.000Z");
 
