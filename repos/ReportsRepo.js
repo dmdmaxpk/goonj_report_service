@@ -1073,25 +1073,25 @@ dailyReport = async(mode = 'prod') => {
 
     let resultToWriteToCsv= [];
 
+    console.log("=> dailyReport");
+    // let today = new Date();
+    // let myToday = new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0);
+    //
+    // let dayBeforeYesterday = new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0);
+    // dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 1);
+    // // let reportStartDate = new Date("2020-09-15T00:00:00.672Z");
+    //
+    // let reportStartDate  = _.clone(today);
+    // reportStartDate.setDate(reportStartDate.getDate() - 7);
+    // reportStartDate.setHours(0, 0, 0);
+
+    let myToday = new Date("2021-10-01T00:00:00.000Z");
+    let reportStartDate = new Date("2021-09-01T00:00:00.000Z");
+
+    console.log("=> myToday: ", myToday);
+    console.log("=> reportStartDate: ", reportStartDate);
+
     try{
-        console.log("=> dailyReport");
-        // let today = new Date();
-        // let myToday = new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0);
-        //
-        // let dayBeforeYesterday = new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0);
-        // dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 1);
-        // // let reportStartDate = new Date("2020-09-15T00:00:00.672Z");
-        //
-        // let reportStartDate  = _.clone(today);
-        // reportStartDate.setDate(reportStartDate.getDate() - 7);
-        // reportStartDate.setHours(0, 0, 0);
-
-        let myToday = new Date("2021-09-01T00:00:00.000Z");
-        let reportStartDate = new Date("2021-10-01T00:00:00.000Z");
-
-        console.log("=> myToday: ", myToday);
-        console.log("=> reportStartDate: ", reportStartDate);
-
         let susbcriberStats = await Subscription.aggregate([
             {
                 "$match":
@@ -1283,7 +1283,8 @@ dailyReport = async(mode = 'prod') => {
 
         console.log("=> dailyReport 13");
 
-    }catch(err){
+    }
+    catch(err){
         console.log("=> catch ", err);
     }
 
@@ -1294,7 +1295,7 @@ dailyReport = async(mode = 'prod') => {
             // messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
             messageObj.to = ["farhan.ali@dmdmax.com","muhammad.azam@dmdmax.com"];
             messageObj.subject = 'Paywall Report';
-            messageObj.text = `PFA some basic stats for Paywall from ${(new Date()).toDateString()} to ${(new Date()).toDateString()}`;
+            messageObj.text = `PFA some basic stats for Paywall from ${(new Date(reportStartDate)).toDateString()} to ${(new Date(myToday)).toDateString()}`;
             messageObj.attachments = {
                 filename: paywallRevFileName,
                 path: path
