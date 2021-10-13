@@ -736,7 +736,7 @@ class BillingHistoryRepository {
                             "billing_status": "Success",
                             $and:[
                                 {billing_dtm:{$gte: new Date("2021-07-01T00:00:00.000Z")}}, 
-                                {billing_dtm:{$lt: new Date("2021-07-01T01:00:00.000Z")}}
+                                {billing_dtm:{$lt: new Date("2021-10-01T00:00:00.000Z")}}
                             ]
                         }
                     },{
@@ -757,7 +757,7 @@ class BillingHistoryRepository {
                                             {$eq: ["$user_id", "$$user_id"]},
                                             {$and: [
                                                 {$gte: ["$added_dtm", new Date("2021-07-01T00:00:00.000Z")]},
-                                                {$lte: ["$added_dtm", new Date("2021-07-01T01:00:00.000Z")]}
+                                                {$lte: ["$added_dtm", new Date("2021-10-01T00:00:00.000Z")]}
                                                 ]
                                             }
                                         ]

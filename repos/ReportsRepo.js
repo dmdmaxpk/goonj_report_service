@@ -583,7 +583,7 @@ getThreeMonthsData = async() => {
                     }
                     console.log("#@# File deleted [findingCsvPath]");
                 });
-                console.log("#@# Sending email - info: ", info);
+                console.log("#@# Sending email - info:");
             }catch (err) {
                 console.log("#@# Sending email - error - ", err);
             }
