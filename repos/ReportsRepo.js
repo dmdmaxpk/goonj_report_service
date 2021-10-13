@@ -559,6 +559,37 @@ getThreeMonthsData = async() => {
     try{
         let finalResult = await billinghistoryRepo.getThreeMonthsData();
         console.log('#@# Final result: ', finalResult);
+
+        if(finalResult.length > 0){
+            console.log("#@# Sending email");
+            try {
+                await csvThreeMonthData.writeRecords(finalResult);
+                let messageObj = {}, path = null;
+                messageObj.to = ["muhammad.azam@dmdmax.com","farhan.ali@dmdmax.com", "usama.shamim@dmdmax.com"];
+                messageObj.subject = '90 Days Data';
+                messageObj.text = `90 days data requested by telenor`;
+                messageObj.attachments = {filename: threeMonthDataFilePath, path: path};
+
+                let uploadRes = await uploadFileAtS3(threeMonthDataFilePath);
+                console.log("#@# uploadRes: ", uploadRes);
+                if (uploadRes.status) {
+                    messageObj.attachments.path = uploadRes.data.Location;
+                    helper.sendToQueue(messageObj);
+                }
+
+                fs.unlink(threeMonthDataFilePath,function(err,data) {
+                    if (err) {
+                        console.log("#@# File not deleted[findingCsvPath]");
+                    }
+                    console.log("#@# File deleted [findingCsvPath]");
+                });
+                console.log("#@# Sending email - info: ", info);
+            }catch (err) {
+                console.log("#@# Sending email - error - ", err);
+            }
+        }else{
+            console.log("#@# finalResult is empty");
+        }
     }catch(e){
         console.log("#@# error - ", e);
     }
