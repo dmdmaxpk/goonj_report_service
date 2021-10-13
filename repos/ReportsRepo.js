@@ -66,6 +66,9 @@ let paywallCallbackFilePath = `./${paywallCallbackReport}`;
 let paywallTrialToBilledUsers = currentDate+"_TrialToBilled.csv";
 let paywallTrialToBilledUsersFilePath = `./${paywallTrialToBilledUsers}`;
 
+let threeMonthData = currentDate+"_ThreeMonthsData.csv";
+let threeMonthDataFilePath = `./${threeMonthData}`;
+
 let affiliatePvs = currentDate+"_AffiliatePageViews.csv";
 let affiliatePvsFilePath = `./${affiliatePvs}`;
 
@@ -222,6 +225,15 @@ const csvTrialToBilledUsers = createCsvWriter({
         {id: 'billed_date', title: "Successfull Billing Date"},
         //{id: 'msisdn', title: 'List of MSISDNs'},
         {id: 'total', title: 'Total Count'}
+    ]
+});
+
+const csvThreeMonthData = createCsvWriter({
+    path: threeMonthDataFilePath,
+    header: [
+        {id: '_id', title: 'Sessions'},
+        {id: 'subscribers', title: "Susbcribers"},
+        {id: 'revenue', title: 'Revenue'}
     ]
 });
 
@@ -538,6 +550,17 @@ getExpiredMsisdn = async() => {
         });
     }catch(e){
         console.log("### error - ", e);
+    }
+}
+
+getThreeMonthsData = async() => {
+    console.log("#@# getThreeMonthsData");
+
+    try{
+        let finalResult = await billinghistoryRepo.getThreeMonthsData();
+        console.log('#@# Final result: ', finalResult);
+    }catch(e){
+        console.log("#@# error - ", e);
     }
 }
 
@@ -2961,4 +2984,5 @@ module.exports = {
     computeWatchHoursByViewLogs:computeWatchHoursByViewLogs,
     computeLoggerTotalHoursDataMsisdnWise:computeLoggerTotalHoursDataMsisdnWise,
     computeDoubleChargeUsers:computeDoubleChargeUsers,
+    getThreeMonthsData: getThreeMonthsData
 }

@@ -1,5 +1,6 @@
 const reportsRepo = require('../repos/ReportsRepo');
 const helper = require('../helper/helper');
+const { three_months_report } = require('../controllers/BillingStatsController');
 
 generateDailyReport = async() => {
     console.log("=> Generating daily reports");
@@ -191,6 +192,14 @@ billingInLastHour = async() => {
     }
 }
 
+threeMonthsReport = async() => {
+    try{
+        reportsRepo.getThreeMonthsData();
+    }catch(e){
+        console.log(e);
+    }
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -201,5 +210,6 @@ module.exports = {
     generateWeeklyReports: generateWeeklyReports,
     generateMonthlyReports: generateMonthlyReports,
     generateRandomReports: generateRandomReports,
-    billingInLastHour: billingInLastHour
+    billingInLastHour: billingInLastHour,
+    threeMonthsReport: threeMonthsReport
 }

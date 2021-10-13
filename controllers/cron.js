@@ -31,6 +31,11 @@ exports.hourlyBillingReport = async (req,res) =>  {
     res.send("hourlyBillingReport - Executed");
 }
 
+exports.three_months_report = async (req,res) =>  {
+    await reportsService.threeMonthsReport();
+    res.send("ThreeMonthsReport - Executed");
+}
+
 exports.sendReportsEveryThreeDays = async (req,res) =>  {
     console.log("sendReportsEveryThreeDays")
     await reportsService.generateEveryThreeDaysReports();

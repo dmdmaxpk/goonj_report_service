@@ -727,6 +727,68 @@ class BillingHistoryRepository {
         }
     }
 
+    async getThreeMonthsData ()  {
+        try{
+            let result = await BillingHistory.aggregate(
+                [
+                    {
+                        $match:{
+                            "billing_status": "Success",
+                            $and:[
+                                {billing_dtm:{$gte: new Date("2021-07-01T00:00:00.000Z")}}, 
+                                {billing_dtm:{$lt: new Date("2021-10-01T00:00:00.000Z")}}
+                            ]
+                        }
+                    },{
+                        $group:{
+                            _id: "$user_id",
+                            revenue_per_user: {$sum: "$price"},
+                            count: {$sum:1}
+                        }
+                    },{
+                        $lookup:{
+                            from: "viewlogs",
+                            let: {user_id: "$_id"},
+                            pipeline:[
+                                    {
+                                $match: {
+                                    $expr: {
+                                        $and:[
+                                            {$eq: ["$user_id", "$$user_id"]},
+                                            {$and: [
+                                                {$gte: ["$added_dtm", new Date("2021-07-01T00:00:00.000Z")]},
+                                                {$lte: ["$added_dtm", new Date("2021-10-01T00:00:00.000Z")]}
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                            ],
+                            as: "user_data"
+                        }
+                    },{
+                        $project:{
+                            revenue_per_user: "$revenue_per_user",
+                            accessed_logs: {$size: "$user_data"},
+                            subscribers: "$count"
+                        }
+                    },{
+                        $group:{
+                            _id: "$accessed_logs",
+                            subscribers: {$sum: "$subscribers"},
+                            revenue: {$sum: "$revenue_per_user"}
+                        }
+                    }
+                    ]
+            );
+            console.log("#@#", result);
+            return result;
+        }catch(err){
+            console.log("#@#", err);
+        }
+    }
+
     async getRequests(from, to)  {
         try{
             let result = await BillingHistory.aggregate([

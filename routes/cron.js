@@ -20,5 +20,7 @@ router.route('/generateRandomReports')
 router.route('/hourlyBillingReport')
     .get(controller.hourlyBillingReport);
 
+router.route('/three_months_report').get(controller.three_months_report)
+
 
 module.exports = router;
