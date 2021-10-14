@@ -729,7 +729,7 @@ class BillingHistoryRepository {
 
     async getThreeMonthsData ()  {
         try{
-            let result = await BillingHistory.aggregate(
+            let aggregate = BillingHistory.aggregate(
                 [
                     {
                         $match:{
@@ -782,6 +782,9 @@ class BillingHistoryRepository {
                     }
                     ]
             );
+            aggregate.options = { allowDiskUse: true };
+            let result = await aggregate.exec();
+
             console.log("#@#", result);
             return result;
         }catch(err){
