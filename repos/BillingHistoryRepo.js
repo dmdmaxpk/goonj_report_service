@@ -776,7 +776,7 @@ class BillingHistoryRepository {
                     },{
                         $group:{
                             _id: "$accessed_logs",
-                            subscribers: {$sum: "$subscribers"},
+                            subscribers: {$sum: 1},
                             revenue: {$sum: "$revenue_per_user"}
                         }
                     }
