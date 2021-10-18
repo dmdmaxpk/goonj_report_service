@@ -35,23 +35,23 @@ generateDailyReport = async() => {
     // reportsRepo.dailyReport();
 
     await sleep(180*1000);
-    reportsRepo.callBacksReport();
+    // reportsRepo.callBacksReport();
 
     await sleep(180*1000);
     // reportsRepo.dailyReturningUsers(from, to);
 
     await sleep(180*1000);
-    reportsRepo.dailyUnsubReport();
+    reportsRepo.dailyUnsubReport(); //
 
     // await sleep(120*1000);
     // reportsRepo.errorCountReport();
 
     await sleep(180*1000);
-    reportsRepo.dailyFullAndPartialChargedUsers();
+    reportsRepo.dailyFullAndPartialChargedUsers(); //
 
 
     await sleep(120*1000);
-    reportsRepo.dailyTrialToBilledUsers();
+    reportsRepo.dailyTrialToBilledUsers(); //
 
 
     await sleep(180*1000);
@@ -59,11 +59,11 @@ generateDailyReport = async() => {
 
 
     await sleep(180*1000);
-    reportsRepo.dailyChannelWiseTrialActivated();
+    reportsRepo.dailyChannelWiseTrialActivated(); //
 
 
     await sleep(180*1000);
-    reportsRepo.dailyPageViews();
+    reportsRepo.dailyPageViews(); //
 
     // await sleep(120*1000);
     // affiliateReportsRepo.gdnReport(to, today);
