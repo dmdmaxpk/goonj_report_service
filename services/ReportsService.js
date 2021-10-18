@@ -32,13 +32,13 @@ generateDailyReport = async() => {
 
     
     // Revenue report
-    // reportsRepo.dailyReport();
+    reportsRepo.dailyReport();
 
     await sleep(180*1000);
-    // reportsRepo.callBacksReport();
+    reportsRepo.callBacksReport();
 
     await sleep(180*1000);
-    // reportsRepo.dailyReturningUsers(from, to);
+    reportsRepo.dailyReturningUsers(from, to);
 
     await sleep(180*1000);
     reportsRepo.dailyUnsubReport(); //

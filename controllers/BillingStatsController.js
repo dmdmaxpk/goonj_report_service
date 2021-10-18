@@ -40,7 +40,7 @@ exports.rev_report = async (req,res) =>  {
 
 
     let revenue = await historyRepo.getRevenueInDateRange(todayStart, todayEnd);
-    await console.log("today revenue", revenue)
+    // await console.log("today revenue", revenue)
     data.push({'Todays revenue till the time': revenue[0].total});
 
     revenue = await historyRepo.getRevenueInDateRange(yesterdayStart, yesterdayEnd);
@@ -49,7 +49,7 @@ exports.rev_report = async (req,res) =>  {
     revenue = await historyRepo.getRevenueInDateRange(dayBeforeYesterdayStart, dayBeforeYesterdayEnd);
     data.push({'Day before yesterday revenue till the time': revenue[0].total});
 
-    console.log("=> ", revenue);
+    console.log("revenue => ", revenue);
     res.send(data);
 }
 
@@ -92,7 +92,7 @@ exports.req_count = async (req,res) =>  {
     requests = await historyRepo.getRequests(dayBeforeYesterdayStart, dayBeforeYesterdayEnd);
     data.push({'Day before yesterdays requests till the time': requests[0].sum});
 
-    console.log("=> ", data);
+    // console.log("reqCount => ", data);
     res.send(data);
 }
 
@@ -105,7 +105,7 @@ exports.revenue_stats = async (req,res) =>  {
     today.setHours(00);
     today.setMinutes(00);
     today.setSeconds(00);
-    console.log('req.query.day: ', req.query.day);
+    // console.log('req.query.day: ', req.query.day);
 
     if (req.query.day === 'today'){
         let todayStart = _.clone(localDate);
@@ -115,7 +115,7 @@ exports.revenue_stats = async (req,res) =>  {
         todayStart.setMinutes(00);
         todayStart.setSeconds(00);
         revenueStats = await historyRepo.getRevenueStatsDateWise(todayStart, todayEnd);
-        console.log('todayRevenueStats: ', revenueStats);
+        // console.log('todayRevenueStats: ', revenueStats);
 
     }
     else if(req.query.day === 'yesterday'){
@@ -128,7 +128,7 @@ exports.revenue_stats = async (req,res) =>  {
         yesterdayStart.setSeconds(00);
         yesterdayEnd.setDate(localDate.getDate() - 1);
         revenueStats = await historyRepo.getRevenueStatsDateWise(yesterdayStart, yesterdayEnd);
-        console.log('yesterdayRevenueStats: ', revenueStats);
+        // console.log('yesterdayRevenueStats: ', revenueStats);
     }
     else if(req.query.day === 'datBeforeYesterday'){
         let dayBeforeYesterdayStart = _.clone(localDate);
@@ -140,7 +140,7 @@ exports.revenue_stats = async (req,res) =>  {
         dayBeforeYesterdayStart.setSeconds(00);
         dayBeforeYesterdayEnd.setDate(serverDate.getDate() - 2);
         revenueStats = await historyRepo.getRevenueStatsDateWise(dayBeforeYesterdayStart, dayBeforeYesterdayEnd);
-        console.log('dayBeforeYesterdayRevenueStats - stringify: ', revenueStats);
+        // console.log('dayBeforeYesterdayRevenueStats - stringify: ', revenueStats);
     }
 
     console.log('revenueStats: ', revenueStats);
