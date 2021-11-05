@@ -2657,8 +2657,12 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
 
         let singObject = {};
         for(let i = 0; i < inputData.length; i++){
-            singObject = { msisdn: inputData[i], dou: 0, revenue: 0, mid: '', tid: ''}
-
+            singObject.msisdn = inputData[i];
+            singObject.dou = 0;
+            singObject.revenue = 0;
+            singObject.mid = 0;
+            singObject.tid = 0;
+            
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
@@ -2670,6 +2674,8 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                     }
 
                     let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    console.log("totalRevenue: ", totalRevenue);
+                    
                     if(totalRevenue.length > 0){
                         singObject.revenue = totalRevenue[0].revenue;
                     }else{
