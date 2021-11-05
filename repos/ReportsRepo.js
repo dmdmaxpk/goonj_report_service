@@ -2655,12 +2655,11 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
         let inputData = await readFileSync(jsonPath);
         console.log("### Input Data Length: ", inputData.length);
 
+        let singObject = {};
         for(let i = 0; i < inputData.length; i++){
-            if(inputData[i] && inputData[i].length === 11){
-                let singObject = {
-                    msisdn: inputData[i]
-                }
+            singObject = { msisdn: inputData[i], dou: 0, revenue: 0, mid: '', tid: ''}
 
+            if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
                     let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
@@ -2683,28 +2682,29 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
 
                         singObject.mid = subscription.affiliate_mid;
                         singObject.tid = subscription.affiliate_unique_transaction_id;
-                    }else{
+                    }
+                    else{
                         singObject.mid = '';
                         singObject.tid = '';
                     }
 
-
-                    console.log("### singObject ", singObject);
-
-                    finalResult.push(singObject);
                     console.log("### Done ", i);
+                
                 }else{
-                    console.log("### No user found for", inputData[i][0]);
+                    console.log("### No user found for", inputData[i]);
                 }
-            }else{
+            }
+            else{
                 console.log("### Invalid number or number length");
             }
+
+            console.log("### singObject ", singObject);
+            finalResult.push(singObject);
         }
 
-        console.log("### Sending email", finalResult);
+        console.log("### Sending email", finalResult.length);
         await acqusitionRevenueReportWriter.writeRecords(finalResult);
         let messageObj = {};
-        // messageObj.to = ["muhammad.azam@dmdmax.com"];
         messageObj.to = ["muhammad.azam@dmdmax.com"];
         messageObj.subject = `Complaint Data`,
         messageObj.text =  `This report contains the details of msisdns being sent us over email from Telenor`
