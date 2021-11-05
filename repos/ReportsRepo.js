@@ -2675,7 +2675,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
 
                     let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
                     console.log("totalRevenue: ", totalRevenue);
-                    
+
                     if(totalRevenue.length > 0){
                         singObject.revenue = totalRevenue[0].revenue;
                     }else{
@@ -2708,31 +2708,31 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             finalResult.push(singObject);
         }
 
-        console.log("### Sending email", finalResult.length);
-        await acqusitionRevenueReportWriter.writeRecords(finalResult);
-        let messageObj = {};
-        messageObj.to = ["muhammad.azam@dmdmax.com"];
-        messageObj.subject = `Complaint Data`,
-        messageObj.text =  `This report contains the details of msisdns being sent us over email from Telenor`
-        messageObj.attachments = {
-            filename: randomReport,
-            path: null
-        };
+        console.log("### Sending email", finalResult);
+        // await acqusitionRevenueReportWriter.writeRecords(finalResult);
+        // let messageObj = {};
+        // messageObj.to = ["muhammad.azam@dmdmax.com"];
+        // messageObj.subject = `Complaint Data`,
+        // messageObj.text =  `This report contains the details of msisdns being sent us over email from Telenor`
+        // messageObj.attachments = {
+        //     filename: randomReport,
+        //     path: null
+        // };
 
-        let uploadRes = await uploadFileAtS3(randomReport);
-        console.log("uploadRes: ", uploadRes);
-        if (uploadRes.status) {
-            messageObj.attachments.path = uploadRes.data.Location;
-            helper.sendToQueue(messageObj);
-        }
+        // let uploadRes = await uploadFileAtS3(randomReport);
+        // console.log("uploadRes: ", uploadRes);
+        // if (uploadRes.status) {
+        //     messageObj.attachments.path = uploadRes.data.Location;
+        //     helper.sendToQueue(messageObj);
+        // }
 
-        console.log("###  [randomReport][emailSent]");
-        fs.unlink(randomReportFilePath,function(err,data) {
-            if (err) {
-                console.log("###  File not deleted[randomReport]");
-            }
-            console.log("###  File deleted [randomReport]");
-        });
+        // console.log("###  [randomReport][emailSent]");
+        // fs.unlink(randomReportFilePath,function(err,data) {
+        //     if (err) {
+        //         console.log("###  File not deleted[randomReport]");
+        //     }
+        //     console.log("###  File deleted [randomReport]");
+        // });
     }catch(e){
         console.log("### error - ", e);
     }
