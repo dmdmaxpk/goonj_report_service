@@ -252,6 +252,16 @@ const randomReportWriter = createCsvWriter({
     ]
 });
 
+
+const acqusitionRevenueReportWriter = createCsvWriter({
+    path: randomReportFilePath,
+    header: [
+        {id: 'msisdn', title: 'Msisdn'},
+        {id: 'revenue', title: 'Revenue'},
+        {id: 'sessions', title: 'No.of Sessions'}
+    ]
+});
+
 const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
 
 const doubleChargeReport = createCsvWriter({
@@ -2529,7 +2539,7 @@ generateReportForAcquisitionSourceAndNoOfTimeUserBilled = async() => {
 
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
-                    let dou = await viewLogsRepo.getDaysOfUseInDateRange(user._id, "2021-01-01T00:00:00.000Z", "2021-04-26T00:00:00.000Z");
+                    let dou = await viewLogsRepo.getDaysOfUseInDateRange(user._id, "2021-10-01T00:00:00.000Z", "2021-04-26T00:00:00.000Z");
                     if(dou && dou.length > 0){
                         singObject.dou = dou[0].count;
                     }else{
@@ -2620,6 +2630,81 @@ generateReportForAcquisitionSourceAndNoOfTimeUserBilled = async() => {
         //         }
         //     ]
         // });
+
+        console.log("###  [randomReport][emailSent]");
+        fs.unlink(randomReportFilePath,function(err,data) {
+            if (err) {
+                console.log("###  File not deleted[randomReport]");
+            }
+            console.log("###  File deleted [randomReport]");
+        });
+    }catch(e){
+        console.log("### error - ", e);
+    }
+}
+
+
+generateReportForAcquisitionRevenueAndSessions = async() => {
+    console.log("=> generateReportForAcquisitionRevenueAndSessions");
+    let finalResult = [];
+
+    try{
+        var jsonPath = path.join(__dirname, '..', 'msisdns.txt');
+        let inputData = await readFileSync(jsonPath);
+        console.log("### Input Data Length: ", inputData.length);
+
+        for(let i = 0; i < inputData.length; i++){
+            if(inputData[i] && inputData[i].length === 11){
+                let singObject = {
+                    msisdn: inputData[i]
+                }
+
+                let user = await usersRepo.getUserByMsisdn(inputData[i]);
+                if(user){
+                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    if(dou){
+                        singObject.dou = dou.douTotal;
+                    }else{
+                        singObject.dou = 0;
+                    }
+
+                    let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    if(totalRevenue){
+                        singObject.revenue = totalRevenue.revenue;
+                    }else{
+                        singObject.revenue = 0;
+                    }
+
+                    console.log("### singObject ", singObject);
+
+                    finalResult.push(singObject);
+                    console.log("### Done ", i);
+                }else{
+                    console.log("### No user found for", inputData[i][0]);
+                }
+            }else{
+                console.log("### Invalid number or number length");
+            }
+        }
+
+        console.log("### Sending email", finalResult);
+        await acqusitionRevenueReportWriter.writeRecords(finalResult);
+        let messageObj = {}, path = null;
+        // messageObj.to = ["muhammad.azam@dmdmax.com"];
+        messageObj.to = ["muhammad.azam@dmdmax.com"];
+        messageObj.subject = `Complaint Data`,
+        messageObj.text =  `This report contains the details of msisdns being sent us over email from Telenor`
+        messageObj.attachments = {
+            filename: randomReport,
+            path: path
+        };
+
+        let uploadRes = await uploadFileAtS3(randomReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
+        }
 
         console.log("###  [randomReport][emailSent]");
         fs.unlink(randomReportFilePath,function(err,data) {
@@ -2863,8 +2948,8 @@ computeWatchHoursByViewLogs = async() => {
     console.log("=> computeWatchHoursByViewLogs");
 
     try{
-        let from = '2021-07-01T00:00:00.000Z';
-        let to = '2021-07-31T23:59:59.000Z';
+        let from = '2021-10-01T00:00:00.000Z';
+        let to = '2021-10-31T23:59:59.000Z';
         // let payingUsers = await billinghistoryRepo.getPayingUserEngagement(from, to);
         //
         // console.log('payingUsers: ', payingUsers.length);
@@ -3015,5 +3100,6 @@ module.exports = {
     computeWatchHoursByViewLogs:computeWatchHoursByViewLogs,
     computeLoggerTotalHoursDataMsisdnWise:computeLoggerTotalHoursDataMsisdnWise,
     computeDoubleChargeUsers:computeDoubleChargeUsers,
-    getThreeMonthsData: getThreeMonthsData
+    getThreeMonthsData: getThreeMonthsData,
+    generateReportForAcquisitionRevenueAndSessions: generateReportForAcquisitionRevenueAndSessions
 }

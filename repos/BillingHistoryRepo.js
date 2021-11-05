@@ -310,6 +310,28 @@ class BillingHistoryRepository {
         return result;
     }
 
+    async getRevenueGeneratedByPerUser(user_id, from, to) {
+        let result = await BillingHistory.aggregate([
+            {
+                $match:{
+                    "user_id": user_id,
+                    "billing_status": "Success",
+                    $and: [
+                        {billing_dtm:{$gte:new Date(from)}}, 
+                        {billing_dtm:{$lte:new Date(to)}}
+                    ]
+                }
+            },
+            {
+                $group:{
+                    _id: "null",
+                    revenue: {$sum: "$price"}	
+                }
+            }
+            ]);
+        return result;
+    }
+
     async totalUniqueTransactingUsers (from, to) {
         console.log("=> totalUniqueTransactingUsers from ", from, "to", to);
         let result = await BillingHistory.aggregate([
