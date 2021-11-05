@@ -258,7 +258,7 @@ const acqusitionRevenueReportWriter = createCsvWriter({
     header: [
         {id: 'msisdn', title: 'Msisdn'},
         {id: 'revenue', title: 'Revenue'},
-        {id: 'sessions', title: 'No.of Sessions'},
+        {id: 'dou', title: 'No.of Sessions'},
         {id: 'mid', title: 'Affiliate Mid'},
         {id: 'tid', title: 'Transaction Id'},
     ]
