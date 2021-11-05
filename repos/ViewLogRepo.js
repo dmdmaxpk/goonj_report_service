@@ -130,4 +130,5 @@ module.exports = {
     getDaysOfUse: getDaysOfUse,
     getDaysOfUseInDateRange: getDaysOfUseInDateRange,
     getDaysOfUseUnique: getDaysOfUseUnique,
+    getDaysOfUseTotal: getDaysOfUseTotal
 }
