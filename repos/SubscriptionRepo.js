@@ -12,6 +12,12 @@ class SubscriptionRepository {
         return result;
     }
 
+    async getSubscriptionsByHe(user_id)  {
+        let result = await Subscription.find({source: "HE", user_id: user_id});
+        return result;
+    }
+
+
     async getQueuedCount(user_id)  {
         let result = await Subscription.countDocuments({queued:true});
         return result;

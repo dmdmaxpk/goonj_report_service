@@ -258,7 +258,9 @@ const acqusitionRevenueReportWriter = createCsvWriter({
     header: [
         {id: 'msisdn', title: 'Msisdn'},
         {id: 'revenue', title: 'Revenue'},
-        {id: 'sessions', title: 'No.of Sessions'}
+        {id: 'sessions', title: 'No.of Sessions'},
+        {id: 'mid', title: 'Affiliate Mid'},
+        {id: 'tid', title: 'Transaction Id'},
     ]
 });
 
@@ -2679,8 +2681,19 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                         singObject.revenue = 0;
                     }
 
-                    console.log("### singObject ", singObject);
+                    let subscriptions = await subscriptionRepo.getSubscriptionsByHe(user._id);
+                    if(subscriptions.length > 0){
+                        let subscription = subscriptions[0];
 
+                        singObject.mid = subscription.affiliate_mid;
+                        singObject.tid = subscription.affiliate_unique_transaction_id;
+                    }else{
+                        singObject.mid = '';
+                        singObject.tid = '';
+                    }
+
+
+                    console.log("### singObject ", singObject);
 
                     finalResult.push(singObject);
                     console.log("### Done ", i);
