@@ -2689,14 +2689,14 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
 
         console.log("### Sending email", finalResult);
         await acqusitionRevenueReportWriter.writeRecords(finalResult);
-        let messageObj = {}, path = null;
+        let messageObj = {};
         // messageObj.to = ["muhammad.azam@dmdmax.com"];
         messageObj.to = ["muhammad.azam@dmdmax.com"];
         messageObj.subject = `Complaint Data`,
         messageObj.text =  `This report contains the details of msisdns being sent us over email from Telenor`
         messageObj.attachments = {
             filename: randomReport,
-            path: path
+            path: null
         };
 
         let uploadRes = await uploadFileAtS3(randomReport);
