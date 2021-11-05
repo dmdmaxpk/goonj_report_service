@@ -36,7 +36,7 @@ let config = {
     development: {
         port: 3011,
         base_path: base_path,
-        mongoDB: 'mongodb://10.0.1.88:27017/goonjpaywall',
+        mongoDB: 'mongodb://localhost:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
         message_service: message_service,
@@ -46,7 +46,7 @@ let config = {
     staging: {
         port: 3011,
         base_path: base_path,
-        mongoDB: 'mongodb://10.0.1.88:27017/goonjpaywall',
+        mongoDB: 'mongodb://localhost:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
         message_service: message_service,
@@ -56,7 +56,7 @@ let config = {
     production: {
         port: 3011,
         base_path: base_path,
-        mongoDB: 'mongodb://10.0.1.88:27017/goonjpaywall',
+        mongoDB: 'mongodb://localhost:27017/goonjpaywall',
         codes: codes,
         queueNames: queueNames,
         message_service: message_service,
