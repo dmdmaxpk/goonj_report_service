@@ -2662,6 +2662,8 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
                     let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    console.log("### dou ", dou);
+
                     if(dou){
                         singObject.dou = dou.douTotal;
                     }else{
@@ -2669,6 +2671,8 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                     }
 
                     let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    console.log("### totalRevenue ", totalRevenue);
+                    
                     if(totalRevenue){
                         singObject.revenue = totalRevenue.revenue;
                     }else{
@@ -2676,6 +2680,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                     }
 
                     console.log("### singObject ", singObject);
+
 
                     finalResult.push(singObject);
                     console.log("### Done ", i);
