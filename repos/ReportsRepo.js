@@ -1202,7 +1202,7 @@ dailyReport = async(mode = 'prod') => {
             {
                 "$match":
                     {
-                        "added_dtm": { "$gte": reportStartDate ,$lt: myToday  },
+                        "added_dtm": { "$gte": reportStartDate ,$lte: myToday  },
                         active:true,
                         operator:"telenor"
                     }
@@ -1267,6 +1267,7 @@ dailyReport = async(mode = 'prod') => {
         var totalSubscriber = totalSubscriberStats;
         susbcriberStats.forEach(subsc => {
             if(subsc.date){
+                console.log("dailyReport 9.1: ", subsc.date);
                 resultToWrite[subsc.date.toDateString()]['newSubscriber'] = subsc.count;
                 totalSubscriber = totalSubscriber - subsc.count;
                 resultToWrite[subsc.date.toDateString()]['totalSubscribers'] = totalSubscriber;
