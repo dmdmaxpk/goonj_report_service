@@ -1149,7 +1149,7 @@ dailyReport = async(mode = 'prod') => {
     // let reportStartDate = new Date("2020-09-15T00:00:00.672Z");
 
     let reportStartDate  = _.clone(today);
-    reportStartDate.setDate(reportStartDate.getDate() - 7);
+    reportStartDate.setDate(reportStartDate.getDate() - 30);
     reportStartDate.setHours(0, 0, 0);
 
     // let myToday = new Date("2021-10-01T00:00:00.000Z");
@@ -1202,7 +1202,7 @@ dailyReport = async(mode = 'prod') => {
             {
                 "$match":
                     {
-                        "added_dtm": { "$gte": reportStartDate ,$lte: myToday  },
+                        "added_dtm": { "$gte": reportStartDate ,$lt: myToday  },
                         active:true,
                         operator:"telenor"
                     }
@@ -1262,12 +1262,10 @@ dailyReport = async(mode = 'prod') => {
         });
 
         console.log("=> dailyReport 9: ", userStats);
-        console.log("=> resultToWrite 9: ", resultToWrite);
 
         var totalSubscriber = totalSubscriberStats;
         susbcriberStats.forEach(subsc => {
             if(subsc.date){
-                console.log("dailyReport 9.1: ", subsc.date);
                 resultToWrite[subsc.date.toDateString()]['newSubscriber'] = subsc.count;
                 totalSubscriber = totalSubscriber - subsc.count;
                 resultToWrite[subsc.date.toDateString()]['totalSubscribers'] = totalSubscriber;
@@ -1362,7 +1360,7 @@ dailyReport = async(mode = 'prod') => {
 
             let messageObj = {}, path = null;
             // messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
-            messageObj.to = ["muhammad.azam@dmdmax.com"];
+            messageObj.to = ["farhan.ali@dmdmax.com", "muhammad.azam@dmdmax.com", "usama.shamim@dmdmax.com", "nauman@dmdmax.com"];
             messageObj.subject = 'Paywall Report';
             messageObj.text = `PFA some basic stats for Paywall from ${(new Date(reportStartDate)).toDateString()} to ${(new Date(myToday)).toDateString()}`;
             messageObj.attachments = {
