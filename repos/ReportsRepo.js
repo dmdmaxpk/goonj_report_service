@@ -261,6 +261,7 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'dou', title: 'No.of Sessions'},
         {id: 'mid', title: 'Affiliate Mid'},
         {id: 'tid', title: 'Transaction Id'},
+        {id: 'acqusition_timestepms', title: 'Acqusition Timestepms'}
     ]
 });
 
@@ -2655,41 +2656,42 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
         let inputData = await readFileSync(jsonPath);
         console.log("### Input Data Length: ", inputData.length);
 
-        let singObject = {};
         for(let i = 0; i < inputData.length; i++){
+            let singObject = {};
             singObject.msisdn = inputData[i];
             singObject.dou = 0;
             singObject.revenue = 0;
-            singObject.mid = 0;
-            singObject.tid = 0;
+            singObject.mid = '';
+            singObject.tid = '';
+            singObject.acqusition_timestepms = '';
             
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
-                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
-                    if(dou.length > 0){
-                        singObject.dou = dou[0].douTotal;
-                    }else{
-                        singObject.dou = 0;
-                    }
+                    // let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    // if(dou.length > 0){
+                    //     singObject.dou = dou[0].douTotal;
+                    // }else{
+                    //     singObject.dou = 0;
+                    // }
 
-                    let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
-                    if(totalRevenue.length > 0){
-                        singObject.revenue = totalRevenue[0].revenue;
-                    }else{
-                        singObject.revenue = 0;
-                    }
+                    // let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    // if(totalRevenue.length > 0){
+                    //     singObject.revenue = totalRevenue[0].revenue;
+                    // }else{
+                    //     singObject.revenue = 0;
+                    // }
 
-                    let subscriptions = await subscriptionRepo.getSubscriptionsByHe(user._id);
-                    if(subscriptions.length > 0){
-                        let subscription = subscriptions[0];
-
+                    let subscription = await subscriptionRepo.getSubscriptionsByHe(user._id);
+                    if(subscription){
                         singObject.mid = subscription.affiliate_mid;
                         singObject.tid = subscription.affiliate_unique_transaction_id;
+                        singObject.acqusition_timestepms = subscription.added_dtm;
                     }
                     else{
                         singObject.mid = '';
                         singObject.tid = '';
+                        singObject.acqusition_timestepms = '';
                     }
 
                     console.log("### Done ", i);

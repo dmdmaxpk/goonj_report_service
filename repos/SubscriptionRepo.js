@@ -13,7 +13,7 @@ class SubscriptionRepository {
     }
 
     async getSubscriptionsByHe(user_id)  {
-        let result = await Subscription.find({source: "HE", user_id: user_id});
+        let result = await Subscription.findOne({source: "HE", user_id: user_id});
         return result;
     }
 
