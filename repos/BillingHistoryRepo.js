@@ -315,11 +315,11 @@ class BillingHistoryRepository {
             {
                 $match:{
                     "user_id": user_id,
-                    "billing_status": "Success",
-                    $and: [
-                        {billing_dtm:{$gte:new Date(from)}}, 
-                        {billing_dtm:{$lte:new Date(to)}}
-                    ]
+                    "billing_status": "Success"
+                    // $and: [
+                    //     {billing_dtm:{$gte:new Date(from)}}, 
+                    //     {billing_dtm:{$lte:new Date(to)}}
+                    // ]
                 }
             },
             {

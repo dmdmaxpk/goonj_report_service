@@ -2675,7 +2675,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                     //     singObject.dou = 0;
                     // }
 
-                    let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id);
                     if(totalRevenue.length > 0){
                         singObject.revenue = totalRevenue[0].revenue;
                     }else{
