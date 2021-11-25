@@ -2,7 +2,7 @@ const BillingHistoryRepository = require('../repos/BillingHistoryRepo');
 const historyRepo = new BillingHistoryRepository();
 const helper = require('../helper/helper');
 const  _ = require('lodash');
-const { generateReportForAcquisitionRevenueAndSessions } = require('../repos/ReportsRepo');
+const { generateReportForAcquisitionRevenueAndSessions, expireBaseAndBlackList } = require('../repos/ReportsRepo');
 
 exports.getExpiryHistory = async(req, res) => {
     let result = await historyRepo.getExpiryHistory(req.query.user_id)
@@ -150,6 +150,6 @@ exports.revenue_stats = async (req,res) =>  {
 
 exports.report = async (req,res) =>  {
     // historyRepo.report();
-    generateReportForAcquisitionRevenueAndSessions();
+    expireBaseAndBlackList();
     res.send({message: "report generated"})
 }
