@@ -2935,6 +2935,30 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
             let singObject = { msisdn: inputData[i] };
             singObject.watchTime = 0;
             if(inputData[i] && inputData[i].length === 11){
+
+                let user = await usersRepo.getUserByMsisdn(inputData[i]);
+                if(user){
+                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-08-01T00:00:00.000Z", "2021-12-01T23:59:59.000Z");
+                    if(dou.length > 0){
+                        singObject.dou = dou[0].douTotal;
+                    }else{
+                        singObject.dou = 0;
+                    }
+
+                    let subscription = await subscriptionRepo.getSubscriptionsByHe(user._id);
+                    if(subscription){
+                        singObject.status = subscription.subscription_status;
+                    }
+                    else{
+                        singObject.status = '';
+                    }
+
+                    console.log("### Done ", i);
+                
+                }else{
+                    console.log("### No user found for", inputData[i]);
+                }
+
                 console.log("### Request for msisdn: ", inputData[i], i);
                 let records = await loggerMsisdnRepo.computeTotalBitratesData(inputData[i], dbConnection);
                 console.log('### records: ', records);
@@ -2950,6 +2974,8 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
                 }
             }else{
                 singObject.watchTime = 0;
+                singObject.dou = 0;
+                singObject.status = '';
                 console.log("### Invalid number or number length: ");
             }
 
@@ -2964,9 +2990,9 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
             console.log("### Sending email");
             await loggerMsisdnWiseReportWriter.writeRecords(finalResult);
             let messageObj = {}, path = null;
-            messageObj.to = ["muhammad.azam@dmdmax.com"];
-            messageObj.subject = `Complaint Data`;
-            messageObj.text =  `This report contains the details of msisdns being sent us over email from Danish.`
+            messageObj.to = ["taha@dmdmax.com"];
+            messageObj.subject = `Watch Time & Engagement Details`;
+            messageObj.text =  `This report contains the details of msisdns being sent us over email from Telenor.`
             messageObj.attachments = {
                 filename: randomReport,
                 path: path
