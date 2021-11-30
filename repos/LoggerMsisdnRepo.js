@@ -8,6 +8,7 @@ let connect = async () => {
                 reject();
             }else{
                 let dbConn = await client.db('streamlogs');
+                console.log(`Database Connected`, dbConn);
                 resolve(dbConn);
             }
         });
@@ -57,7 +58,13 @@ let computeTotalBitratesData = async (msisdn, from, to, dbConnection) => {
         // match.logDate = {$gte: new Date(from), $lte: new Date(to)};
 
         console.log('match: ', match);
-        dbConnection.collection('msisdnstreamlogs').aggregate([
+        dbConnection.collection('msisdnstreamlogs', function (err, collection) {
+            if (err) {
+                console.log('err: ', err);
+                resolve([]);
+            }
+
+            collection.aggregate([
                 { $match: match},
                 { $project: {
                         bitrate: "$bitrateCount",
@@ -78,7 +85,7 @@ let computeTotalBitratesData = async (msisdn, from, to, dbConnection) => {
             });
 
         });
-//     });
+    });
 };
 
 module.exports = {
