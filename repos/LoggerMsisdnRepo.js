@@ -8,7 +8,7 @@ let connect = async () => {
                 reject();
             }else{
                 let dbConn = await client.db('streamlogs');
-                console.log(`Database Connected`, dbConn);
+                console.log(`Database Connected`);
                 resolve(dbConn);
             }
         });
@@ -19,35 +19,33 @@ let computeBitratesMonthlyData = async (msisdn, startDate, endDate, dbConnection
     return new Promise((resolve, reject) => {
         let match = { $and:[{logDate:{$gte:new Date(startDate)}}, {logDate:{$lte:new Date(endDate)}}] };
         match.msisdn = msisdn;
-        dbConnection.collection('msisdnstreamlogs', function (err, collection) {
+        // dbConnection.collection('msisdnstreamlogs', function (err, collection) {
+        dbConnection.collection('msisdnstreamlogs').aggregate([
+            { $match: match},
+            { $project: {
+                    bitrate: "$bitrateCount",
+                    logMonth: { $month: "$logDate" },
+                }
+            },
+            { $group: {
+                    _id: {logMonth: "$logMonth"},
+                    totalBitRates: { $sum: "$bitrate" }
+                }
+            }
+        ],{ allowDiskUse: true }).toArray(function(err, items) {
+            if(err){
+                console.log('computeBitratesMonthlyData - err: ', err.message);
+                resolve([]);
+            }
+            resolve(items);
+        }, function (err, result) {
             if (err) {
                 console.log('err: ', err);
                 resolve([]);
             }
-
-            collection.aggregate([
-                { $match: match},
-                { $project: {
-                        bitrate: "$bitrateCount",
-                        logMonth: { $month: "$logDate" },
-                    }
-                },
-                { $group: {
-                        _id: {logMonth: "$logMonth"},
-                        totalBitRates: { $sum: "$bitrate" }
-                    }
-                }
-            ],{ allowDiskUse: true }).toArray(function(err, items) {
-                if(err){
-                    console.log('computeBitratesMonthlyData - err: ', err.message);
-                    resolve([]);
-                }
-                resolve(items);
-            });
-
         });
-    });
-};
+    })
+}
 
 let computeTotalBitratesData = async (msisdn, from, to, dbConnection) => {
     return new Promise((resolve, reject) => {
@@ -63,7 +61,7 @@ let computeTotalBitratesData = async (msisdn, from, to, dbConnection) => {
                 console.log('err: ', err);
                 resolve([]);
             }
-
+            
             collection.aggregate([
                 { $match: match},
                 { $project: {
