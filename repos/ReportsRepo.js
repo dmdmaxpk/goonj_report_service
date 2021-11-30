@@ -296,6 +296,8 @@ const loggerMsisdnWiseReportWriter = createCsvWriter({
     path: randomReportFilePath,
     header: [
         {id: 'msisdn', title: 'Msisdn'},
+        {id: 'status', title: 'Engagement Status'},
+        {id: 'dou', title: 'Total Views'},
         {id: 'watchTime', title: 'Watch Time (SEC)'}
     ]
 });
