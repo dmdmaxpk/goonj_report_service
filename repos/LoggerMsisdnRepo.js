@@ -8,6 +8,7 @@ let connect = async () => {
                 reject();
             }else{
                 let dbConn = await client.db('streamlogs');
+                console.log(`Database Connected`, dbConn);
                 resolve(dbConn);
             }
         });
