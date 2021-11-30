@@ -2948,6 +2948,7 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
                     }
 
                     let subscription = await subscriptionRepo.getSubscriptionsByHe(user._id);
+                    console.log("sub", subscription)
                     // if(subscription){
                         singObject.status = subscription.subscription_status;
                     // }
