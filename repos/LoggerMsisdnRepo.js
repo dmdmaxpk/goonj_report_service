@@ -8,7 +8,7 @@ let connect = async () => {
                 reject();
             }else{
                 let dbConn = await client.db('streamlogs');
-                console.log(`Database Connected`, dbConn);
+                console.log(`Database Connected`);
                 resolve(dbConn);
             }
         });
@@ -49,7 +49,7 @@ let computeBitratesMonthlyData = async (msisdn, startDate, endDate, dbConnection
     });
 };
 
-let computeTotalBitratesData = async (msisdn, from, to, dbConnection) => {
+let computeTotalBitratesData = async (msisdn, dbConnection) => {
     return new Promise((resolve, reject) => {
         let match = {};
         match.msisdn = msisdn;
