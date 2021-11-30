@@ -2948,12 +2948,12 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
                     }
 
                     let subscription = await subscriptionRepo.getSubscriptionsByHe(user._id);
-                    if(subscription){
+                    // if(subscription){
                         singObject.status = subscription.subscription_status;
-                    }
-                    else{
-                        singObject.status = '';
-                    }
+                    // }
+                    // else{
+                        // singObject.status = '';
+                    // }
 
                     console.log("### Done ", i);
                 
