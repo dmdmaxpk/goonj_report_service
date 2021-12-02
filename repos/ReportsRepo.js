@@ -2947,20 +2947,20 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
                     let douSept = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-09-01T00:00:00.000Z", "2021-10-01T00:00:00.000Z");
-                    if(dou.length > 0){
-                        singObject.douSept = dou[0].douTotal;
+                    if(douSept.length > 0){
+                        singObject.douSept = douSept[0].douTotal;
                     }else{
                         singObject.douSept = 0;
                     }
                     let douOct = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-11-01T00:00:00.000Z");
-                    if(dou.length > 0){
-                        singObject.douOct = dou[0].douTotal;
+                    if(douOct.length > 0){
+                        singObject.douOct = douOct[0].douTotal;
                     }else{
                         singObject.douOct = 0;
                     }
                     let douNov = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-11-01T00:00:00.000Z", "2021-12-01T00:00:00.000Z");
-                    if(dou.length > 0){
-                        singObject.douNov = dou[0].douTotal;
+                    if(douNov.length > 0){
+                        singObject.douNov = douNov[0].douTotal;
                     }else{
                         singObject.douNov = 0;
                     }
