@@ -49,13 +49,13 @@ let computeBitratesMonthlyData = async (msisdn, startDate, endDate, dbConnection
     });
 };
 
-let computeTotalBitratesData = async (msisdn, dbConnection) => {
+let computeTotalBitratesData = async (msisdn, from, to, dbConnection) => {
     return new Promise((resolve, reject) => {
         let match = {};
         match.msisdn = msisdn;
         // match.source = 'vod';
         // match.platform = 'android';
-        // match.logDate = {$gte: new Date(from), $lte: new Date(to)};
+        match.logDate = {$gte: new Date(from), $lte: new Date(to)};
 
         console.log('match: ', match);
         dbConnection.collection('msisdnstreamlogs', function (err, collection) {

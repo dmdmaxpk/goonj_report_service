@@ -74,11 +74,11 @@ getDaysOfUseTotal = async(userId, from, to) => {
         let result = await ViewLog.aggregate([
         {
             $match:{
-                user_id: userId
-                // $and:[
-                //     {added_dtm:{$gte: new Date(from)}},
-                //     {added_dtm:{$lte: new Date(to)}}
-                // ]
+                user_id: userId,
+                $and:[
+                    {added_dtm:{$gte: new Date(from)}},
+                    {added_dtm:{$lte: new Date(to)}}
+                ]
             }
         },
         {$group: {

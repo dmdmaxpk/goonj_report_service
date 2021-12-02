@@ -297,8 +297,12 @@ const loggerMsisdnWiseReportWriter = createCsvWriter({
     header: [
         {id: 'msisdn', title: 'Msisdn'},
         {id: 'status', title: 'Engagement Status'},
-        {id: 'dou', title: 'Total Views'},
-        {id: 'watchTime', title: 'Watch Time (SEC)'}
+        {id: 'douSept', title: 'Total Views Sept'},
+        {id: 'douOct', title: 'Total Views Oct'},
+        {id: 'douNov', title: 'Total Views Nov'},
+        {id: 'watchTimeSept', title: 'Watch Time Sept (Min)'},
+        {id: 'watchTimeOct', title: 'Watch Time Oct (Min)'},
+        {id: 'watchTimeNov', title: 'Watch Time Nov (Min)'},
     ]
 });
 
@@ -2935,16 +2939,30 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
         for(let i = 0; i < inputData.length; i++){
 
             let singObject = { msisdn: inputData[i] };
-            singObject.watchTime = 0;
+            singObject.watchTimeSept = 0;
+            singObject.watchTimeOct = 0;
+            singObject.watchTimeNov = 0;
             if(inputData[i] && inputData[i].length === 11){
 
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
-                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-08-01T00:00:00.000Z", "2021-12-01T23:59:59.000Z");
+                    let douSept = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-09-01T00:00:00.000Z", "2021-10-01T00:00:00.000Z");
                     if(dou.length > 0){
-                        singObject.dou = dou[0].douTotal;
+                        singObject.douSept = dou[0].douTotal;
                     }else{
-                        singObject.dou = 0;
+                        singObject.douSept = 0;
+                    }
+                    let douOct = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-11-01T00:00:00.000Z");
+                    if(dou.length > 0){
+                        singObject.douOct = dou[0].douTotal;
+                    }else{
+                        singObject.douOct = 0;
+                    }
+                    let douNov = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-11-01T00:00:00.000Z", "2021-12-01T00:00:00.000Z");
+                    if(dou.length > 0){
+                        singObject.douNov = dou[0].douTotal;
+                    }else{
+                        singObject.douNov = 0;
                     }
 
                     let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
@@ -2962,21 +2980,51 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
                 }
 
                 console.log("### Request for msisdn: ", inputData[i], i);
-                let records = await loggerMsisdnRepo.computeTotalBitratesData(inputData[i], dbConnection);
-                console.log('### records: ', records);
-                if(records.length > 0){
-                    for (let record of records) {
+                let recordsSept = await loggerMsisdnRepo.computeTotalBitratesData(inputData[i], "2021-09-01T00:00:00.000Z", "2021-10-01T00:00:00.000Z", dbConnection);
+                console.log('### records: ', recordsSept);
+                if(recordsSept.length > 0){
+                    for (let record of recordsSept) {
                         console.log('record.totalBitRates: ', record.totalBitRates);
-                        singObject.watchTime = Number((Number(record.totalBitRates) * 5)) + Number(singObject.watchTime);
+                        singObject.watchTimeSept = Number((Number(record.totalBitRates) * 5)) + Number(singObject.watchTimeSept);
                     }
                 }
                 else{
                     console.log("### Data not found: ");
-                    singObject.watchTime = 0;
+                    singObject.watchTimeSept = 0;
+                }
+
+                let recordsOct = await loggerMsisdnRepo.computeTotalBitratesData(inputData[i], "2021-10-01T00:00:00.000Z", "2021-11-01T00:00:00.000Z", dbConnection);
+                console.log('### records: ', recordsOct);
+                if(recordsOct.length > 0){
+                    for (let record of recordsOct) {
+                        console.log('record.totalBitRates: ', record.totalBitRates);
+                        singObject.watchTimeOct = Number((Number(record.totalBitRates) * 5)) + Number(singObject.watchTimeOct);
+                    }
+                }
+                else{
+                    console.log("### Data not found: ");
+                    singObject.watchTimeOct = 0;
+                }
+
+                let recordsNov = await loggerMsisdnRepo.computeTotalBitratesData(inputData[i], "2021-11-01T00:00:00.000Z", "2021-12-01T00:00:00.000Z", dbConnection);
+                console.log('### records: ', recordsNov);
+                if(recordsNov.length > 0){
+                    for (let record of recordsNov) {
+                        console.log('record.totalBitRates: ', record.totalBitRates);
+                        singObject.watchTimeNov = Number((Number(record.totalBitRates) * 5)) + Number(singObject.watchTimeNov);
+                    }
+                }
+                else{
+                    console.log("### Data not found: ");
+                    singObject.watchTimeNov = 0;
                 }
             }else{
-                singObject.watchTime = 0;
-                singObject.dou = 0;
+                singObject.watchTimeSept = 0;
+                singObject.watchTimeOct = 0;
+                singObject.watchTimeNov = 0;
+                singObject.douSept = 0;
+                singObject.douOct = 0;
+                singObject.douNov = 0;
                 singObject.status = '';
                 console.log("### Invalid number or number length: ");
             }
