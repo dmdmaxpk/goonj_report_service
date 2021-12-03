@@ -260,6 +260,7 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'revenue', title: 'Revenue'},
         {id: 'dou', title: 'No.of Sessions'},
         {id: 'mid', title: 'Affiliate Mid'},
+        {id: 'source', title: 'Source'},
         {id: 'tid', title: 'Transaction Id'},
         {id: 'acqusition_timestepms', title: 'Acqusition Timestepms'}
     ]
@@ -2701,8 +2702,9 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
         for(let i = 0; i < inputData.length; i++){
             let singObject = {};
             singObject.msisdn = inputData[i];
-            // singObject.dou = 0;
-            // singObject.mid = '';
+            singObject.dou = 0;
+            singObject.mid = '';
+            singObject.source = '';
             // singObject.tid = '';
             singObject.revenue = 0;
             singObject.acqusition_timestepms = '';
@@ -2710,12 +2712,12 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
-                    // let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
-                    // if(dou.length > 0){
-                    //     singObject.dou = dou[0].douTotal;
-                    // }else{
-                    //     singObject.dou = 0;
-                    // }
+                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    if(dou.length > 0){
+                        singObject.dou = dou[0].douTotal;
+                    }else{
+                        singObject.dou = 0;
+                    }
 
                     let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id);
                     if(totalRevenue.length > 0){
@@ -2726,13 +2728,15 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
 
                     let subscription = await subscriptionRepo.getSubscriptionsByHe(user._id);
                     if(subscription){
-                        // singObject.mid = subscription.affiliate_mid;
                         // singObject.tid = subscription.affiliate_unique_transaction_id;
+                        singObject.mid = subscription.affiliate_mid;
+                        singObject.source = subscription.source;
                         singObject.acqusition_timestepms = subscription.added_dtm;
                     }
                     else{
-                        // singObject.mid = '';
                         // singObject.tid = '';
+                        singObject.mid = '';
+                        singObject.source = '';
                         singObject.acqusition_timestepms = '';
                     }
 
@@ -2940,20 +2944,20 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
 
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
-                    let dou = await viewLogsRepo.getLatestViewLog(user._id);
-                    if(dou){
-                        singObject.dou = dou.added_dtm;
+                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
+                    if(dou.length > 0){
+                        singObject.dou = dou[0].douTotal;
                     }else{
                         singObject.dou = 0;
                     }
 
-                    // let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
-                    // if(subscription){
-                    //     singObject.status = subscription.subscription_status;
-                    // }
-                    // else{
-                    //     singObject.status = '';
-                    // }
+                    let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
+                    if(subscription){
+                        singObject.status = subscription.subscription_status;
+                    }
+                    else{
+                        singObject.status = '';
+                    }
 
                     console.log("### Done ", i);
                 
@@ -2961,19 +2965,19 @@ computeLoggerTotalHoursDataMsisdnWise = async() => {
                     console.log("### No user found for", inputData[i]);
                 }
 
-                // console.log("### Request for msisdn: ", inputData[i], i);
-                // let records = await loggerMsisdnRepo.computeTotalBitratesData(inputData[i], dbConnection);
-                // console.log('### records: ', records);
-                // if(records.length > 0){
-                //     for (let record of records) {
-                //         console.log('record.totalBitRates: ', record.totalBitRates);
-                //         singObject.watchTime = Number((Number(record.totalBitRates) * 5)) + Number(singObject.watchTime);
-                //     }
-                // }
-                // else{
-                //     console.log("### Data not found: ");
-                //     singObject.watchTime = 0;
-                // }
+                console.log("### Request for msisdn: ", inputData[i], i);
+                let records = await loggerMsisdnRepo.computeTotalBitratesData(inputData[i], dbConnection);
+                console.log('### records: ', records);
+                if(records.length > 0){
+                    for (let record of records) {
+                        console.log('record.totalBitRates: ', record.totalBitRates);
+                        singObject.watchTime = Number((Number(record.totalBitRates) * 5)) + Number(singObject.watchTime);
+                    }
+                }
+                else{
+                    console.log("### Data not found: ");
+                    singObject.watchTime = 0;
+                }
             }else{
                 singObject.watchTime = 0;
                 singObject.dou = 0;

@@ -151,6 +151,7 @@ exports.revenue_stats = async (req,res) =>  {
 exports.report = async (req,res) =>  {
     // historyRepo.report();
     // expireBaseAndBlackList();
-    computeLoggerTotalHoursDataMsisdnWise();
+    // computeLoggerTotalHoursDataMsisdnWise();
+    generateReportForAcquisitionRevenueAndSessions();
     res.send({message: "report generated"})
 }
