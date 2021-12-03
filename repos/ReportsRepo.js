@@ -2726,7 +2726,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                         singObject.revenue = 0;
                     }
 
-                    let subscription = await subscriptionRepo.getSubscriptionsByHe(user._id);
+                    let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
                     if(subscription){
                         // singObject.tid = subscription.affiliate_unique_transaction_id;
                         singObject.mid = subscription.affiliate_mid;
