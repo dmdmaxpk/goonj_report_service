@@ -2742,7 +2742,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                         // singObject.tid = subscription.affiliate_unique_transaction_id;
                         singObject.mid = subscription.affiliate_mid;
                         singObject.source = subscription.source;
-                        singObject.acqusition_timestepms = date.getMonth();
+                        singObject.acqusition_timestepms = date.getMonth() + 1;
                         singObject.status = subscription.subscription_status === 'expired' ? 'Churned' : 'Retained';
                         // singObject.acqusition_timestepms = subscription.added_dtm;
                     }
