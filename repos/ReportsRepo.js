@@ -2742,7 +2742,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                         singObject.mid = subscription.affiliate_mid;
                         singObject.source = subscription.source;
                         singObject.acqusition_timestepms = subscription.added_dtm;
-                        singObject.status = subscription.status === 'expired' ? 'Churned' : 'Retained';
+                        singObject.status = subscription.subscription_status === 'expired' ? 'Churned' : 'Retained';
                     }
                     else{
                         // singObject.tid = '';
