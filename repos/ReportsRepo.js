@@ -257,12 +257,15 @@ const acqusitionRevenueReportWriter = createCsvWriter({
     path: randomReportFilePath,
     header: [
         {id: 'msisdn', title: 'Msisdn'},
+        {id: 'acqusition_timestepms', title: 'Acqusition Timestepms'},
         {id: 'revenue', title: 'Revenue'},
+        {id: 'successCount', title: 'No. of times charged'},
         {id: 'dou', title: 'No.of Sessions'},
+        {id: 'status', title: 'Retained/Churned'},
+        {id: 'lastAccess', title: 'Last access date'},
         {id: 'mid', title: 'Affiliate Mid'},
         {id: 'source', title: 'Source'},
-        {id: 'tid', title: 'Transaction Id'},
-        {id: 'acqusition_timestepms', title: 'Acqusition Timestepms'}
+        {id: 'tid', title: 'Transaction Id'}
     ]
 });
 
@@ -2705,9 +2708,12 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.dou = 0;
             singObject.mid = '';
             singObject.source = '';
-            // singObject.tid = '';
             singObject.revenue = 0;
+            singObject.successCount = 0;
+            singObject.status = '';
+            singObject.lastAccess = '';
             singObject.acqusition_timestepms = '';
+            // singObject.tid = '';
             
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
@@ -2715,15 +2721,19 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                     let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
                     if(dou.length > 0){
                         singObject.dou = dou[0].douTotal;
+                        singObject.lastAccess = dou[0].lastAccess;
                     }else{
                         singObject.dou = 0;
+                        singObject.lastAccess = '-';
                     }
 
                     let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id);
                     if(totalRevenue.length > 0){
                         singObject.revenue = totalRevenue[0].revenue;
+                        singObject.successCount = totalRevenue[0].count;
                     }else{
                         singObject.revenue = 0;
+                        singObject.successCount = 0;
                     }
 
                     let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
@@ -2732,12 +2742,14 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                         singObject.mid = subscription.affiliate_mid;
                         singObject.source = subscription.source;
                         singObject.acqusition_timestepms = subscription.added_dtm;
+                        singObject.status = subscription.status === 'expired' ? 'Churned' : 'Retained';
                     }
                     else{
                         // singObject.tid = '';
                         singObject.mid = '';
                         singObject.source = '';
                         singObject.acqusition_timestepms = '';
+                        singObject.status = '-';
                     }
 
                     console.log("### Done ", i);

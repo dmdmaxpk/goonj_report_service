@@ -325,7 +325,8 @@ class BillingHistoryRepository {
             {
                 $group:{
                     _id: "null",
-                    revenue: {$sum: "$price"}	
+                    revenue: {$sum: "$price"},
+                    count: {$sum: 1}
                 }
             }
             ]);
