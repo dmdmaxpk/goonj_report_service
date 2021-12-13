@@ -2738,11 +2738,13 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
 
                     let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
                     if(subscription){
+                        let date = new Date(subscription.added_dtm);
                         // singObject.tid = subscription.affiliate_unique_transaction_id;
                         singObject.mid = subscription.affiliate_mid;
                         singObject.source = subscription.source;
-                        singObject.acqusition_timestepms = subscription.added_dtm;
+                        singObject.acqusition_timestepms = date.getMonth();
                         singObject.status = subscription.subscription_status === 'expired' ? 'Churned' : 'Retained';
+                        // singObject.acqusition_timestepms = subscription.added_dtm;
                     }
                     else{
                         // singObject.tid = '';
