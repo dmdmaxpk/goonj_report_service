@@ -888,7 +888,7 @@ expireBaseAndBlackList = async() => {
                         
                         axios.post('http://localhost:3004/subscription/unsubscribe', unSubObject);
                         console.log('### Axios call sent for msisdn ', user.msisdn);
-                        // blacklistIds.push(user._id);
+                        blacklistIds.push(user._id);
                     // }
                 }else{
                     console.log("### No user found for", inputData[i]);
@@ -899,35 +899,8 @@ expireBaseAndBlackList = async() => {
             // finalResult.push(singObject)
         }
 
-        // let blacklistResult = await usersRepo.blacklistMany(blacklistIds);
-        // console.log("### Blacklisted: ", blacklistResult, blacklistIds);
-
-        // console.log("### Sending email", finalResult);
-        
-        // await acqusitionRevenueReportWriter.writeRecords(finalResult);
-        // let messageObj = {};
-        // messageObj.to = ["taha@dmdmax.com"];
-        // messageObj.subject = `MSISDN purged and Blacklisted`,
-        // messageObj.text =  `This report contains the details of msisdns sent us over email from Telenor`
-        // messageObj.attachments = {
-        //     filename: randomReport,
-        //     path: null
-        // };
-
-        // let uploadRes = await uploadFileAtS3(randomReport);
-        // console.log("uploadRes: ", uploadRes);
-        // if (uploadRes.status) {
-        //     messageObj.attachments.path = uploadRes.data.Location;
-        //     helper.sendToQueue(messageObj);
-        // }
-
-        // console.log("###  [randomReport][emailSent]");
-        // fs.unlink(randomReportFilePath,function(err,data) {
-        //     if (err) {
-        //         console.log("###  File not deleted[randomReport]");
-        //     }
-        //     console.log("###  File deleted [randomReport]");
-        // });
+        let blacklistResult = await usersRepo.blacklistMany(blacklistIds);
+        console.log("### Blacklisted: ", blacklistResult, blacklistIds);
         
     }catch(e){
         console.log("### error - ", e);
@@ -951,8 +924,8 @@ expireBaseAndBlackListOrCreate = async() => {
                     unSubObject.msisdn = user.msisdn;
                     unSubObject.source = 'tp-on-demand-via-email';
 
-                    axios.post('http://127.0.0.1:5000/payment/sms-unsub', unSubObject);
-                    console.log('### Axios call send for msisdn ', user.msisdn);
+                    // axios.post('http://127.0.0.1:5000/payment/sms-unsub', unSubObject);
+                    // console.log('### Axios call send for msisdn ', user.msisdn);
                     blacklistIds.push(user._id);
                 }else{
                     console.log("### No user found for ", inputData[i]);
