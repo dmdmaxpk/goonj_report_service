@@ -36,6 +36,11 @@ class UserRepository {
         return data;
     }
 
+    async updateUsersByQuery(ids, query)  {
+        let data = await User.updateMany({"_id": {$in:ids}},{$set: query});
+        return data;
+    }
+
     async getTotalUserBaseTillDate (from, to) {
         const result = await User.find(
         {

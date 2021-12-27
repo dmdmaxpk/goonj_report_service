@@ -2,7 +2,12 @@ const BillingHistoryRepository = require('../repos/BillingHistoryRepo');
 const historyRepo = new BillingHistoryRepository();
 const helper = require('../helper/helper');
 const  _ = require('lodash');
-const { generateReportForAcquisitionRevenueAndSessions, expireBaseAndBlackList, computeLoggerTotalHoursDataMsisdnWise, expireBaseAndBlackListOrCreate } = require('../repos/ReportsRepo');
+const {
+    generateReportForAcquisitionRevenueAndSessions,
+    expireBaseAndBlackList,
+    computeLoggerTotalHoursDataMsisdnWise,
+    expireBaseAndBlackListOrCreate,
+    markExpireAndGetViewLogs } = require('../repos/ReportsRepo');
 
 exports.getExpiryHistory = async(req, res) => {
     let result = await historyRepo.getExpiryHistory(req.query.user_id)
@@ -149,6 +154,6 @@ exports.revenue_stats = async (req,res) =>  {
 };
 
 exports.report = async (req,res) =>  {
-    expireBaseAndBlackListOrCreate();
+    markExpireAndGetViewLogs()
     res.send({message: "report generated"})
 }

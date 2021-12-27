@@ -269,6 +269,15 @@ const acqusitionRevenueReportWriter = createCsvWriter({
     ]
 });
 
+const last60and30daysViewLogs = createCsvWriter({
+    path: randomReportFilePath,
+    header: [
+        {id: 'msisdn', title: 'Msisdn'}, 
+        {id: 'last60dou', title: 'Last 60 Days Viewlogs'}, 
+        {id: 'last30dou', title: 'Last 30 Days Viewlogs'}, 
+    ]
+});
+
 const tp_billing_cycle_hours = [1,5,8,11,14,17,20,22];
 
 const doubleChargeReport = createCsvWriter({
@@ -945,6 +954,73 @@ expireBaseAndBlackListOrCreate = async() => {
 
         let blacklistResult = await usersRepo.blacklistMany(blacklistIds);
         console.log("### Blacklisted: ", blacklistResult);
+    }catch(e){
+        console.log("### error - ", e);
+    }
+}
+
+markExpireAndGetViewLogs = async() => {
+    console.log("### markExpireAndGetViewLogs");
+    try{
+        var jsonPath = path.join(__dirname, '..', 'msisdns.txt');
+        let inputData = await readFileSync(jsonPath);
+        console.log("### Input Data Length: ", inputData.length);
+        let updateUserIds = [];
+        let finalResult = [];
+        for(let i = 0; i < inputData.length; i++){
+            let singObject = {}
+            if(inputData[i] && inputData[i].length === 11){
+                let user = await usersRepo.getUserByMsisdn(inputData[i]);
+                if(user){
+                    let last30dou = await viewLogsRepo.getDaysOfUseTotal(user._id, '2021-11-27 00:00:00.000Z', '2021-12-27 00:00:00.000Z');
+                    let last60dou = await viewLogsRepo.getDaysOfUseTotal(user._id, '2021-10-27 00:00:00.000Z', '2021-12-27 00:00:00.000Z');
+                    if(last60dou.length > 0 && last60dou[0].douTotal > 0){
+                        console.log("DOU's more than 0")      
+                        singObject.msisdn = inputData[i];
+                        singObject.last60dou = last60dou[0].douTotal;
+                        singObject.last30dou = last30dou[0] && last30dou[0].douTotal ? last30dou[0].douTotal : 0;
+                    }
+                    else{
+                        console.log("DOU's less than or equal to 0");
+                        updateUserIds.push(user._id);
+                    }
+                }else{
+                    console.log("### No user found for", inputData[i]);
+                }
+            }else{
+                console.log("### Invalid number or number length");
+            }
+            finalResult.push(singObject)
+        }
+
+        await last60and30daysViewLogs.writeRecords(finalResult);
+        let messageObj = {};
+        messageObj.to = ["taha@dmdmax.com"];
+        messageObj.subject = `MSISDNs DOUs`,
+        messageObj.text =  `This report contains the details of msisdns sent us over email from Telenor`
+        messageObj.attachments = {
+            filename: randomReport,
+            path: null
+        };
+
+        let uploadRes = await uploadFileAtS3(randomReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
+        }
+
+        console.log("###  [randomReport][emailSent]");
+        fs.unlink(randomReportFilePath,function(err,data) {
+            if (err) {
+                console.log("###  File not deleted[randomReport]");
+            }
+            console.log("###  File deleted [randomReport]");
+        });
+
+        let setUsersToPurge = await usersRepo.updateUsersByQuery(updateUserIds, {should_purge: true});
+        console.log("set users to should_purge: true", setUsersToPurge);
+
     }catch(e){
         console.log("### error - ", e);
     }
@@ -3180,5 +3256,6 @@ module.exports = {
     computeLoggerTotalHoursDataMsisdnWise:computeLoggerTotalHoursDataMsisdnWise,
     computeDoubleChargeUsers:computeDoubleChargeUsers,
     getThreeMonthsData: getThreeMonthsData,
-    generateReportForAcquisitionRevenueAndSessions: generateReportForAcquisitionRevenueAndSessions
+    generateReportForAcquisitionRevenueAndSessions: generateReportForAcquisitionRevenueAndSessions,
+    markExpireAndGetViewLogs: markExpireAndGetViewLogs
 }
