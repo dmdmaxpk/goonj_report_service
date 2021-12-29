@@ -3219,6 +3219,22 @@ getArray = async(records) => {
     return ids;
 }
 
+purgeMarkedUsers = async () => {
+    let users = await usersRepo.getPurgeMarkedUsers();
+
+    console.log("users count", users.length);
+
+    let userIds = [];
+    for(let i = 0; i < users.length; i++){
+        userIds.push(users[i]._id);
+    }
+
+    console.log("Purging in progress... ... ...");
+    
+    let purgeUsers = await subscriptionRepo.purgeUsers(userIds);
+    console.log("purged users: ", purgeUsers);
+}
+
 module.exports = {
     dailyReport: dailyReport,
     callBacksReport: callBacksReport,
@@ -3257,5 +3273,6 @@ module.exports = {
     computeDoubleChargeUsers:computeDoubleChargeUsers,
     getThreeMonthsData: getThreeMonthsData,
     generateReportForAcquisitionRevenueAndSessions: generateReportForAcquisitionRevenueAndSessions,
-    markExpireAndGetViewLogs: markExpireAndGetViewLogs
+    markExpireAndGetViewLogs: markExpireAndGetViewLogs,
+    purgeMarkedUsers: purgeMarkedUsers
 }

@@ -227,6 +227,11 @@ class SubscriptionRepository {
 
         return data;
     }
+
+    async purgeUsers(userIds){
+        let result = await Subscription.updateMany({user_id: {$in: userIds}}, {$set: {subscription_status: 'expired', auto_renewal: false, is_allowed_to_stream: false} });
+        return result;
+    }
 }
 
 module.exports = SubscriptionRepository;

@@ -57,6 +57,11 @@ class UserRepository {
         const result = await User.find({operator:"telenor", $and:[{added_dtm:{$gte:new Date(from)}}, {added_dtm:{$lte:new Date(to)}}]}, {msisdn:1});
         return result;
     }
+
+    async getPurgeMarkedUsers(){
+        const result = await User.find({should_purge: true});
+        return result;
+    }
 }
 
 module.exports = UserRepository;
