@@ -876,20 +876,10 @@ expireBaseAndBlackList = async() => {
         let inputData = await readFileSync(jsonPath);
         console.log("### Input Data Length: ", inputData.length);
         let blacklistIds = [];
-        let finalResult = [];
         for(let i = 0; i < inputData.length; i++){
-            let singObject = {}
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
-                // let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
                 if(user){
-                    // if(dou.length > 0 && dou[0].douTotal > 2){
-                    //     console.log("DOU's more than 2")      
-                    //     singObject.msisdn = inputData[i];
-                    //     singObject.dou = dou[0].douTotal;
-                    // }
-                    // else{
-                        // console.log("DOU's less than or equal to 2")      
                         let unSubObject = {};
                         unSubObject.transaction_id = 'random-transaction-id';
                         unSubObject.msisdn = user.msisdn;
@@ -898,14 +888,12 @@ expireBaseAndBlackList = async() => {
                         axios.post('http://localhost:3004/subscription/unsubscribe', unSubObject);
                         console.log('### Axios call sent for msisdn ', user.msisdn);
                         blacklistIds.push(user._id);
-                    // }
                 }else{
                     console.log("### No user found for", inputData[i]);
                 }
             }else{
                 console.log("### Invalid number or number length");
             }
-            // finalResult.push(singObject)
         }
 
         let blacklistResult = await usersRepo.blacklistMany(blacklistIds);
