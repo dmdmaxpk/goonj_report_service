@@ -2755,7 +2755,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
-                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2021-10-31T23:59:59.000Z");
+                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-09-01T00:00:00.000Z", "2022-01-30T23:59:59.000Z");
                     if(dou.length > 0){
                         singObject.dou = dou[0].douTotal;
                         singObject.lastAccess = dou[0].lastAccess;
@@ -2775,13 +2775,14 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
 
                     let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
                     if(subscription){
-                        let date = new Date(subscription.added_dtm);
+                        let date = new Date(subscription.added_dtm).toISOString();
                         singObject.tid = subscription.affiliate_unique_transaction_id;
                         singObject.mid = subscription.affiliate_mid;
                         singObject.source = subscription.source;
-                        singObject.acqusition_timestepms = monthNames[date.getMonth()];
                         singObject.status = subscription.subscription_status === 'expired' ? 'Churned' : 'Retained';
+                        singObject.acqusition_timestepms = date;
                         // singObject.acqusition_timestepms = subscription.added_dtm;
+                        // singObject.acqusition_timestepms = monthNames[date.getMonth()];
                     }
                     else{
                         // singObject.tid = '';
