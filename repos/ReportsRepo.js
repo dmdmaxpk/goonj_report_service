@@ -2755,7 +2755,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
-                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-09-01T00:00:00.000Z", "2022-01-30T23:59:59.000Z");
+                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-12-01T00:00:00.000Z", "2022-01-30T23:59:59.000Z");
                     if(dou.length > 0){
                         singObject.dou = dou[0].douTotal;
                         singObject.lastAccess = dou[0].lastAccess;
