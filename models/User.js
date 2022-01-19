@@ -21,7 +21,9 @@ const userSchema = new Schema({
     gender: String,
     profilePicture: String,
     source: {type: String, default: "na", index: true},
-
+    is_dormant: {type: Boolean, index: true},
+    dormant_last_modified: {type: Date, index: true},
+    
     //fields for FnF flow
     is_gray_listed: { type: Boolean, default: false },
     is_black_listed: { type: Boolean, default: false },

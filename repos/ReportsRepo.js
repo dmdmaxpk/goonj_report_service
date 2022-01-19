@@ -885,8 +885,8 @@ expireBaseAndBlackList = async() => {
                         unSubObject.msisdn = user.msisdn;
                         unSubObject.source = 'tp-on-demand-via-email';
                         
-                        axios.post('http://localhost:3004/subscription/unsubscribe', unSubObject);
-                        console.log('### Axios call sent for msisdn ', user.msisdn);
+                        // axios.post('http://localhost:3004/subscription/unsubscribe', unSubObject);
+                        // console.log('### Axios call sent for msisdn ', user.msisdn);
                         blacklistIds.push(user._id);
                 }else{
                     console.log("### No user found for", inputData[i]);
