@@ -896,8 +896,10 @@ expireBaseAndBlackList = async() => {
             }
         }
 
-        let blacklistResult = await usersRepo.blacklistMany(blacklistIds);
-        console.log("### Blacklisted: ", blacklistResult, blacklistIds);
+        // let blacklistResult = await usersRepo.blacklistMany(blacklistIds);
+        // console.log("### Blacklisted: ", blacklistResult, blacklistIds);
+        let blacklistResult = await usersRepo.markDormant(blacklistIds);
+        console.log("### Marked Dormant: ", blacklistResult, blacklistIds);
         
     }catch(e){
         console.log("### error - ", e);

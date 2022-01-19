@@ -36,6 +36,11 @@ class UserRepository {
         return data;
     }
 
+    async markDormant(ids) {
+        let data = await User.updateMany({"_id": {$in:ids }},{$set:{is_dormant: true, dormant_last_modified: new Date()}});
+        return data
+    }
+
     async updateUsersByQuery(ids, query)  {
         let data = await User.updateMany({"_id": {$in:ids}},{$set: query});
         return data;
