@@ -885,8 +885,8 @@ expireBaseAndBlackList = async() => {
                         unSubObject.msisdn = user.msisdn;
                         unSubObject.source = 'tp-on-demand-via-email';
                         
-                        // axios.post('http://localhost:3004/subscription/unsubscribe', unSubObject);
-                        // console.log('### Axios call sent for msisdn ', user.msisdn);
+                        axios.post('http://localhost:3004/subscription/unsubscribe', unSubObject);
+                        console.log('### Axios call sent for msisdn ', user.msisdn);
                         blacklistIds.push(user._id);
                 }else{
                     console.log("### No user found for", inputData[i]);
@@ -896,10 +896,8 @@ expireBaseAndBlackList = async() => {
             }
         }
 
-        // let blacklistResult = await usersRepo.blacklistMany(blacklistIds);
-        // console.log("### Blacklisted: ", blacklistResult, blacklistIds);
-        let blacklistResult = await usersRepo.markDormant(blacklistIds);
-        console.log("### Marked Dormant: ", blacklistResult, blacklistIds);
+        let blacklistResult = await usersRepo.blacklistMany(blacklistIds);
+        console.log("### Blacklisted: ", blacklistResult, blacklistIds);
         
     }catch(e){
         console.log("### error - ", e);
@@ -2757,7 +2755,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
-                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-12-01T00:00:00.000Z", "2022-01-30T23:59:59.000Z");
+                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2022-01-30T23:59:59.000Z");
                     if(dou.length > 0){
                         singObject.dou = dou[0].douTotal;
                         singObject.lastAccess = dou[0].lastAccess;
