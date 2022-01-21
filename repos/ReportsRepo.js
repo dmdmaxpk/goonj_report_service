@@ -265,7 +265,8 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'lastAccess', title: 'Last access date'},
         {id: 'mid', title: 'Affiliate Mid'},
         {id: 'source', title: 'Source'},
-        {id: 'tid', title: 'Transaction Id'}
+        {id: 'tid', title: 'Transaction Id'},
+        {id: 'callback_sent', title: 'Affiliate Callback sent'}
     ]
 });
 
@@ -2750,6 +2751,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.status = '';
             singObject.lastAccess = '';
             singObject.acqusition_timestepms = '';
+            singObject.callback_sent = '';
             // singObject.tid = '';
             
             if(inputData[i] && inputData[i].length === 11){
@@ -2781,6 +2783,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                         singObject.source = subscription.source;
                         singObject.status = subscription.subscription_status === 'expired' ? 'Churned' : 'Retained';
                         singObject.acqusition_timestepms = date;
+                        singObject.callback_sent = subscription.is_affiliation_callback_executed;
                         // singObject.acqusition_timestepms = subscription.added_dtm;
                         // singObject.acqusition_timestepms = monthNames[date.getMonth()];
                     }
