@@ -8,7 +8,8 @@ const {
     computeLoggerTotalHoursDataMsisdnWise,
     expireBaseAndBlackListOrCreate,
     markExpireAndGetViewLogs,
-    purgeMarkedUsers } = require('../repos/ReportsRepo');
+    purgeMarkedUsers, 
+    expireList} = require('../repos/ReportsRepo');
 
 exports.getExpiryHistory = async(req, res) => {
     let result = await historyRepo.getExpiryHistory(req.query.user_id)
@@ -155,6 +156,6 @@ exports.revenue_stats = async (req,res) =>  {
 };
 
 exports.report = async (req,res) =>  {
-    generateReportForAcquisitionRevenueAndSessions();
+    expireList()
     res.send({message: "report generated"})
 }

@@ -948,6 +948,40 @@ expireBaseAndBlackListOrCreate = async() => {
     }
 }
 
+expireList = async() => {
+    console.log("### expireList");
+    try{
+        var jsonPath = path.join(__dirname, '..', 'msisdns.txt');
+        let inputData = await readFileSync(jsonPath);
+        console.log("### Input Data Length: ", inputData.length);
+        let count = 0;
+        for(let i = 0; i < inputData.length; i++){
+            if(inputData[i] && inputData[i].length === 11){
+                let user = await usersRepo.getUserByMsisdn(inputData[i]);
+                if(user){
+                        let unSubObject = {};
+                        unSubObject.transaction_id = 'random-transaction-id';
+                        unSubObject.msisdn = user.msisdn;
+                        unSubObject.source = 'tp-on-demand-via-email';
+                        
+                        axios.post('http://localhost:3004/subscription/unsubscribe', unSubObject);
+                        count++;
+                        console.log('### Axios call sent for msisdn ', user.msisdn, count);
+                }else{
+                    console.log("### No user found for", inputData[i]);
+                }
+            }else{
+                console.log("### Invalid number or number length");
+            }
+        }
+
+        console.log("### Expired count:", count);
+        
+    }catch(e){
+        console.log("### error - ", e);
+    }
+}
+
 markExpireAndGetViewLogs = async() => {
     console.log("### markExpireAndGetViewLogs");
     try{
@@ -3266,5 +3300,6 @@ module.exports = {
     getThreeMonthsData: getThreeMonthsData,
     generateReportForAcquisitionRevenueAndSessions: generateReportForAcquisitionRevenueAndSessions,
     markExpireAndGetViewLogs: markExpireAndGetViewLogs,
-    purgeMarkedUsers: purgeMarkedUsers
+    purgeMarkedUsers: purgeMarkedUsers,
+    expireList: expireList
 }
