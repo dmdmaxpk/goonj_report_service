@@ -269,7 +269,8 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'callback_sent', title: 'Affiliate Callback sent'},
         {id: 'trialActivated', title: 'Trial Activated'},
         {id: 'trialDate', title: 'Trial Activation Date'},
-        {id: 'firstChargingDate', title: 'First Charging Date'}
+        {id: 'firstChargingDate', title: 'First Charging Date'},
+        {id: 'dormant', title: 'Dormant'}
     ]
 });
 
@@ -2792,11 +2793,13 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.trialActivated = '';
             singObject.trialDate = '';
             singObject.firstChargingDate = '';
+            singObject.dormant = '';
             // singObject.tid = '';
             
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
+                    singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
                     let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2022-01-30T23:59:59.000Z");
                     if(dou.length > 0){
                         singObject.dou = dou[0].douTotal;
