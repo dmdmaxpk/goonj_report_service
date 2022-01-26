@@ -972,6 +972,16 @@ class BillingHistoryRepository {
             console.log("getBillingInsufficientBalanceInDateRange - err =>", err);
         }
     }
+    
+    async findTrial(user_id){
+        try{
+            let result = await BillingHistory.find({user_id, billing_status: "trial"});
+            return result;
+        }
+        catch{
+            console.log("error finding trial data")
+        }
+    }
 }
 
 module.exports = BillingHistoryRepository;

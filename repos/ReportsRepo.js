@@ -266,7 +266,9 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'mid', title: 'Affiliate Mid'},
         {id: 'source', title: 'Source'},
         {id: 'tid', title: 'Transaction Id'},
-        {id: 'callback_sent', title: 'Affiliate Callback sent'}
+        {id: 'callback_sent', title: 'Affiliate Callback sent'},
+        {id: 'trialActivated', title: 'Trial Activated'},
+        {id: 'trialDate', title: 'Trial Activation Date'},
     ]
 });
 
@@ -2786,6 +2788,8 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.lastAccess = '';
             singObject.acqusition_timestepms = '';
             singObject.callback_sent = '';
+            singObject.trialActivated = '';
+            singObject.trialDate = '';
             // singObject.tid = '';
             
             if(inputData[i] && inputData[i].length === 11){
@@ -2799,7 +2803,11 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                         singObject.dou = 0;
                         singObject.lastAccess = '-';
                     }
-
+                    let trial = await billinghistoryRepo.findTrial(user._id);
+                    if(trial){
+                        singObject.trialActivated = true;
+                        singObject.trialDate = trial.billing_dtm;
+                    }
                     let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id);
                     if(totalRevenue.length > 0){
                         singObject.revenue = totalRevenue[0].revenue;
