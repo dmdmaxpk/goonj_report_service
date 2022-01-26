@@ -975,7 +975,17 @@ class BillingHistoryRepository {
     
     async findTrial(user_id){
         try{
-            let result = await BillingHistory.find({user_id, billing_status: "trial"});
+            let result = await BillingHistory.findOne({user_id, billing_status: "trial"});
+            return result;
+        }
+        catch{
+            console.log("error finding trial data")
+        }
+    }
+
+    async getFirstChargingDetail(user_id){
+        try{
+            let result = await BillingHistory.findOne({user_id, billing_status: "Success"});
             return result;
         }
         catch{
