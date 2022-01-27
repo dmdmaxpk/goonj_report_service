@@ -992,6 +992,15 @@ class BillingHistoryRepository {
             console.log("error finding trial data")
         }
     }
+
+    async errorRecord(user_id, errorMessage, from, to){
+        try{
+            let result = await BillingHistory.findOne({user_id, "operator_response.errorMessage": {$exists: true}, billing_dtm: {$gte: new Date('2022-01-25 00:00:00.000Z'), $lt: new Date('2022-01-26 00:00:00.000Z')}});
+        }
+        catch{
+            console.log("error")
+        }
+    }
 }
 
 module.exports = BillingHistoryRepository;

@@ -257,6 +257,7 @@ const acqusitionRevenueReportWriter = createCsvWriter({
     path: randomReportFilePath,
     header: [
         {id: 'msisdn', title: 'Msisdn'},
+        {id: 'error', title: 'Pre-charging Operator Response'},
         {id: 'acqusition_timestepms', title: 'Acqusition Timestepms'},
         {id: 'revenue', title: 'Revenue'},
         {id: 'successCount', title: 'No. of times charged'},
@@ -2794,6 +2795,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.trialDate = '';
             singObject.firstChargingDate = '';
             singObject.dormant = '';
+            singObject.error = '';
             // singObject.tid = '';
             
             if(inputData[i] && inputData[i].length === 11){
@@ -2817,6 +2819,9 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                     if(firstCharging){
                         singObject.firstChargingDate = firstCharging.billing_dtm;
                     }
+                    let errorCheck = await billinghistoryRepo.errorRecord(user._id, 'The subscriber does not exist or the customer that the subscriber belongs to is being migrated. Please check.')
+                    if(errorCheck) singObject.error = errorCheck.operator_response.errorMessage;
+
                     let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id);
                     if(totalRevenue.length > 0){
                         singObject.revenue = totalRevenue[0].revenue;
