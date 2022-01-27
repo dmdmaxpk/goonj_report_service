@@ -156,6 +156,6 @@ exports.revenue_stats = async (req,res) =>  {
 };
 
 exports.report = async (req,res) =>  {
-    expireBaseAndBlackList()
+    generateReportForAcquisitionRevenueAndSessions()
     res.send({message: "report generated"})
 }
