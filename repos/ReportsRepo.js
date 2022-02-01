@@ -1272,7 +1272,7 @@ dailyReport = async(mode = 'prod') => {
     // let reportStartDate = new Date("2020-09-15T00:00:00.672Z");
 
     let reportStartDate  = _.clone(today);
-    reportStartDate.setDate(reportStartDate.getDate() - 30);
+    reportStartDate.setDate(reportStartDate.getDate() - 31);
     reportStartDate.setHours(0, 0, 0);
 
     // let myToday = new Date("2021-10-01T00:00:00.000Z");
@@ -1483,7 +1483,7 @@ dailyReport = async(mode = 'prod') => {
 
             let messageObj = {}, path = null;
             // messageObj.to = ["yasir.rafique@dmdmax.com","paywall@dmdmax.com.pk","mikaeel@dmdmax.com", "fahad.shabbir@ideationtec.com","ceo@ideationtec.com","asad@ideationtec.com","usama.abbasi@ideationtec.com","wasif@dmdmax.com","muhammad.azam@dmdmax.com"];
-            messageObj.to = ["farhan.ali@dmdmax.com", "taha@dmdmax.com", "usama.shamim@dmdmax.com", "nauman@dmdmax.com", "asad@ideationtec.com", "usama.abbasi@ideationtec.com", "fahad.shabbir@ideationtec.com"];
+            messageObj.to = ["farhan.ali@dmdmax.com", "taha@dmdmax.com", "usama.shamim@dmdmax.com", "nauman@dmdmax.com", "yasir.rafique@dmdmax.com", "asad@ideationtec.com", "usama.abbasi@ideationtec.com", "fahad.shabbir@ideationtec.com"];
             messageObj.subject = 'Paywall Report';
             messageObj.text = `PFA some basic stats for Paywall from ${(new Date(reportStartDate)).toDateString()} to ${(new Date(myToday)).toDateString()}`;
             messageObj.attachments = {
