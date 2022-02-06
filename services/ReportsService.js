@@ -34,39 +34,39 @@ generateDailyReport = async() => {
     // Revenue report
     await reportsRepo.dailyReport();
 
-    // await sleep(180*1000);
-    // reportsRepo.callBacksReport();
+    await sleep(180*1000);
+    reportsRepo.callBacksReport();
 
-    // await sleep(180*1000);
-    // reportsRepo.dailyReturningUsers(from, to);
+    await sleep(180*1000);
+    reportsRepo.dailyReturningUsers(from, to);
 
-    // await sleep(180*1000);
-    // reportsRepo.dailyUnsubReport(); //
-
-    // // await sleep(120*1000);
-    // // reportsRepo.errorCountReport();
-
-    // await sleep(180*1000);
-    // reportsRepo.dailyFullAndPartialChargedUsers(); //
-
+    await sleep(180*1000);
+    reportsRepo.dailyUnsubReport(); //
 
     // await sleep(120*1000);
-    // reportsRepo.dailyTrialToBilledUsers(); //
+    // reportsRepo.errorCountReport();
+
+    await sleep(180*1000);
+    reportsRepo.dailyFullAndPartialChargedUsers(); //
 
 
-    // await sleep(180*1000);
-    // reportsRepo.dailyChannelWiseUnsub();
+    await sleep(120*1000);
+    reportsRepo.dailyTrialToBilledUsers(); //
 
 
-    // await sleep(180*1000);
-    // reportsRepo.dailyChannelWiseTrialActivated(); //
+    await sleep(180*1000);
+    reportsRepo.dailyChannelWiseUnsub();
 
 
-    // await sleep(180*1000);
-    // reportsRepo.dailyPageViews(); //
+    await sleep(180*1000);
+    reportsRepo.dailyChannelWiseTrialActivated(); //
 
-    // // await sleep(120*1000);
-    // // affiliateReportsRepo.gdnReport(to, today);
+
+    await sleep(180*1000);
+    reportsRepo.dailyPageViews(); //
+
+    // await sleep(120*1000);
+    // affiliateReportsRepo.gdnReport(to, today);
 }
 
 generateEveryThreeDaysReports =  async() => {
