@@ -156,6 +156,16 @@ exports.revenue_stats = async (req,res) =>  {
 };
 
 exports.report = async (req,res) =>  {
-    generateReportForAcquisitionRevenueAndSessions()
+    // expireList();
     res.send({message: "report generated"})
+}
+
+exports.revReport = async (req,res) =>  {
+    generateReportForAcquisitionRevenueAndSessions();
+    res.send({message: "rev report generated"})
+}
+
+exports.expireList = async (req,res) =>  {
+    expireList();
+    res.send({message: "purge initiated"})
 }
