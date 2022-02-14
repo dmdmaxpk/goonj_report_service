@@ -44,7 +44,7 @@ job.start();
 
 const reportsService = require('./services/ReportsService');
 var CronJob = require('cron').CronJob;
-var tpDashboardCron = new CronJob('0 17 * * *', async function() {
+var tpDashboardCron = new CronJob('0 1 * * *', async function() {
     await reportsService.tpDashboardReport();
     console.log('TP Dashboard cron executed');
 }, null, true, 'Asia/Karachi');
