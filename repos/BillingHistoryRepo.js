@@ -1010,7 +1010,7 @@ class BillingHistoryRepository {
                 {$group: {_id: "$user_id"}},
                 {$count: "totalChargedUsers"}
             ]);
-            return result;
+            return result[0].totalChargedUsers;
         }
         catch(err){
             console.log("err", err)
@@ -1024,7 +1024,7 @@ class BillingHistoryRepository {
                 {$group: {_id: "$user_id"}},
                 {$count: "totalAttemptedUsersPackageWise"}
             ]);
-            return result;
+            return result[0].totalAttemptedUsersPackageWise;
         }
         catch(err){
             console.log("err", err)
@@ -1038,7 +1038,7 @@ class BillingHistoryRepository {
                 {$group: {_id: "$user_id"}},
                 {$count: "unsubbedUsers"}
             ]);
-            return result;
+            return result[0].unsubbedUsers;
         }
         catch(err){
             console.log("err", err)
@@ -1052,7 +1052,7 @@ class BillingHistoryRepository {
                 {$group: {_id: "$user_id"}},
                 {$count: "purgedUsers"}
             ]);
-            return result;
+            return result[0].purgedUsers;
         }
         catch(err){
             console.log("err", err)
