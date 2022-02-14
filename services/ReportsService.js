@@ -8,6 +8,9 @@ const billingHistoryRepo = new BillingHistoryRepository();
 const SubscriptionRepository = require('../repos/SubscriptionRepo');
 const subscriptionRepo = new SubscriptionRepository();
 
+const TPDashboardRepository = require('../repos/TPDashboardRepo');
+const tpDashboardRepo = new TPDashboardRepository();
+
 generateDailyReport = async() => {
     console.log("=> Generating daily reports");
 
@@ -228,7 +231,8 @@ tpDashboardReport = async() => {
         from.setSeconds(00);
 
         console.log("from", from, "to", to);
-        let totalRevenue = await billingHistoryRepo.getRevenueInDateRange(from, to);
+        let getRevenue = await billingHistoryRepo.getRevenueInDateRange(from, to);
+        let totalRevenue = getRevenue[0].total;
         console.log("totalRevenue", totalRevenue);
 
         let newPayingUsersAcquiredDaily = await subscriptionRepo.newPayingUsers(from, to, dailyPackage);
@@ -250,8 +254,25 @@ tpDashboardReport = async() => {
 
         let unsubbedUsers = await billingHistoryRepo.unsubbed(from, to);
         let purgedUsers = await billingHistoryRepo.purged(from, to);
-
         console.log("unsubbedUsers", unsubbedUsers, "purgedUsers", purgedUsers);
+
+        let data = {
+            date: from,
+            revenue: totalRevenue,
+            newPayingUsersAcquiredDaily: newPayingUsersAcquiredDaily,
+            newPayingUsersAcquiredWeekly: newPayingUsersAcquiredWeekly,
+            renewedPayingUsersDaily: renewedPayingUsersDaily,
+            renewedPayingUsersWeekly: renewedPayingUsersWeekly,
+            totalChargedUsersDaily: totalChargedUsersDaily,
+            totalChargedUsersWeekly: totalChargedUsersWeekly,
+            totalAttemptedUsersDaily: totalAttemptedUsersDaily,
+            totalAttemptedUsersWeekly: totalAttemptedUsersWeekly,
+            unsubbed: unsubbedUsers,
+            purged: purgedUsers
+        }
+
+        let insertDailyData = await tpDashboardRepo.saveData(data);
+        console.log("insertDailyData", insertDailyData);
     }
     catch{
 

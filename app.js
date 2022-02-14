@@ -10,6 +10,7 @@ require('./models/OTP');
 require('./models/ViewLog');
 require('./models/Subscription');
 require('./models/BillingHistory');
+require('./models/TPDashboard');
 
 const config = require('./config');
 
