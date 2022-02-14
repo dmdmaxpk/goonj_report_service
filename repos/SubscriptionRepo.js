@@ -232,6 +232,44 @@ class SubscriptionRepository {
         let result = await Subscription.updateMany({user_id: {$in: userIds}}, {$set: {subscription_status: 'expired', auto_renewal: false, is_allowed_to_stream: false} });
         return result;
     }
+
+    async newPayingUsers (from ,to, package_id)  {
+        let result = await Subscription.aggregate([
+            {
+                $match:{
+                    subscribed_package_id: package_id,
+                    added_dtm: {$gte: new Date(from), $lt: new Date(to)}
+                }
+            },{
+                $project:{
+                    _id: 0,
+                    user_id: 1,
+                }
+            },{
+                $lookup:{
+                    from: "billinghistories",
+                    let: {user_id: "$user_id"},
+                    pipeline:[
+                                        {
+                                            $match: {
+                                                    $expr: {
+                                    $and:[
+                                                            {$eq: ["$user_id", "$$user_id"]},
+                                                            {$eq: ["$billing_status", "Success"]}
+                                    ]
+                                                    }
+                                            }
+                                        }
+                            ],
+                    as: "history"
+                }
+            },
+            {$project: {user_id: 1, timesPaid: {$size: "$history"}}},
+            {$match: {timesPaid: {$gt: 0}}},
+            {$count: "newPayingUsers"}
+        ]);
+        return result.newPayingUsers ? result.newPayingUsers : 0;
+    }
 }
 
 module.exports = SubscriptionRepository;

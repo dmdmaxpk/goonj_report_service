@@ -75,3 +75,8 @@ monitorRabbitMq = async() => {
     //     console.log("### Current queued subscriptions are ",queuedCount);
     // }
 }
+
+exports.tpDashboard = async (req,res) =>  {
+    await reportsService.tpDashboardReport();
+    res.send("TPDashboard - Executed\n");
+}

@@ -1002,6 +1002,62 @@ class BillingHistoryRepository {
             console.log("error")
         }
     }
+
+    async chargedUsersCountPackageWise(from, to, package_id){
+        try{
+            let result = await BillingHistory.aggregate([
+                {$match: {billing_dtm: {$gte: new Date(from), $lt: new Date(to)}, package_id: package_id, billing_status: "Success"}},
+                {$group: {_id: "$user_id"}},
+                {$count: "totalChargedUsers"}
+            ]);
+            return result.totalChargedUsers;
+        }
+        catch(err){
+            console.log("err", err)
+        }
+    }
+
+    async totalAttemptedUsersPackageWise(from, to, package_id){
+        try{
+            let result = await BillingHistory.aggregate([
+                {$match: {billing_dtm: {$gte: new Date(from), $lt: new Date(to)}, package_id: package_id, billing_status: {$in: ['Success', 'graced']} }},
+                {$group: {_id: "$user_id"}},
+                {$count: "totalAttemptedUsersPackageWise"}
+            ]);
+            return result.totalAttemptedUsersPackageWise;
+        }
+        catch(err){
+            console.log("err", err)
+        }
+    }
+
+    async unsubbed(from, to){
+        try{
+            let result = await BillingHistory.aggregate([
+                {$match: {billing_dtm: {$gte: new Date(from), $lt: new Date(to)}, billing_status: {$in: ["expired", "unsubscribe-request-received-and-expired"]}, source: {$ne: "system-after-grace-end"} }},
+                {$group: {_id: "$user_id"}},
+                {$count: "unsubbedUsers"}
+            ]);
+            return result.unsubbedUsers;
+        }
+        catch(err){
+            console.log("err", err)
+        }
+    }
+
+    async purged(from, to){
+        try{
+            let result = await BillingHistory.aggregate([
+                {$match: {billing_dtm: {$gte: new Date(from), $lt: new Date(to)}, billing_status: {$in: ["expired", "unsubscribe-request-received-and-expired"]}, source: "system-after-grace-end" }},
+                {$group: {_id: "$user_id"}},
+                {$count: "purgedUsers"}
+            ]);
+            return result.purgedUsers;
+        }
+        catch(err){
+            console.log("err", err)
+        }
+    }
 }
 
 module.exports = BillingHistoryRepository;

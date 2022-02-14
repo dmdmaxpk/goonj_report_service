@@ -2,6 +2,12 @@ const reportsRepo = require('../repos/ReportsRepo');
 const helper = require('../helper/helper');
 const { three_months_report } = require('../controllers/BillingStatsController');
 
+const BillingHistoryRepository = require('../repos/BillingHistoryRepo');
+const billingHistoryRepo = new BillingHistoryRepository();
+
+const SubscriptionRepository = require('../repos/SubscriptionRepo');
+const subscriptionRepo = new SubscriptionRepository();
+
 generateDailyReport = async() => {
     console.log("=> Generating daily reports");
 
@@ -201,6 +207,57 @@ threeMonthsReport = async() => {
     }
 }
 
+
+tpDashboardReport = async() => {
+    try{
+        let dailyPackage = 'QDfC';
+        let weeklyPackage = 'QDfG'
+        var date = new Date();
+
+        var to = new Date();
+        to.setDate(to.getDate());
+        to.setHours(00);
+        to.setMinutes(00);
+        to.setSeconds(00);
+
+        //Day before yesterday
+        var from = new Date();
+        from.setDate(date.getDate() - 1);
+        from.setHours(00);
+        from.setMinutes(00);
+        from.setSeconds(00);
+
+        console.log("from", from, "to", to);
+        let totalRevenue = await billingHistoryRepo.getRevenueInDateRange(from, to);
+        console.log("totalRevenue", totalRevenue);
+
+        let newPayingUsersAcquiredDaily = await subscriptionRepo.newPayingUsers(from, to, dailyPackage);
+        let newPayingUsersAcquiredWeekly = await subscriptionRepo.newPayingUsers(from, to, weeklyPackage);
+        console.log("newPayingUsersAcquiredDaily", newPayingUsersAcquiredDaily, "newPayingUsersAcquiredWeekly", newPayingUsersAcquiredWeekly);
+
+        let totalChargedUsersDaily = await billingHistoryRepo.chargedUsersCountPackageWise(from, to, dailyPackage);
+        let totalChargedUsersWeekly = await billingHistoryRepo.chargedUsersCountPackageWise(from, to, weeklyPackage);
+        console.log("totalChargedUsersDaily", totalChargedUsersDaily, "totalChargedUsersWeekly", totalChargedUsersWeekly);
+
+        let renewedPayingUsersDaily = Number(totalChargedUsersDaily) - Number(newPayingUsersAcquiredDaily);
+        let renewedPayingUsersWeekly = Number(totalChargedUsersWeekly) - Number(newPayingUsersAcquiredWeekly);
+
+        console.log("renewedPayingUsersDaily", renewedPayingUsersDaily, "renewedPayingUsersWeekly", renewedPayingUsersWeekly);
+
+        let totalAttemptedUsersDaily = await billingHistoryRepo.totalAttemptedUsersPackageWise(from, to, dailyPackage);
+        let totalAttemptedUsersWeekly = await billingHistoryRepo.totalAttemptedUsersPackageWise(from, to, weeklyPackage);
+        console.log("totalAttemptedUsersDaily", totalAttemptedUsersDaily, "totalAttemptedUsersWeekly", totalAttemptedUsersWeekly);
+
+        let unsubbedUsers = await billingHistoryRepo.unsubbed(from, to);
+        let purgedUsers = await billingHistoryRepo.purged(from, to);
+
+        console.log("unsubbedUsers", unsubbedUsers, "purgedUsers", purgedUsers);
+    }
+    catch{
+
+    }
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -212,5 +269,6 @@ module.exports = {
     generateMonthlyReports: generateMonthlyReports,
     generateRandomReports: generateRandomReports,
     billingInLastHour: billingInLastHour,
-    threeMonthsReport: threeMonthsReport
+    threeMonthsReport: threeMonthsReport,
+    tpDashboardReport: tpDashboardReport
 }

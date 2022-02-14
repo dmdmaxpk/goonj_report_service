@@ -22,5 +22,7 @@ router.route('/hourlyBillingReport')
 
 router.route('/three_months_report').get(controller.three_months_report)
 
+router.route('/tpDashboardStats').get(controller.tpDashboard)
+
 
 module.exports = router;
