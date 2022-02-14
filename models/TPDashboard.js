@@ -17,6 +17,6 @@ const tpDashboardSchema = new Schema({
     unsubbed: Number,
     purged: Number,
 
-    date: { type: Date, default: Date.now }
+    date: { type: Date, default: Date.now, unique: true }
 }, { strict: true })
 module.exports = mongoose.model('TPDashboard', tpDashboardSchema);

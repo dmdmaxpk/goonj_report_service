@@ -42,6 +42,15 @@ var job = new CronJob('30 5 * * *', function() {
 job.start();
 
 
+const reportsService = require('./services/ReportsService');
+var CronJob = require('cron').CronJob;
+var tpDashboardCron = new CronJob('0 1 * * *', async function() {
+    await reportsService.tpDashboardReport();
+    console.log('TP Dashboard cron executed');
+}, null, true, 'Asia/Karachi');
+tpDashboardCron.start();
+
+
 const RabbitMq = require('./rabbit/RabbitMq');
 const rabbitMq = new RabbitMq().getInstance();
 
