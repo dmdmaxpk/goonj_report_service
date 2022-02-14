@@ -222,6 +222,7 @@ tpDashboardReport = async() => {
         to.setHours(00);
         to.setMinutes(00);
         to.setSeconds(00);
+        to.setMilliseconds(00);
 
         //Day before yesterday
         var from = new Date();
@@ -229,6 +230,7 @@ tpDashboardReport = async() => {
         from.setHours(00);
         from.setMinutes(00);
         from.setSeconds(00);
+        from.setMilliseconds(00);
 
         console.log("from", from, "to", to);
         let getRevenue = await billingHistoryRepo.getRevenueInDateRange(from, to);
