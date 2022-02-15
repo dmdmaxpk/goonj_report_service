@@ -10,4 +10,6 @@ router.use('/history',    require('./historyRoutes'));
 
 router.use('/report',    require('./reportRoutes'));
 
+router.use('/tpDashboard',    require('./tpDashboardRoutes'));
+
 module.exports = router;
