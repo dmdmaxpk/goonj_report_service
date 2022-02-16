@@ -219,8 +219,8 @@ tpDashboardReport = async(startDate, endDate) => {
         let from, to;
 
         if(startDate && endDate){
-            from = startDate;
-            to = endDate;
+            from = new Date(startDate);
+            to = new Date(endDate);
         }
         else{
             to = new Date();
