@@ -89,7 +89,7 @@ exports.tpDashboardLoopCompute = async (req,res) =>  {
 
     for(var i=0; i<=days; i++){
 
-        from.setDate(date.getDate() + 1);
+        from.setDate(from.getDate() + 1);
         from.setHours(00);
         from.setMinutes(00);
         from.setSeconds(00);
