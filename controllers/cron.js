@@ -77,6 +77,7 @@ monitorRabbitMq = async() => {
 }
 
 exports.tpDashboard = async (req,res) =>  {
-    await reportsService.tpDashboardReport();
+    let {startDate, endDate} = req.query;
+    await reportsService.tpDashboardReport(startDate, endDate);
     res.send("TPDashboard - Executed\n");
 }

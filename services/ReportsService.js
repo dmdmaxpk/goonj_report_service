@@ -211,26 +211,33 @@ threeMonthsReport = async() => {
 }
 
 
-tpDashboardReport = async() => {
+tpDashboardReport = async(startDate, endDate) => {
     try{
         let dailyPackage = 'QDfC';
         let weeklyPackage = 'QDfG'
         var date = new Date();
+        let from, to;
 
-        var to = new Date();
-        to.setDate(to.getDate());
-        to.setHours(00);
-        to.setMinutes(00);
-        to.setSeconds(00);
-        to.setMilliseconds(00);
-
-        //Day before yesterday
-        var from = new Date();
-        from.setDate(date.getDate() - 1);
-        from.setHours(00);
-        from.setMinutes(00);
-        from.setSeconds(00);
-        from.setMilliseconds(00);
+        if(startDate && endDate){
+            from = startDate;
+            to = endDate;
+        }
+        else{
+            to = new Date();
+            to.setDate(to.getDate());
+            to.setHours(00);
+            to.setMinutes(00);
+            to.setSeconds(00);
+            to.setMilliseconds(00);
+            
+            //Day before yesterday
+            from = new Date();
+            from.setDate(date.getDate() - 1);
+            from.setHours(00);
+            from.setMinutes(00);
+            from.setSeconds(00);
+            from.setMilliseconds(00);
+        }
 
         console.log("from", from, "to", to);
         let getRevenue = await billingHistoryRepo.getRevenueInDateRange(from, to);
