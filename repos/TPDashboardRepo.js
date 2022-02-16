@@ -13,7 +13,7 @@ class TPDashboardRepository {
         let result;
         if(startDate && endDate){
             result = await TPDashboard.aggregate([
-                    {$match: {date: {$gte: new Date(), $lt: new Date()}}}
+                    {$match: {date: {$gte: new Date(startDate), $lt: new Date(endDate)}}}
             ]);
         }
         else{
