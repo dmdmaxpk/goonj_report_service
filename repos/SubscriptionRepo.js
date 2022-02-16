@@ -255,7 +255,9 @@ class SubscriptionRepository {
                                                     $expr: {
                                     $and:[
                                                             {$eq: ["$user_id", "$$user_id"]},
-                                                            {$eq: ["$billing_status", "Success"]}
+                                                            {$eq: ["$billing_status", "Success"]},
+                                                            {$gte: ["$billing_dtm", new Date(from)]},
+                                                            {$lt: ["$billing_dtm", new Date(to)]}
                                     ]
                                                     }
                                             }

@@ -81,3 +81,27 @@ exports.tpDashboard = async (req,res) =>  {
     await reportsService.tpDashboardReport(startDate, endDate);
     res.send("TPDashboard - Executed\n");
 }
+
+exports.tpDashboardLoopCompute = async (req,res) =>  {
+    let {startDate, endDate, days} = req.query;
+    let from = new Date(startDate);
+    let to = new Date(startDate);
+
+    for(var i=0; i<=days; i++){
+
+        from.setDate(date.getDate() + 1);
+        from.setHours(00);
+        from.setMinutes(00);
+        from.setSeconds(00);
+        from.setMilliseconds(00);
+        
+        to.setDate(to.getDate() + 2);
+        to.setHours(00);
+        to.setMinutes(00);
+        to.setSeconds(00);
+        to.setMilliseconds(00);
+        
+        await reportsService.tpDashboardReport(from, to);
+    }
+    res.send("TPDashboard Loop Compute - Executed\n");
+}
