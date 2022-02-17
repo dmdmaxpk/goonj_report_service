@@ -2802,7 +2802,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
                     singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
-                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2021-10-01T00:00:00.000Z", "2022-01-30T23:59:59.000Z");
+                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2022-02-10T00:00:00.000Z", "2022-02-18T00:00:00.000Z");
                     if(dou.length > 0){
                         singObject.dou = dou[0].douTotal;
                         singObject.lastAccess = new Date(dou[0].lastAccess).toISOString();
