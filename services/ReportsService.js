@@ -265,6 +265,14 @@ tpDashboardReport = async(startDate, endDate) => {
         let purgedUsers = await billingHistoryRepo.purged(from, to);
         console.log("unsubbedUsers", unsubbedUsers, "purgedUsers", purgedUsers);
 
+        let payingUsersAccessedWeb = await billingHistoryRepo.payingUsersAccessedWebApp(from, to, {"$ne": ["$source", "app"]});
+        let payingUsersAccessedApp = await billingHistoryRepo.payingUsersAccessedWebApp(from, to, {"$eq": ["$source", "app"]});
+        console.log("payingUsersAccessedWeb", payingUsersAccessedWeb, "payingUsersAccessedApp", payingUsersAccessedApp);
+
+        let totalSessionsWeb = await billingHistoryRepo.totalSessionsWebApp(from, to, {"$ne": ["$source", "app"]});
+        let totalSessionsApp = await billingHistoryRepo.totalSessionsWebApp(from, to, {"$eq": ["$source", "app"]});
+        console.log("totalSessionsWeb", totalSessionsWeb, "totalSessionsApp", totalSessionsApp);
+
         let data = {
             date: from,
             revenue: totalRevenue,
@@ -277,7 +285,11 @@ tpDashboardReport = async(startDate, endDate) => {
             totalAttemptedUsersDaily: totalAttemptedUsersDaily,
             totalAttemptedUsersWeekly: totalAttemptedUsersWeekly,
             unsubbed: unsubbedUsers,
-            purged: purgedUsers
+            purged: purgedUsers,
+            payingUsersAccessedWeb: payingUsersAccessedWeb,
+            payingUsersAccessedApp: payingUsersAccessedApp,
+            totalSessionsWeb: totalSessionsWeb,
+            totalSessionsApp: totalSessionsApp
         }
 
         let insertDailyData = await tpDashboardRepo.saveData(data);

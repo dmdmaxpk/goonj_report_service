@@ -16,6 +16,10 @@ const tpDashboardSchema = new Schema({
     totalAttemptedUsersWeekly: Number,
     unsubbed: Number,
     purged: Number,
+    payingUsersAccessedWeb: Number,
+    payingUsersAccessedApp: Number,
+    totalSessionsWeb: Number,
+    totalSessionsApp: Number,
 
     date: { type: Date, default: Date.now, unique: true }
 }, { strict: true })

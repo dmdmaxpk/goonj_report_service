@@ -1058,6 +1058,79 @@ class BillingHistoryRepository {
             console.log("err", err)
         }
     }
+
+    async payingUsersAccessedWebApp(from, to, source){
+        try{
+            let result = await BillingHistory.aggregate([
+                            {$match: {billing_status: "Success", billing_dtm: {$gte: new Date(from), $lt: new Date(to)} }},
+                            {$group: {_id: "$user_id"}},
+                            {$project: {user_id: "$_id"}},
+                            {$lookup:{
+                                    from: "viewlogs",
+                                    let: {user_id: "$user_id"},
+                                    pipeline:[
+                                                        {
+                                                            $match: {
+                                                                    $expr: {
+                                                    $and:[
+                                                                            {$eq: ["$user_id", "$$user_id"]},
+                                                                            source,
+                                                                            {$gte: ["$added_dtm", new Date(from)]},
+                                                                            {$lt: ["$added_dtm", new Date(to)]}
+                                                    ]
+                                                                    }
+                                                            }
+                                                        }
+                                            ],
+                                    as: "logs"
+                                }
+                            },
+                            {$project: {views: {$size: "$logs"}}},
+                            {$match: {views: {$gt: 0}}},
+                            {$count: "totalViews"}
+                        ])
+            return result[0].totalViews;
+        }
+        catch(err){
+            console.log("err", err)
+        }
+    }
+
+    async totalSessionsWebApp(from, to, source){
+        try{
+            let result = await BillingHistory.aggregate([
+                            {$match: {billing_status: "Success", billing_dtm: {$gte: new Date(from), $lt: new Date(to)} }},
+                            {$group: {_id: "$user_id"}},
+                            {$project: {user_id: "$_id"}},
+                            {$lookup:{
+                                    from: "viewlogs",
+                                    let: {user_id: "$user_id"},
+                                    pipeline:[
+                                                        {
+                                                            $match: {
+                                                                    $expr: {
+                                                    $and:[
+                                                                            {$eq: ["$user_id", "$$user_id"]},
+                                                                            source,
+                                                                            {$gte: ["$added_dtm", new Date(from)]},
+                                                                            {$lt: ["$added_dtm", new Date(to)]}
+                                                    ]
+                                                                    }
+                                                            }
+                                                        }
+                                            ],
+                                    as: "logs"
+                                }
+                            },
+                            {$project: {views: {$size: "$logs"}}},
+                            {$group: {_id: "total", sessions: {$sum: "$views"}}}
+                        ])
+            return result[0].sessions;
+        }
+        catch(err){
+            console.log("err", err)
+        }
+    }
 }
 
 module.exports = BillingHistoryRepository;
