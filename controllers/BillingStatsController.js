@@ -11,6 +11,9 @@ const {
     purgeMarkedUsers, 
     expireList} = require('../repos/ReportsRepo');
 
+const multer = require('multer');
+const path = require('path');
+
 exports.getExpiryHistory = async(req, res) => {
     let result = await historyRepo.getExpiryHistory(req.query.user_id)
     res.send(result);
@@ -168,4 +171,28 @@ exports.revReport = async (req,res) =>  {
 exports.expireList = async (req,res) =>  {
     expireList();
     res.send({message: "purge initiated"})
+}
+
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, './')
+    },
+    filename: (req, file, cb) => {
+      let ext = path.extname(file.originalname);
+      cb(null, `msisdns.txt`);
+    }
+  });
+var upload = multer({ storage: storage }).any();
+exports.automatedReport = async (req, res) => {
+    let {report} = req.query;
+    let result = '';
+    upload(req, res, async(err) => {
+        if(report === 'purge'){
+            result = await expireList();
+        }
+        else if(report === 'revReport'){
+            result = await generateReportForAcquisitionRevenueAndSessions();
+        }
+        res.send({message: result})
+    });
 }

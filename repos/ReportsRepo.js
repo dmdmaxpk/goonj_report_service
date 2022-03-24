@@ -981,7 +981,7 @@ expireList = async() => {
         }
 
         console.log("### Expired count:", count);
-        
+        return `${count} user were purged successfully!`;
     }catch(e){
         console.log("### error - ", e);
     }
@@ -2890,6 +2890,8 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             }
             console.log("###  File deleted [randomReport]");
         });
+
+        return 'Revenue list successfully emailed to provided email. Please check your inbox.'
     }catch(e){
         console.log("### error - ", e);
     }
