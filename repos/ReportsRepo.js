@@ -2802,7 +2802,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
                     singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
-                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id, "2022-02-10T00:00:00.000Z", "2022-02-18T00:00:00.000Z");
+                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
                     if(dou.length > 0){
                         singObject.dou = dou[0].douTotal;
                         singObject.lastAccess = new Date(dou[0].lastAccess).toISOString();
@@ -2868,7 +2868,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
         console.log("### Sending email", finalResult);
         await acqusitionRevenueReportWriter.writeRecords(finalResult);
         let messageObj = {};
-        messageObj.to = ["taha@dmdmax.com"];
+        messageObj.to = ["taha@dmdmax.com", "usama.shamim@dmdmax.com"];
         messageObj.subject = `MSISDN list data`,
         messageObj.text =  `This report contains the details of msisdns sent us over email from Telenor`
         messageObj.attachments = {
