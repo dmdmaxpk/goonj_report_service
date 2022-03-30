@@ -969,7 +969,7 @@ expireList = async() => {
                         unSubObject.msisdn = user.msisdn;
                         unSubObject.source = 'tp-on-demand-via-email';
                         
-                        axios.post('http://10.0.1.76/:3004/subscription/unsubscribe', unSubObject);
+                        axios.post('http://10.0.1.76:3004/subscription/unsubscribe', unSubObject)
                         count++;
                         console.log('### Axios call sent for msisdn ', user.msisdn, count);
                 }else{
