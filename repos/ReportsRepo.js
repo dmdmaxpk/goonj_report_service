@@ -2803,46 +2803,46 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             if(inputData[i] && inputData[i].length === 11){
                 let user = await usersRepo.getUserByMsisdn(inputData[i]);
                 if(user){
-                    singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
-                    let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
-                    if(dou.length > 0){
-                        singObject.dou = dou[0].douTotal;
-                        singObject.lastAccess = new Date(dou[0].lastAccess).toISOString();
-                    }else{
-                        singObject.dou = 0;
-                        singObject.lastAccess = '-';
-                    }
-                    let trial = await billinghistoryRepo.findTrial(user._id);
-                    if(trial){
-                        singObject.trialActivated = true;
-                        singObject.trialDate = trial.billing_dtm;
-                    }
-                    let firstCharging = await billinghistoryRepo.getFirstChargingDetail(user._id);
-                    if(firstCharging){
-                        singObject.firstChargingDate = firstCharging.billing_dtm;
-                    }
-                    let errorCheck = await billinghistoryRepo.errorRecord(user._id, 'The subscriber does not exist or the customer that the subscriber belongs to is being migrated. Please check.')
-                    if(errorCheck) singObject.error = errorCheck.operator_response.errorMessage;
+                    // singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
+                    // let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
+                    // if(dou.length > 0){
+                    //     singObject.dou = dou[0].douTotal;
+                    //     singObject.lastAccess = new Date(dou[0].lastAccess).toISOString();
+                    // }else{
+                    //     singObject.dou = 0;
+                    //     singObject.lastAccess = '-';
+                    // }
+                    // let trial = await billinghistoryRepo.findTrial(user._id);
+                    // if(trial){
+                    //     singObject.trialActivated = true;
+                    //     singObject.trialDate = trial.billing_dtm;
+                    // }
+                    // let firstCharging = await billinghistoryRepo.getFirstChargingDetail(user._id);
+                    // if(firstCharging){
+                    //     singObject.firstChargingDate = firstCharging.billing_dtm;
+                    // }
+                    // let errorCheck = await billinghistoryRepo.errorRecord(user._id, 'The subscriber does not exist or the customer that the subscriber belongs to is being migrated. Please check.')
+                    // if(errorCheck) singObject.error = errorCheck.operator_response.errorMessage;
 
-                    let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id);
-                    if(totalRevenue.length > 0){
-                        singObject.revenue = totalRevenue[0].revenue;
-                        singObject.successCount = totalRevenue[0].count;
-                    }else{
-                        singObject.revenue = 0;
-                        singObject.successCount = 0;
-                    }
+                    // let totalRevenue = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id);
+                    // if(totalRevenue.length > 0){
+                    //     singObject.revenue = totalRevenue[0].revenue;
+                    //     singObject.successCount = totalRevenue[0].count;
+                    // }else{
+                    //     singObject.revenue = 0;
+                    //     singObject.successCount = 0;
+                    // }
 
                     let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
                     if(subscription){
                         let expiryHistory = await billinghistoryRepo.getExpiryHistory(user._id);
-                        let date = new Date(subscription.added_dtm).toISOString();
-                        singObject.tid = subscription.affiliate_unique_transaction_id;
-                        singObject.mid = subscription.affiliate_mid;
-                        singObject.source = subscription.source;
-                        singObject.status = subscription.subscription_status === 'expired' ? 'Churned' : 'Retained';
-                        singObject.acqusition_timestepms = date;
-                        singObject.callback_sent = subscription.is_affiliation_callback_executed;
+                        // let date = new Date(subscription.added_dtm).toISOString();
+                        // singObject.tid = subscription.affiliate_unique_transaction_id;
+                        // singObject.mid = subscription.affiliate_mid;
+                        // singObject.source = subscription.source;
+                        // singObject.status = subscription.subscription_status === 'expired' ? 'Churned' : 'Retained';
+                        // singObject.acqusition_timestepms = date;
+                        // singObject.callback_sent = subscription.is_affiliation_callback_executed;
                         singObject.expiryDate = expiryHistory.length > 0 ? expiryHistory[0].billing_dtm : '-';
                         // singObject.acqusition_timestepms = subscription.added_dtm;
                         // singObject.acqusition_timestepms = monthNames[date.getMonth()];
