@@ -271,7 +271,8 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'trialActivated', title: 'Trial Activated'},
         {id: 'trialDate', title: 'Trial Activation Date'},
         {id: 'firstChargingDate', title: 'First Charging Date'},
-        {id: 'dormant', title: 'Dormant'}
+        {id: 'dormant', title: 'Dormant'},
+        {id: 'expiryDate', title: 'Expiry Date'}
     ]
 });
 
@@ -2796,6 +2797,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.firstChargingDate = '';
             singObject.dormant = '';
             singObject.error = '';
+            singObject.expiryDate = '';
             // singObject.tid = '';
             
             if(inputData[i] && inputData[i].length === 11){
@@ -2833,6 +2835,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
 
                     let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
                     if(subscription){
+                        let expiryHistory = await billinghistoryRepo.getExpiryHistory(user._id);
                         let date = new Date(subscription.added_dtm).toISOString();
                         singObject.tid = subscription.affiliate_unique_transaction_id;
                         singObject.mid = subscription.affiliate_mid;
@@ -2840,6 +2843,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                         singObject.status = subscription.subscription_status === 'expired' ? 'Churned' : 'Retained';
                         singObject.acqusition_timestepms = date;
                         singObject.callback_sent = subscription.is_affiliation_callback_executed;
+                        singObject.expiryDate = expiryHistory.length > 0 ? expiryHistory[0].billing_dtm : '-';
                         // singObject.acqusition_timestepms = subscription.added_dtm;
                         // singObject.acqusition_timestepms = monthNames[date.getMonth()];
                     }
@@ -2868,7 +2872,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
         console.log("### Sending email", finalResult);
         await acqusitionRevenueReportWriter.writeRecords(finalResult);
         let messageObj = {};
-        messageObj.to = ["taha@dmdmax.com", "usama.shamim@dmdmax.com"];
+        messageObj.to = ["taha@dmdmax.com"];
         messageObj.subject = `MSISDN list data`,
         messageObj.text =  `This report contains the details of msisdns sent us over email from Telenor`
         messageObj.attachments = {
