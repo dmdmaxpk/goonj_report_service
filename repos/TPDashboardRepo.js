@@ -6,7 +6,7 @@ class TPDashboardRepository {
         try{
             let tpDash = new TPDashboard(data);
             let result = await tpDash.save();
-            console.log("saveData", saveData);
+            console.log("saveData", result);
             return result;
         }
         catch(err){
