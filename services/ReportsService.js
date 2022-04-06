@@ -274,7 +274,7 @@ tpDashboardReport = async(startDate, endDate) => {
         console.log("totalSessionsWeb", totalSessionsWeb, "totalSessionsApp", totalSessionsApp);
 
         let data = {
-            interval: 'daily',
+            interval: 'day',
             date: from,
             revenue: totalRevenue,
             newPayingUsersAcquiredDaily: newPayingUsersAcquiredDaily,
