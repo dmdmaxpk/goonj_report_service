@@ -3,10 +3,15 @@ const TPDashboard = mongoose.model('TPDashboard');
 
 class TPDashboardRepository {
     async saveData(data){
-        let tpDash = new TPDashboard(data);
-        let result = await tpDash.save();
-        console.log("saveData", saveData);
-        return result;
+        try{
+            let tpDash = new TPDashboard(data);
+            let result = await tpDash.save();
+            console.log("saveData", saveData);
+            return result;
+        }
+        catch(err){
+            console.log("saving err:", err);
+        }
     }
 
     async getData(body){
