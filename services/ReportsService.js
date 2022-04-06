@@ -353,7 +353,7 @@ tpDashboardReportMonthly = async(startDate, endDate) => {
         let data = {
             interval: 'month',
             monthYear: {month: startMonth, year: startYear},
-            date: from,
+            date: new Date(),
             revenue: totalRevenue,
             newPayingUsersAcquiredDaily: newPayingUsersAcquiredDaily,
             newPayingUsersAcquiredWeekly: newPayingUsersAcquiredWeekly,
