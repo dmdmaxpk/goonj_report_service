@@ -4,7 +4,8 @@ const {Schema} = mongoose;
 
 const tpDashboardSchema = new Schema({
     _id: { type: ShortId, len: 4, retries: 4 },
-
+    interval: String,
+    monthYear: { month: Number, year: Number },
     revenue: Number,
     newPayingUsersAcquiredDaily: Number,
     newPayingUsersAcquiredWeekly: Number,

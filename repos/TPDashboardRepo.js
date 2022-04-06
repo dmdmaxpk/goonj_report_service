@@ -5,6 +5,7 @@ class TPDashboardRepository {
     async saveData(data){
         let tpDash = new TPDashboard(data);
         let result = await tpDash.save();
+        console.log("saveData", saveData);
         return result;
     }
 

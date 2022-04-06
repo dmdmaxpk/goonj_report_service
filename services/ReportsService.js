@@ -274,6 +274,7 @@ tpDashboardReport = async(startDate, endDate) => {
         console.log("totalSessionsWeb", totalSessionsWeb, "totalSessionsApp", totalSessionsApp);
 
         let data = {
+            interval: 'daily',
             date: from,
             revenue: totalRevenue,
             newPayingUsersAcquiredDaily: newPayingUsersAcquiredDaily,
@@ -300,6 +301,85 @@ tpDashboardReport = async(startDate, endDate) => {
     }
 }
 
+tpDashboardReportMonthly = async(startDate, endDate) => {
+    try{
+        let dailyPackage = 'QDfC';
+        let weeklyPackage = 'QDfG'
+        var date = new Date();
+
+        let endMonth = date.getMonth();
+        let endYear = date.getFullYear();
+        endMonth = endMonth + 1;
+        let startMonth = endMonth == 1 ? 12 : endMonth - 1;
+        let startYear = endMonth == 1 ? endYear - 1 : endYear;
+
+        let from = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-01 00:00:00.000Z`;        
+        let to = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-01 00:00:00.000Z`;        
+        console.log("from", from, "to", to);
+
+        let getRevenue = await billingHistoryRepo.getRevenueInDateRange(from, to);
+        let totalRevenue = getRevenue[0].total;
+        console.log("totalRevenue", totalRevenue);
+
+        let newPayingUsersAcquiredDaily = await subscriptionRepo.newPayingUsers(from, to, dailyPackage);
+        let newPayingUsersAcquiredWeekly = await subscriptionRepo.newPayingUsers(from, to, weeklyPackage);
+        console.log("newPayingUsersAcquiredDaily", newPayingUsersAcquiredDaily, "newPayingUsersAcquiredWeekly", newPayingUsersAcquiredWeekly);
+
+        let totalChargedUsersDaily = await billingHistoryRepo.chargedUsersCountPackageWise(from, to, dailyPackage);
+        let totalChargedUsersWeekly = await billingHistoryRepo.chargedUsersCountPackageWise(from, to, weeklyPackage);
+        console.log("totalChargedUsersDaily", totalChargedUsersDaily, "totalChargedUsersWeekly", totalChargedUsersWeekly);
+
+        let renewedPayingUsersDaily = Number(totalChargedUsersDaily) - Number(newPayingUsersAcquiredDaily);
+        let renewedPayingUsersWeekly = Number(totalChargedUsersWeekly) - Number(newPayingUsersAcquiredWeekly);
+
+        console.log("renewedPayingUsersDaily", renewedPayingUsersDaily, "renewedPayingUsersWeekly", renewedPayingUsersWeekly);
+
+        let totalAttemptedUsersDaily = await billingHistoryRepo.totalAttemptedUsersPackageWise(from, to, dailyPackage);
+        let totalAttemptedUsersWeekly = await billingHistoryRepo.totalAttemptedUsersPackageWise(from, to, weeklyPackage);
+        console.log("totalAttemptedUsersDaily", totalAttemptedUsersDaily, "totalAttemptedUsersWeekly", totalAttemptedUsersWeekly);
+
+        let unsubbedUsers = await billingHistoryRepo.unsubbed(from, to);
+        let purgedUsers = await billingHistoryRepo.purged(from, to);
+        console.log("unsubbedUsers", unsubbedUsers, "purgedUsers", purgedUsers);
+
+        let payingUsersAccessedWeb = await billingHistoryRepo.payingUsersAccessedWebApp(from, to, {"$ne": ["$source", "app"]});
+        let payingUsersAccessedApp = await billingHistoryRepo.payingUsersAccessedWebApp(from, to, {"$eq": ["$source", "app"]});
+        console.log("payingUsersAccessedWeb", payingUsersAccessedWeb, "payingUsersAccessedApp", payingUsersAccessedApp);
+
+        let totalSessionsWeb = await billingHistoryRepo.totalSessionsWebApp(from, to, {"$ne": ["$source", "app"]});
+        let totalSessionsApp = await billingHistoryRepo.totalSessionsWebApp(from, to, {"$eq": ["$source", "app"]});
+        console.log("totalSessionsWeb", totalSessionsWeb, "totalSessionsApp", totalSessionsApp);
+
+        let data = {
+            interval: 'month',
+            monthYear: {month: startMonth, year: startYear},
+            date: from,
+            revenue: totalRevenue,
+            newPayingUsersAcquiredDaily: newPayingUsersAcquiredDaily,
+            newPayingUsersAcquiredWeekly: newPayingUsersAcquiredWeekly,
+            renewedPayingUsersDaily: renewedPayingUsersDaily,
+            renewedPayingUsersWeekly: renewedPayingUsersWeekly,
+            totalChargedUsersDaily: totalChargedUsersDaily,
+            totalChargedUsersWeekly: totalChargedUsersWeekly,
+            totalAttemptedUsersDaily: totalAttemptedUsersDaily,
+            totalAttemptedUsersWeekly: totalAttemptedUsersWeekly,
+            unsubbed: unsubbedUsers,
+            purged: purgedUsers,
+            payingUsersAccessedWeb: payingUsersAccessedWeb,
+            payingUsersAccessedApp: payingUsersAccessedApp,
+            totalSessionsWeb: totalSessionsWeb,
+            totalSessionsApp: totalSessionsApp
+        }
+
+        let insertDailyData = await tpDashboardRepo.saveData(data);
+        console.log("insertDailyData", insertDailyData);
+        return insertDailyData;
+    }
+    catch{
+
+    }
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -312,5 +392,6 @@ module.exports = {
     generateRandomReports: generateRandomReports,
     billingInLastHour: billingInLastHour,
     threeMonthsReport: threeMonthsReport,
-    tpDashboardReport: tpDashboardReport
+    tpDashboardReport: tpDashboardReport,
+    tpDashboardReportMonthly: tpDashboardReportMonthly
 }
