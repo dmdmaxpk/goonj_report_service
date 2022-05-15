@@ -193,6 +193,9 @@ exports.automatedReport = async (req, res) => {
         else if(report === 'revReport'){
             result = await generateReportForAcquisitionRevenueAndSessions();
         }
+        else if(report === 'blacklist'){
+            result = await expireBaseAndBlackListOrCreate()
+        }
         res.send({message: result})
     });
 }
