@@ -954,6 +954,26 @@ expireBaseAndBlackListOrCreate = async() => {
     }
 }
 
+blackListOrCreateViaAPI = async() => {
+    console.log("### blackListOrCreateViaAPI");
+    try{
+        var jsonPath = path.join(__dirname, '..', 'msisdns.txt');
+        let inputData = await readFileSync(jsonPath);
+        console.log("### Input Data Length: ", inputData.length);
+        for(let i = 0; i < inputData.length; i++){
+            if(inputData[i] && inputData[i].length === 11){
+                let user = { msisdn: inputData[i] }
+                axios.post('http://10.0.1.76:3007/user/mark-create-blackList', user);
+                console.log('### Blacklist Axios call send for msisdn ', user.msisdn);
+            }else{
+                console.log("### Invalid number or number length");
+            }
+        }
+    }catch(e){
+        console.log("### error - ", e);
+    }
+}
+
 expireList = async() => {
     console.log("### expireList");
     try{
@@ -3329,5 +3349,6 @@ module.exports = {
     generateReportForAcquisitionRevenueAndSessions: generateReportForAcquisitionRevenueAndSessions,
     markExpireAndGetViewLogs: markExpireAndGetViewLogs,
     purgeMarkedUsers: purgeMarkedUsers,
-    expireList: expireList
+    expireList: expireList,
+    blackListOrCreateViaAPI: blackListOrCreateViaAPI
 }

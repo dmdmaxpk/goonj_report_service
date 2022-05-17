@@ -9,7 +9,8 @@ const {
     expireBaseAndBlackListOrCreate,
     markExpireAndGetViewLogs,
     purgeMarkedUsers, 
-    expireList} = require('../repos/ReportsRepo');
+    expireList,
+    blackListOrCreateViaAPI} = require('../repos/ReportsRepo');
 
 const multer = require('multer');
 const path = require('path');
@@ -194,7 +195,7 @@ exports.automatedReport = async (req, res) => {
             result = await generateReportForAcquisitionRevenueAndSessions();
         }
         else if(report === 'blacklist'){
-            result = await expireBaseAndBlackListOrCreate()
+            result = await blackListOrCreateViaAPI()
         }
         res.send({message: result})
     });
