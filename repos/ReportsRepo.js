@@ -3336,11 +3336,11 @@ generateReportForExpiredDueToNonPaymentInLast45Days = async() => {
             
             let dou = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(history.user_id, "2022-07-05T00:00:00.000Z", "2022-08-20T00:00:00.000Z");
             if(dou.length > 0){
-                singObject.dou = dou[0].douTotal;
-                singObject.last_access_date = new Date(dou[0].lastAccess).toISOString();
+                finalObj.dou = dou[0].douTotal;
+                finalObj.last_access_date = new Date(dou[0].lastAccess).toISOString();
             }else{
-                singObject.dou = 0;
-                singObject.last_access_date = '-';
+                finalObj.dou = 0;
+                finalObj.last_access_date = '-';
             }
 
             finalResult.push(finalObj);
