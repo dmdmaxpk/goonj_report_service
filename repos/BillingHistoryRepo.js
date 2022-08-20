@@ -1134,7 +1134,7 @@ class BillingHistoryRepository {
 
     async getExpiredBySystem (from, to) {
         try{
-            return await BillingHistory.aggregate([
+            let data = await BillingHistory.aggregate([
                 {
                     $match:{
                         billing_status: "expired",
@@ -1144,7 +1144,9 @@ class BillingHistoryRepository {
                             {billing_dtm:{$lt: new Date(to)}}
                         ]
                     }
-                }], {allowDiskUse:true})
+                }], {allowDiskUse:true});
+            console.log(data);
+            return data;
         }catch(e){
             console.log(e.message);
         }
