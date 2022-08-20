@@ -93,6 +93,30 @@ getDaysOfUseTotal = async(userId, from, to) => {
     }
 }
 
+getDaysOfUseTotalWithInDateRange = async(userId, from, to) => {
+    try{
+        let result = await ViewLog.aggregate([
+        {
+            $match:{
+                user_id: userId,
+                $and:[
+                    {added_dtm:{$gte: new Date(from)}},
+                    {added_dtm:{$lte: new Date(to)}}
+                ]
+            }
+        },
+        {$group: {
+            _id: "null",
+            douTotal: {$sum: 1},
+            lastAccess: {$last: "$added_dtm"}
+        }},
+        ]);
+        return result;
+    }catch(e){
+        console.log(e);
+    }
+}
+
 getDaysOfUseUnique = async(userId, from, to) => {
     try{
         let result = await ViewLog.aggregate([
@@ -131,5 +155,6 @@ module.exports = {
     getDaysOfUse: getDaysOfUse,
     getDaysOfUseInDateRange: getDaysOfUseInDateRange,
     getDaysOfUseUnique: getDaysOfUseUnique,
-    getDaysOfUseTotal: getDaysOfUseTotal
+    getDaysOfUseTotal: getDaysOfUseTotal,
+    getDaysOfUseTotalWithInDateRange: getDaysOfUseTotalWithInDateRange
 }

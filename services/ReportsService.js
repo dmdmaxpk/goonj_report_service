@@ -163,6 +163,7 @@ generateRandomReports =  async() => {
     //reportsRepo.getReportForHeOrWifi();
     // reportsRepo.expireBaseAndBlackList();
     // reportsRepo.expireBaseAndBlackListOrCreate();
+    reportsRepo.generateReportForExpiredDueToNonPaymentInLast45Days();
     // reportsRepo.getExpiredMsisdn();
     // reportsRepo.getDailyData();
     // reportsRepo.getWeeklyData();

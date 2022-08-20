@@ -1131,6 +1131,46 @@ class BillingHistoryRepository {
             console.log("err", err)
         }
     }
+
+    async getExpiredBySystem (from, to) {
+        try{
+            return await BillingHistory.aggregate([
+                {
+                    $match:{
+                        billing_status: "expired",
+                        source: "system-after-grace-end",
+                        $and:[
+                            {billing_dtm:{$gte: new Date(from)}}, 
+                            {billing_dtm:{$lt: new Date(to)}}
+                        ]
+                    }
+                }], {allowDiskUse:true})
+        }catch(e){
+            console.log(e.message);
+        }
+    }
+
+    async getLastChargeDate(user_id) {
+        let chargedAttempts = await BillingHistory.aggregate([
+        {
+            $match:{
+                user_id: user_id,
+                billing_status: "Success"
+            }
+        }], {allowDiskUse:true});
+
+        if(chargedAttempts.length > 1){
+            chargedAttempts.sort((a, b) => {
+                return new Date(b.billing_dtm) - new Date(a.billing_dtm);
+            })
+            return chargedAttempts[0];
+        }else if(chargedAttempts.length > 0) {
+            return chargedAttempts[0]
+        }else{
+            return undefined;
+        }
+        
+    }
 }
 
 module.exports = BillingHistoryRepository;

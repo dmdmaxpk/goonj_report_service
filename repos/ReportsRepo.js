@@ -249,6 +249,9 @@ const randomReportWriter = createCsvWriter({
         {id: 'number_of_success_charging', title: 'Number of Success Charging'},
         {id: "dou",title: "DOU" },
         {id: "source",title: "Source (Consent model)" },
+        {id: "last_access_date", title: "Last Access Date"},
+        {id: "expire_date", title: "Expire Date"},
+        {id: "last_charge_date", title: "Last Charge Date"},
     ]
 });
 
@@ -3309,6 +3312,74 @@ purgeMarkedUsers = async () => {
     console.log("purged users: ", purgeUsers);
 }
 
+generateReportForExpiredDueToNonPaymentInLast45Days = async() => {
+    console.log("=> generateReportForExpiredDueToNonUsageInLast45Days");
+
+    try{
+        let histories = await billinghistoryRepo.getExpiredBySystem("2022-07-05T00:00:00.000Z", "2022-08-20T00:00:00.000Z");
+        let totalCount = histories.length;
+        console.log('Count: ', totalCount);
+
+        let finalResult = [];
+        let i = 1;
+        for(let history of histories) {
+            
+            let finalObj = {msisdn: history.msisdn};
+
+            let subscriptions = await subscriptionRepo.getAllSubscriptions(history.user_id);
+            if(subscriptions.length > 0){
+                finalObj.acquisition_date = subscriptions[0].added_dm;
+                finalObj.number_of_success_charging = subscriptions[0].total_successive_bill_counts;
+                finalObj.last_charge_date = await usersRepo.getLastChargeDate(subscriptions[0]);
+            }
+            finalObj.expire_date = history.billing_dtm;
+            
+            let dou = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(history.user_id, "2022-07-05T00:00:00.000Z", "2022-08-20T00:00:00.000Z");
+            if(dou.length > 0){
+                singObject.dou = dou[0].douTotal;
+                singObject.last_access_date = new Date(dou[0].lastAccess).toISOString();
+            }else{
+                singObject.dou = 0;
+                singObject.last_access_date = '-';
+            }
+
+            finalResult.push(finalObj);
+
+            console.log(`${i} / ${totalCount}`);
+            i += 1;
+        }
+        
+
+        console.log("### Sending email");
+        await randomReportWriter.writeRecords(finalResult);
+        let messageObj = {}, path = null;
+        messageObj.to = ["farhan.ali@dmdmax.com","usama.shamim@dmdmax.com"];
+        messageObj.subject = `Last 45 Days Expired Due To Non Payment`,
+        messageObj.text =  `This report contains the details of msisdns who expired within last 45 days due to non-payment`
+        messageObj.attachments = {
+            filename: randomReport,
+            path: path
+        };
+
+        let uploadRes = await uploadFileAtS3(randomReport);
+        console.log("uploadRes: ", uploadRes);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
+        }
+
+        console.log("###  [randomReport][emailSent]");
+        // fs.unlink(randomReportFilePath,function(err,data) {
+        //     if (err) {
+        //         console.log("###  File not deleted[randomReport]");
+        //     }
+        //     console.log("###  File deleted [randomReport]");
+        // });
+    }catch(e){
+        console.log("### error - ", e);
+    }
+}
+
 module.exports = {
     dailyReport: dailyReport,
     callBacksReport: callBacksReport,
@@ -3350,5 +3421,6 @@ module.exports = {
     markExpireAndGetViewLogs: markExpireAndGetViewLogs,
     purgeMarkedUsers: purgeMarkedUsers,
     expireList: expireList,
-    blackListOrCreateViaAPI: blackListOrCreateViaAPI
+    blackListOrCreateViaAPI: blackListOrCreateViaAPI,
+    generateReportForExpiredDueToNonPaymentInLast45Days: generateReportForExpiredDueToNonPaymentInLast45Days
 }
