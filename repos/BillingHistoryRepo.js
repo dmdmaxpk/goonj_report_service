@@ -1134,7 +1134,7 @@ class BillingHistoryRepository {
 
     async getExpiredBySystem (from, to) {
         try{
-            let data = await BillingHistory.aggregate([
+            let aggregate = BillingHistory.aggregate([
                 {
                     $match:{
                         billing_status: "expired",
@@ -1144,22 +1144,25 @@ class BillingHistoryRepository {
                             {billing_dtm:{$lt: new Date(to)}}
                         ]
                     }
-                }], {allowDiskUse:true});
-            console.log(data);
-            return data;
+            }]);
+            aggregate.options = { allowDiskUse: true };
+            let result = await aggregate.exec();
+            return result;
         }catch(e){
             console.log(e.message);
         }
     }
 
     async getLastChargeDate(user_id) {
-        let chargedAttempts = await BillingHistory.aggregate([
+        let aggregate = BillingHistory.aggregate([
         {
             $match:{
                 user_id: user_id,
                 billing_status: "Success"
             }
-        }], {allowDiskUse:true});
+        }]);
+        aggregate.options = { allowDiskUse: true };
+        let chargedAttempts = await aggregate.exec();
 
         if(chargedAttempts.length > 1){
             chargedAttempts.sort((a, b) => {
