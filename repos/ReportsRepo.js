@@ -3330,7 +3330,7 @@ generateReportForExpiredDueToNonPaymentInLast45Days = async() => {
             if(subscriptions.length > 0){
                 finalObj.acquisition_date = subscriptions[0].added_dm;
                 finalObj.number_of_success_charging = subscriptions[0].total_successive_bill_counts;
-                finalObj.last_charge_date = await usersRepo.getLastChargeDate(subscriptions[0]);
+                finalObj.last_charge_date = await billinghistoryRepo.getLastChargeDate(subscriptions[0]);
             }
             finalObj.expire_date = history.billing_dtm;
             

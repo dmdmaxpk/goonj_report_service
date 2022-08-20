@@ -1172,7 +1172,7 @@ class BillingHistoryRepository {
         }else if(chargedAttempts.length > 0) {
             return chargedAttempts[0]
         }else{
-            return undefined;
+            return 0;
         }
         
     }
