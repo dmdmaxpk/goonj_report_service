@@ -275,7 +275,9 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'trialDate', title: 'Trial Activation Date'},
         {id: 'firstChargingDate', title: 'First Charging Date'},
         {id: 'dormant', title: 'Dormant'},
-        {id: 'expiryDate', title: 'Expiry Date'}
+        {id: 'expiryDate', title: 'Expiry Date'},
+        {id: 'sessionsInRange', title: 'Sessions In Range'},
+        {id: 'lastSessionSource', title: 'Last Session Source'},
     ]
 });
 
@@ -2821,6 +2823,8 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.dormant = '';
             singObject.error = '';
             singObject.expiryDate = '';
+            singObject.sessionsInRange = 0;
+            singObject.lastSessionSource = '-';
             // singObject.tid = '';
             
             if(inputData[i] && inputData[i].length === 11){
@@ -2828,6 +2832,12 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                 if(user){
                     singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
                     let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
+                    let rangedSession = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-08-01 00:00:00.000Z', '2022-10-01 00:00:00.000Z');
+                    if(rangedSession.length > 0){
+                        singObject.sessionsInRange = rangedSession[0].douTotal;
+                        singObject.lastSessionSource = rangedSession[0].source;
+                    }
+
                     if(dou.length > 0){
                         singObject.dou = dou[0].douTotal;
                         singObject.lastAccess = new Date(dou[0].lastAccess).toISOString();
