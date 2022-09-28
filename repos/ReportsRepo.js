@@ -2832,7 +2832,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                 if(user){
                     singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
                     let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
-                    let rangedSession = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-08-01 00:00:00.000Z', '2022-10-01 00:00:00.000Z');
+                    let rangedSession = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-08-28 00:00:00.000Z', '2022-09-28 00:00:00.000Z');
                     if(rangedSession.length > 0){
                         singObject.sessionsInRange = rangedSession[0].douTotal;
                         singObject.lastSessionSource = rangedSession[0].source;
