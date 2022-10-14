@@ -276,7 +276,9 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'firstChargingDate', title: 'First Charging Date'},
         {id: 'dormant', title: 'Dormant'},
         {id: 'expiryDate', title: 'Expiry Date'},
-        {id: 'sessionsInRange', title: 'Sessions In Range'},
+        {id: 'sessionsInRangeThirty', title: 'Sessions In Range 30'},
+        {id: 'sessionsInRangeThirty', title: 'Sessions In Range 60'},
+        {id: 'sessionsInRangeThirty', title: 'Sessions In Range 90'},
         {id: 'lastSessionSource', title: 'Last Session Source'},
     ]
 });
@@ -2823,7 +2825,9 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.dormant = '';
             singObject.error = '';
             singObject.expiryDate = '';
-            singObject.sessionsInRange = 0;
+            singObject.sessionsInRangeThirty = 0;
+            singObject.sessionsInRangeSixty = 0;
+            singObject.sessionsInRangeNinty = 0;
             singObject.lastSessionSource = '-';
             // singObject.tid = '';
             
@@ -2832,10 +2836,18 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                 if(user){
                     singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
                     let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
-                    let rangedSession = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-08-28 00:00:00.000Z', '2022-09-28 00:00:00.000Z');
-                    if(rangedSession.length > 0){
-                        singObject.sessionsInRange = rangedSession[0].douTotal;
-                        singObject.lastSessionSource = rangedSession[0].source;
+                    let rangedSessionThirty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-09-14 00:00:00.000Z', '2022-10-14 00:00:00.000Z');
+                    if(rangedSessionThirty.length > 0){
+                        singObject.sessionsInRangeThirty = rangedSessionThirty[0].douTotal;
+                        singObject.lastSessionSource = rangedSessionThirty[0].source;
+                    }
+                    let rangedSessionSixty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-08-14 00:00:00.000Z', '2022-10-14 00:00:00.000Z');
+                    if(rangedSessionSixty.length > 0){
+                        singObject.sessionsInRangeSixty = rangedSessionSixty[0].douTotal;
+                    }
+                    let rangedSessionNinty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-07-14 00:00:00.000Z', '2022-10-14 00:00:00.000Z');
+                    if(rangedSessionNinty.length > 0){
+                        singObject.sessionsInRangeNinty = rangedSessionNinty[0].douTotal;
                     }
 
                     if(dou.length > 0){
