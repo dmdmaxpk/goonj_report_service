@@ -277,8 +277,8 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'dormant', title: 'Dormant'},
         {id: 'expiryDate', title: 'Expiry Date'},
         {id: 'sessionsInRangeThirty', title: 'Sessions In Range 30'},
-        {id: 'sessionsInRangeThirty', title: 'Sessions In Range 60'},
-        {id: 'sessionsInRangeThirty', title: 'Sessions In Range 90'},
+        {id: 'sessionsInRangeSixty', title: 'Sessions In Range 60'},
+        {id: 'sessionsInRangeNinty', title: 'Sessions In Range 90'},
         {id: 'lastSessionSource', title: 'Last Session Source'},
     ]
 });
