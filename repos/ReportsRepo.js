@@ -2829,6 +2829,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.sessionsInRangeSixty = 0;
             singObject.sessionsInRangeNinty = 0;
             singObject.lastSessionSource = '-';
+            singObject.smsSent = '-';
             // singObject.tid = '';
             
             if(inputData[i] && inputData[i].length === 11){
@@ -2836,16 +2837,16 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                 if(user){
                     singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
                     let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
-                    let rangedSessionThirty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-09-14 00:00:00.000Z', '2022-10-14 00:00:00.000Z');
+                    let rangedSessionThirty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-08-01 00:00:00.000Z', '2022-09-01 00:00:00.000Z');
                     if(rangedSessionThirty.length > 0){
                         singObject.sessionsInRangeThirty = rangedSessionThirty[0].douTotal;
                         singObject.lastSessionSource = rangedSessionThirty[0].source;
                     }
-                    let rangedSessionSixty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-08-14 00:00:00.000Z', '2022-10-14 00:00:00.000Z');
+                    let rangedSessionSixty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-07-01 00:00:00.000Z', '2022-09-01 00:00:00.000Z');
                     if(rangedSessionSixty.length > 0){
                         singObject.sessionsInRangeSixty = rangedSessionSixty[0].douTotal;
                     }
-                    let rangedSessionNinty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-07-14 00:00:00.000Z', '2022-10-14 00:00:00.000Z');
+                    let rangedSessionNinty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-06-01 00:00:00.000Z', '2022-09-01 00:00:00.000Z');
                     if(rangedSessionNinty.length > 0){
                         singObject.sessionsInRangeNinty = rangedSessionNinty[0].douTotal;
                     }
