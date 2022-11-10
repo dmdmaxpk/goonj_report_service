@@ -280,6 +280,8 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'sessionsInRangeSixty', title: 'Sessions In Range 60'},
         {id: 'sessionsInRangeNinty', title: 'Sessions In Range 90'},
         {id: 'lastSessionSource', title: 'Last Session Source'},
+        {id: 'revenueInRange', title: 'Revenue In Range'},
+        {id: 'successCountInRange', title: 'No. of Times Charged In Range'},
     ]
 });
 
@@ -2830,6 +2832,8 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
             singObject.sessionsInRangeNinty = 0;
             singObject.lastSessionSource = '-';
             singObject.smsSent = '-';
+            singObject.revenueInRange = 0;
+            singObject.successCountInRange = 0;
             // singObject.tid = '';
             
             if(inputData[i] && inputData[i].length === 11){
@@ -2878,6 +2882,13 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                         singObject.revenue = 0;
                         singObject.successCount = 0;
                     }
+
+                    let totalRevenueInRange = await billinghistoryRepo.getRevenueGeneratedByPerUser(user._id, '2022-11-06 00:00:00.000Z', '2022-11-07 00:00:00.000Z');
+                    if(totalRevenueInRange.length > 0){
+                        singObject.revenueInRange = totalRevenueInRange[0].revenue;
+                        singObject.successCountInRange = totalRevenueInRange[0].count;
+                    }
+
 
                     let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
                     if(subscription){

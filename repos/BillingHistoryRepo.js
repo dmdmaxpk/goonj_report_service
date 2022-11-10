@@ -311,16 +311,24 @@ class BillingHistoryRepository {
     }
 
     async getRevenueGeneratedByPerUser(user_id, from, to) {
+        let match = {
+            "user_id": user_id,
+            "billing_status": "Success"
+        };
+
+        if (from && to) {
+            match = {
+                ...match,
+                $and: [
+                    {billing_dtm:{$gte:new Date(from)}}, 
+                    {billing_dtm:{$lte:new Date(to)}}
+                ]
+            }
+        }
+
         let result = await BillingHistory.aggregate([
             {
-                $match:{
-                    "user_id": user_id,
-                    "billing_status": "Success"
-                    // $and: [
-                    //     {billing_dtm:{$gte:new Date(from)}}, 
-                    //     {billing_dtm:{$lte:new Date(to)}}
-                    // ]
-                }
+                $match: match
             },
             {
                 $group:{
