@@ -3331,7 +3331,7 @@ generateDpdpReports = async() => {
             activationDate: subscription.added_dtm,
             status: status,
             chargingPeriod: chargingPeriod,
-            lastSuccessDate: momentdate.subtract(obj.chargingPeriod, "days"),
+            lastSuccessDate: momentdate.subtract(chargingPeriod, "days"),
             renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
         });
 
