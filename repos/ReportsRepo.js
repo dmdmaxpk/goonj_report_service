@@ -118,7 +118,7 @@ const dpdpMigrationWriter = createCsvWriter({
         {id: 'msisdn', title: 'MSISDN'},
         {id: 'serviceName', title: 'Service Name'},
         {id: "varient", title: "Varient" },
-        {id: "channel", title: "Subscription Channel"}
+        {id: "channel", title: "Subscription Channel"},
         {id: "activationDate", title: "Activation date" },
         {id: "renewalReq", title: "Renewal Required" },
         {id: "lastSuccessDate", title: "Last SUCCESSFUL Charging Date"},
