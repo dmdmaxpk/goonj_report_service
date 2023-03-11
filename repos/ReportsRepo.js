@@ -3303,7 +3303,7 @@ purgeMarkedUsers = async () => {
 
 generateDpdpReports = async() => {
     let finalResult = [];
-    let allUsers = await usersRepo.getAllUsers();
+    let allUsers = await usersRepo.getAll();
     /**
      * id: 'msisdn', title: 'MSISDN'},
         {id: 'serviceName', title: 'Service Name'},
