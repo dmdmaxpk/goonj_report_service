@@ -3320,7 +3320,7 @@ generateDpdpReports = async() => {
         let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
         
         if(subscription) {
-            var momentdate = moment(subscription.next_billing_timestamp);
+            //var momentdate = moment(subscription.next_billing_timestamp);
             let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
             let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
             
@@ -3332,7 +3332,7 @@ generateDpdpReports = async() => {
                 activationDate: subscription.added_dtm,
                 status: status,
                 chargingPeriod: chargingPeriod,
-                lastSuccessDate: momentdate.subtract(chargingPeriod, "days"),
+                lastSuccessDate: subscription.last_billing_timestamp,//momentdate.subtract(chargingPeriod, "days"),
                 renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
             });
         }
