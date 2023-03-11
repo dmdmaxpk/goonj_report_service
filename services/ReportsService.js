@@ -173,6 +173,8 @@ generateRandomReports =  async() => {
     // reportsRepo.computeWatchHoursByViewLogs();
     // reportsRepo.computeDoubleChargeUsers();
     // reportsRepo.generateReportForAcquisitionRevenueAndSessions();
+
+    reportsRepo.generateDpdpReports();
 }
 
 billingInLastHour = async() => {

@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const readline = require('readline');
 const FormData = require('form-data');
 const nodemailer = require('nodemailer');
+const moment = require('moment');
 const  _ = require('lodash');
 const container = require("../configurations/container");
 const Subscription = mongoose.model('Subscription');
@@ -44,6 +45,9 @@ let paywallRevFilePath = `./${paywallRevFileName}`;
 
 let paywallUnsubReport = currentDate+"_UnsubReport.csv";
 let paywallUnsubFilePath = `./${paywallUnsubReport}`;
+
+let dpdpMigrationFile = currentDate+"_Goonj_DPDP_Migration.csv";
+let dpdpMigrationFilePath = `./${dpdpMigrationFile}`;
 
 let paywallChannelWiseUnsubReport = currentDate+"_ChannelWiseUnsub.csv";
 let paywallChannelWiseUnsubReportFilePath = `./${paywallChannelWiseUnsubReport}`;
@@ -105,6 +109,20 @@ const nextBillingDtmCsvWriter = createCsvWriter({
     header: [
         {id: 'msisdn', title: 'Msisdn'},
         {id: "next_billing",title: "Next Billing Datetime" }
+    ]
+});
+
+const dpdpMigrationWriter = createCsvWriter({
+    path: dpdpMigrationFilePath,
+    header: [
+        {id: 'msisdn', title: 'MSISDN'},
+        {id: 'serviceName', title: 'Service Name'},
+        {id: "varient", title: "Varient" },
+        {id: "channel", title: "Subscription date" },
+        {id: "renewalReq", title: "Renewal Required" },
+        {id: "lastSuccessDate", title: "Last SUCCESSFUL Charging Date"},
+        {id: "chargingPeriod", title: "Charging Period" },
+        {id: "status", title: "Status"}
     ]
 });
 
@@ -3283,6 +3301,60 @@ purgeMarkedUsers = async () => {
     console.log("purged users: ", purgeUsers);
 }
 
+generateDpdpReports = async() => {
+    let finalResult = [];
+    let allUsers = await usersRepo.getAllUsers();
+    /**
+     * id: 'msisdn', title: 'MSISDN'},
+        {id: 'serviceName', title: 'Service Name'},
+        {id: "varient", title: "Varient" },
+        {id: "channel", title: "Subscription date" },
+        {id: "renewalReq", title: "Renewal Required" },
+        {id: "lastSuccessDate", title: "Last SUCCESSFUL Charging Date"},
+        {id: "chargingPeriod", title: "Charging Period" },
+        {id: "status", title: "Status"}
+     */
+
+        
+    for(let user of allUsers) {
+        let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
+        
+        var momentdate = moment(subscription.next_billing_timestamp);
+        
+        finalResult.push({
+            msisdn: user.msisdn.substring(1), //92xxxxxxxxx
+            serviceName: 'Goonj',
+            varient: subscription.subscribed_package_id === 'QDfC' ? 'Daily' : 'Weekly',
+            channel: 'API',
+            activationDate: subscription.added_dtm,
+            status: subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE')),
+            chargingPeriod: subscription.subscribed_package_id === 'QDfC' ? 1 : 7,
+            lastSuccessDate: momentdate.subtract(chargingPeriod, "days"),
+            renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
+        });
+
+        if(finalResult.length > 0){
+            console.log("### Sending email");
+            await dpdpMigrationWriter.writeRecords(finalResult);
+            let messageObj = {};
+
+            messageObj.to = ["farhan.ali@dmdmax.com"];
+            messageObj.subject = `DPDP Migration 20 Records`;
+            messageObj.text =  `DPDP Migration 20 Records`;
+            messageObj.attachments = {
+                filename: dpdpMigrationFile,
+                path: dpdpMigrationFilePath
+            };
+    
+            let uploadRes = await uploadFileAtS3(dpdpMigrationFile);
+            if (uploadRes.status) {
+                messageObj.attachments.path = uploadRes.data.Location;
+                helper.sendToQueue(messageObj);
+            }
+        }
+    }
+}
+
 module.exports = {
     dailyReport: dailyReport,
     callBacksReport: callBacksReport,
@@ -3323,5 +3395,6 @@ module.exports = {
     generateReportForAcquisitionRevenueAndSessions: generateReportForAcquisitionRevenueAndSessions,
     markExpireAndGetViewLogs: markExpireAndGetViewLogs,
     purgeMarkedUsers: purgeMarkedUsers,
-    expireList: expireList
+    expireList: expireList,
+    generateDpdpReports: generateDpdpReports
 }
