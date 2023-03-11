@@ -3320,8 +3320,7 @@ generateDpdpReports = async() => {
         let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
         
         var momentdate = moment(subscription.next_billing_timestamp);
-        
-        finalResult.push({
+        let obj = {
             msisdn: user.msisdn.substring(1), //92xxxxxxxxx
             serviceName: 'Goonj',
             varient: subscription.subscribed_package_id === 'QDfC' ? 'Daily' : 'Weekly',
@@ -3329,9 +3328,11 @@ generateDpdpReports = async() => {
             activationDate: subscription.added_dtm,
             status: subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE')),
             chargingPeriod: subscription.subscribed_package_id === 'QDfC' ? 1 : 7,
-            lastSuccessDate: momentdate.subtract(chargingPeriod, "days"),
-            renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
-        });
+            lastSuccessDate: momentdate.subtract(obj.chargingPeriod, "days"),
+            renewalReq: obj.status === 'INACTIVE' ? 'NO' : 'YES'
+        };
+
+        finalResult.push();
 
         if(finalResult.length > 0){
             console.log("### Sending email");
