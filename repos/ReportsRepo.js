@@ -3319,40 +3319,42 @@ generateDpdpReports = async() => {
     for(let user of allUsers) {
         let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
         
-        var momentdate = moment(subscription.next_billing_timestamp);
-        let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
-        let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
-        
-        finalResult.push({
-            msisdn: user.msisdn.substring(1), //92xxxxxxxxx
-            serviceName: 'Goonj',
-            varient: subscription.subscribed_package_id === 'QDfC' ? 'Daily' : 'Weekly',
-            channel: 'API',
-            activationDate: subscription.added_dtm,
-            status: status,
-            chargingPeriod: chargingPeriod,
-            lastSuccessDate: momentdate.subtract(chargingPeriod, "days"),
-            renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
-        });
+        if(subscription) {
+            var momentdate = moment(subscription.next_billing_timestamp);
+            let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
+            let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
+            
+            finalResult.push({
+                msisdn: user.msisdn.substring(1), //92xxxxxxxxx
+                serviceName: 'Goonj',
+                varient: subscription.subscribed_package_id === 'QDfC' ? 'Daily' : 'Weekly',
+                channel: 'API',
+                activationDate: subscription.added_dtm,
+                status: status,
+                chargingPeriod: chargingPeriod,
+                lastSuccessDate: momentdate.subtract(chargingPeriod, "days"),
+                renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
+            });
+        }
+    }
 
-        if(finalResult.length > 0){
-            console.log("### Sending email");
-            await dpdpMigrationWriter.writeRecords(finalResult);
-            let messageObj = {};
+    if(finalResult.length > 0){
+        console.log("### Sending email");
+        await dpdpMigrationWriter.writeRecords(finalResult);
+        let messageObj = {};
 
-            messageObj.to = ["farhan.ali@dmdmax.com"];
-            messageObj.subject = `DPDP Migration 20 Records`;
-            messageObj.text =  `DPDP Migration 20 Records`;
-            messageObj.attachments = {
-                filename: dpdpMigrationFile,
-                path: dpdpMigrationFilePath
-            };
-    
-            let uploadRes = await uploadFileAtS3(dpdpMigrationFile);
-            if (uploadRes.status) {
-                messageObj.attachments.path = uploadRes.data.Location;
-                helper.sendToQueue(messageObj);
-            }
+        messageObj.to = ["farhan.ali@dmdmax.com"];
+        messageObj.subject = `DPDP Migration 20 Records`;
+        messageObj.text =  `DPDP Migration 20 Records`;
+        messageObj.attachments = {
+            filename: dpdpMigrationFile,
+            path: dpdpMigrationFilePath
+        };
+
+        let uploadRes = await uploadFileAtS3(dpdpMigrationFile);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
         }
     }
 }
