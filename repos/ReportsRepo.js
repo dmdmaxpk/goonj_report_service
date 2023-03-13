@@ -3315,12 +3315,15 @@ generateDpdpReports = async() => {
         {id: "chargingPeriod", title: "Charging Period" },
         {id: "status", title: "Status"}
      */
-
+    console.log('Total subscriptions to be processed:', allSubs.length);
     if(allSubs.length > 0) {
+        let counter = 0;
         for(let subscription of allSubs) {
             let user = await usersRepo.getUserById(subscription.user_id);
             
             if(user) {
+                console.log('Currently processing index:', counter);
+                
                 //var momentdate = moment(subscription.next_billing_timestamp);
                 let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
                 let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
@@ -3337,6 +3340,8 @@ generateDpdpReports = async() => {
                     renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
                 });
             }
+
+            counter += 1;
         }
     
         if(finalResult.length > 0){
