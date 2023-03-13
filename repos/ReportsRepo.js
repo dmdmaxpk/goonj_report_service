@@ -3304,7 +3304,7 @@ purgeMarkedUsers = async () => {
 
 generateDpdpReports = async() => {
     let finalResult = [];
-    let allUsers = await usersRepo.getAll();
+    let allSubs = await subscriptionRepo.getAllActiveSubscription();
     /**
      * id: 'msisdn', title: 'MSISDN'},
         {id: 'serviceName', title: 'Service Name'},
@@ -3316,46 +3316,47 @@ generateDpdpReports = async() => {
         {id: "status", title: "Status"}
      */
 
-        
-    for(let user of allUsers) {
-        let subscription = await subscriptionRepo.getSubscriptionsByUserId(user._id);
-        
-        if(subscription) {
-            //var momentdate = moment(subscription.next_billing_timestamp);
-            let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
-            let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
+    if(allSubs.length > 0) {
+        for(let subscription of allSubs) {
+            let user = await usersRepo.getUserById(subscription.user_id);
             
-            finalResult.push({
-                msisdn: user.msisdn.substring(1), //92xxxxxxxxx
-                serviceName: 'Goonj',
-                varient: subscription.subscribed_package_id === 'QDfC' ? 'Daily' : 'Weekly',
-                channel: 'API',
-                activationDate: moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
-                status: status,
-                chargingPeriod: chargingPeriod,
-                lastSuccessDate: moment(subscription.last_billing_timestamp).format('YYYY-MM-DD hh:mm:ss'),//momentdate.subtract(chargingPeriod, "days"),
-                renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
-            });
+            if(user) {
+                //var momentdate = moment(subscription.next_billing_timestamp);
+                let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
+                let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
+                
+                finalResult.push({
+                    msisdn: user.msisdn.substring(1),
+                    serviceName: 'Goonj',
+                    varient: subscription.subscribed_package_id === 'QDfC' ? 'Daily' : 'Weekly',
+                    channel: 'API',
+                    activationDate: moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
+                    status: status,
+                    chargingPeriod: chargingPeriod,
+                    lastSuccessDate: subscription.last_billing_timestamp ? moment(subscription.last_billing_timestamp).format('YYYY-MM-DD hh:mm:ss') : moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
+                    renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
+                });
+            }
         }
-    }
-
-    if(finalResult.length > 0){
-        console.log("### Sending email");
-        await dpdpMigrationWriter.writeRecords(finalResult);
-        let messageObj = {};
-
-        messageObj.to = ["farhan.ali@dmdmax.com"];
-        messageObj.subject = `DPDP Migration 20 Records`;
-        messageObj.text =  `DPDP Migration 20 Records`;
-        messageObj.attachments = {
-            filename: dpdpMigrationFile,
-            path: dpdpMigrationFilePath
-        };
-
-        let uploadRes = await uploadFileAtS3(dpdpMigrationFile);
-        if (uploadRes.status) {
-            messageObj.attachments.path = uploadRes.data.Location;
-            helper.sendToQueue(messageObj);
+    
+        if(finalResult.length > 0){
+            console.log("### Sending email");
+            await dpdpMigrationWriter.writeRecords(finalResult);
+            let messageObj = {};
+    
+            messageObj.to = ["farhan.ali@dmdmax.com"];
+            messageObj.subject = `DPDP Migration All Records`;
+            messageObj.text =  `DPDP Migration All Records`;
+            messageObj.attachments = {
+                filename: dpdpMigrationFile,
+                path: dpdpMigrationFilePath
+            };
+    
+            let uploadRes = await uploadFileAtS3(dpdpMigrationFile);
+            if (uploadRes.status) {
+                messageObj.attachments.path = uploadRes.data.Location;
+                helper.sendToQueue(messageObj);
+            }
         }
     }
 }
