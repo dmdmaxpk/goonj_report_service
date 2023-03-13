@@ -3330,10 +3330,10 @@ generateDpdpReports = async() => {
                 serviceName: 'Goonj',
                 varient: subscription.subscribed_package_id === 'QDfC' ? 'Daily' : 'Weekly',
                 channel: 'API',
-                activationDate: subscription.added_dtm,
+                activationDate: moment(subscription.added_dtm).format('yyyy-MM-dd hh:mm:ss'),
                 status: status,
                 chargingPeriod: chargingPeriod,
-                lastSuccessDate: subscription.last_billing_timestamp,//momentdate.subtract(chargingPeriod, "days"),
+                lastSuccessDate: moment(subscription.last_billing_timestamp).format('yyyy-MM-dd hh:mm:ss'),//momentdate.subtract(chargingPeriod, "days"),
                 renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
             });
         }
