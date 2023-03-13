@@ -3336,7 +3336,7 @@ generateDpdpReports = async() => {
                     activationDate: moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
                     status: status,
                     chargingPeriod: chargingPeriod,
-                    lastSuccessDate: subscription.last_billing_timestamp ? moment(subscription.last_billing_timestamp).format('YYYY-MM-DD hh:mm:ss') : moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
+                    lastSuccessDate: subscription.last_billing_timestamp ? moment(subscription.last_billing_timestamp).format('YYYY-MM-DD hh:mm:ss') : moment(subscription.added_dtm).subtract(7, "days").format('YYYY-MM-DD hh:mm:ss'),
                     renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
                 });
             }
