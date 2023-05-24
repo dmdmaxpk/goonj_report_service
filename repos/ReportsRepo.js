@@ -977,8 +977,9 @@ blackListOrCreateViaAPI = async() => {
 
             if(msisdn && msisdn.length === 11){
                 let user = { msisdn }
-                await axios.post('http://10.0.1.76:3007/user/mark-create-blackList', user);
-                console.log(`###  - ${i} - Blacklist call sent for msisdn`, msisdn);
+                let result = await axios.post('http://10.0.1.76:3007/user/mark-create-blackList', user);
+                if(result.code === 0 || result.code === 50) console.log(`###  - ${i} - Blacklisted`, msisdn);
+                else console.log(`###  - ${i} - ${result.data}`, msisdn);
             }else{
                 console.log(`### - ${i} - Invalid number or number length`, msisdn);
             }
