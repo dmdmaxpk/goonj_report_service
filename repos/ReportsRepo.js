@@ -970,12 +970,17 @@ blackListOrCreateViaAPI = async() => {
         let inputData = await readFileSync(jsonPath);
         console.log("### Input Data Length: ", inputData.length);
         for(let i = 0; i < inputData.length; i++){
-            if(inputData[i] && inputData[i].length === 11){
-                let user = { msisdn: inputData[i] }
+            let msisdn = inputData[i];
+            if(msisdn && msisdn.x.substring(0, 1) !== '0') {
+                msisdn = `0${inputData[i]}`
+            }
+
+            if(msisdn && msisdn.length === 11){
+                let user = { msisdn }
                 axios.post('http://10.0.1.76:3007/user/mark-create-blackList', user);
-                console.log('### Blacklist Axios call send for msisdn ', user.msisdn);
+                console.log(`###  - ${i} - Blacklist call sent for msisdn`, user.msisdn);
             }else{
-                console.log("### Invalid number or number length");
+                console.log(`### - ${i} - Invalid number or number length`, user.msisdn);
             }
         }
     }catch(e){
