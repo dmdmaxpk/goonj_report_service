@@ -2935,7 +2935,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
         console.log("### Sending email", finalResult);
         await acqusitionRevenueReportWriter.writeRecords(finalResult);
         let messageObj = {};
-        messageObj.to = ["taha@dmdmax.com", "usama.shamim@dmdmax.com"];
+        messageObj.to = ["farhan.ali@dmdmax.com"];
         messageObj.subject = `MSISDN list data`,
         messageObj.text =  `This report contains the details of msisdns sent us over email from Telenor`
         messageObj.attachments = {
