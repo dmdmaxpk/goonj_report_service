@@ -260,7 +260,6 @@ const acqusitionRevenueReportWriter = createCsvWriter({
     path: randomReportFilePath,
     header: [
         {id: 'msisdn', title: 'Msisdn'},
-        {id: 'error', title: 'Pre-charging Operator Response'},
         {id: 'acqusition_timestepms', title: 'Acqusition Timestepms'},
         {id: 'revenue', title: 'Revenue'},
         {id: 'successCount', title: 'No. of times charged'},
@@ -271,17 +270,11 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'source', title: 'Source'},
         {id: 'tid', title: 'Transaction Id'},
         {id: 'callback_sent', title: 'Affiliate Callback sent'},
-        {id: 'trialActivated', title: 'Trial Activated'},
-        {id: 'trialDate', title: 'Trial Activation Date'},
         {id: 'firstChargingDate', title: 'First Charging Date'},
-        {id: 'dormant', title: 'Dormant'},
         {id: 'expiryDate', title: 'Expiry Date'},
-        {id: 'sessionsInRangeThirty', title: 'Sessions In Range 30'},
+        /*{id: 'sessionsInRangeThirty', title: 'Sessions In Range 30'},
         {id: 'sessionsInRangeSixty', title: 'Sessions In Range 60'},
-        {id: 'sessionsInRangeNinty', title: 'Sessions In Range 90'},
-        {id: 'lastSessionSource', title: 'Last Session Source'},
-        {id: 'revenueInRange', title: 'Revenue In Range'},
-        {id: 'successCountInRange', title: 'No. of Times Charged In Range'},
+        {id: 'sessionsInRangeNinty', title: 'Sessions In Range 90'},*/
     ]
 });
 
