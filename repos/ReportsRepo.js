@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const readline = require('readline');
 const FormData = require('form-data');
 const nodemailer = require('nodemailer');
+const moment = require('moment');
 const  _ = require('lodash');
 const container = require("../configurations/container");
 const Subscription = mongoose.model('Subscription');
@@ -44,6 +45,9 @@ let paywallRevFilePath = `./${paywallRevFileName}`;
 
 let paywallUnsubReport = currentDate+"_UnsubReport.csv";
 let paywallUnsubFilePath = `./${paywallUnsubReport}`;
+
+let dpdpMigrationFile = currentDate+"_Goonj_DPDP_Migration.csv";
+let dpdpMigrationFilePath = `./${dpdpMigrationFile}`;
 
 let paywallChannelWiseUnsubReport = currentDate+"_ChannelWiseUnsub.csv";
 let paywallChannelWiseUnsubReportFilePath = `./${paywallChannelWiseUnsubReport}`;
@@ -105,6 +109,21 @@ const nextBillingDtmCsvWriter = createCsvWriter({
     header: [
         {id: 'msisdn', title: 'Msisdn'},
         {id: "next_billing",title: "Next Billing Datetime" }
+    ]
+});
+
+const dpdpMigrationWriter = createCsvWriter({
+    path: dpdpMigrationFilePath,
+    header: [
+        {id: 'msisdn', title: 'MSISDN'},
+        {id: 'serviceName', title: 'Service Name'},
+        {id: "varient", title: "Varient" },
+        {id: "channel", title: "Subscription Channel"},
+        {id: "activationDate", title: "Activation date" },
+        {id: "renewalReq", title: "Renewal Required" },
+        {id: "lastSuccessDate", title: "Last SUCCESSFUL Charging Date"},
+        {id: "chargingPeriod", title: "Charging Period" },
+        {id: "status", title: "Status"}
     ]
 });
 
@@ -998,7 +1017,7 @@ expireList = async() => {
                         unSubObject.msisdn = user.msisdn;
                         unSubObject.source = 'tp-on-demand-via-email';
                         
-                        axios.post('http://10.0.1.76:3004/subscription/unsubscribe', unSubObject)
+                        axios.post('http://10.0.1.76:3004/subscription/unsubscribe', unSubObject);
                         count++;
                         console.log('### Axios call sent for msisdn ', user.msisdn, count);
                 }else{
@@ -2840,20 +2859,6 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
                 if(user){
                     singObject.dormant = user.is_dormant ? user.is_dormant : user.should_purge;
                     let dou = await viewLogsRepo.getDaysOfUseTotal(user._id);
-                    let rangedSessionThirty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-08-01 00:00:00.000Z', '2022-09-01 00:00:00.000Z');
-                    if(rangedSessionThirty.length > 0){
-                        singObject.sessionsInRangeThirty = rangedSessionThirty[0].douTotal;
-                        singObject.lastSessionSource = rangedSessionThirty[0].source;
-                    }
-                    let rangedSessionSixty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-07-01 00:00:00.000Z', '2022-09-01 00:00:00.000Z');
-                    if(rangedSessionSixty.length > 0){
-                        singObject.sessionsInRangeSixty = rangedSessionSixty[0].douTotal;
-                    }
-                    let rangedSessionNinty = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(user._id, '2022-06-01 00:00:00.000Z', '2022-09-01 00:00:00.000Z');
-                    if(rangedSessionNinty.length > 0){
-                        singObject.sessionsInRangeNinty = rangedSessionNinty[0].douTotal;
-                    }
-
                     if(dou.length > 0){
                         singObject.dou = dou[0].douTotal;
                         singObject.lastAccess = new Date(dou[0].lastAccess).toISOString();
@@ -3345,6 +3350,70 @@ purgeMarkedUsers = async () => {
     console.log("purged users: ", purgeUsers);
 }
 
+generateDpdpReports = async() => {
+    let finalResult = [];
+    let allSubs = await subscriptionRepo.getAllActiveSubscription();
+    /**
+     * id: 'msisdn', title: 'MSISDN'},
+        {id: 'serviceName', title: 'Service Name'},
+        {id: "varient", title: "Varient" },
+        {id: "channel", title: "Subscription date" },
+        {id: "renewalReq", title: "Renewal Required" },
+        {id: "lastSuccessDate", title: "Last SUCCESSFUL Charging Date"},
+        {id: "chargingPeriod", title: "Charging Period" },
+        {id: "status", title: "Status"}
+     */
+    console.log('Total subscriptions to be processed:', allSubs.length);
+    if(allSubs.length > 0) {
+        let counter = 0;
+        for(let subscription of allSubs) {
+            let user = await usersRepo.getUserById(subscription.user_id);
+            
+            if(user) {
+                console.log('Currently processing index:', counter);
+                
+                //var momentdate = moment(subscription.next_billing_timestamp);
+                let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
+                let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
+                
+                finalResult.push({
+                    msisdn: user.msisdn.substring(1),
+                    serviceName: 'Goonj',
+                    varient: subscription.subscribed_package_id === 'QDfC' ? 'Daily' : 'Weekly',
+                    channel: 'API',
+                    activationDate: moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
+                    status: status,
+                    chargingPeriod: chargingPeriod,
+                    lastSuccessDate: subscription.last_billing_timestamp ? moment(subscription.last_billing_timestamp).format('YYYY-MM-DD hh:mm:ss') : moment(subscription.added_dtm).subtract(7, "days").format('YYYY-MM-DD hh:mm:ss'),
+                    renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
+                });
+            }
+
+            counter += 1;
+        }
+    
+        if(finalResult.length > 0){
+            console.log("### Sending email");
+            await dpdpMigrationWriter.writeRecords(finalResult);
+            let messageObj = {};
+    
+            messageObj.to = ["farhan.ali@dmdmax.com"];
+            messageObj.subject = `DPDP Migration All Records`;
+            messageObj.text =  `DPDP Migration All Records`;
+            messageObj.attachments = {
+                filename: dpdpMigrationFile,
+                path: dpdpMigrationFilePath
+            };
+    
+            let uploadRes = await uploadFileAtS3(dpdpMigrationFile);
+            if (uploadRes.status) {
+                messageObj.attachments.path = uploadRes.data.Location;
+                helper.sendToQueue(messageObj);
+            }
+        }
+    }
+}
+
 generateReportForExpiredDueToNonPaymentInLast45Days = async() => {
     console.log("=> generateReportForExpiredDueToNonUsageInLast45Days");
 
@@ -3454,6 +3523,7 @@ module.exports = {
     markExpireAndGetViewLogs: markExpireAndGetViewLogs,
     purgeMarkedUsers: purgeMarkedUsers,
     expireList: expireList,
+    generateDpdpReports: generateDpdpReports,
     blackListOrCreateViaAPI: blackListOrCreateViaAPI,
     generateReportForExpiredDueToNonPaymentInLast45Days: generateReportForExpiredDueToNonPaymentInLast45Days
 }

@@ -12,6 +12,10 @@ class UserRepository {
         return result;
     }
 
+    async getAll () {
+        return await User.find({}).limit(20);
+    }
+
     async getUserByMsisdn (msisdn) {
         let result = await User.findOne({msisdn: msisdn});
         return result;

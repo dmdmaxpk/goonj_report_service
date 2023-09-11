@@ -7,6 +7,28 @@ class SubscriptionRepository {
         return result;
     }
 
+    async getAllActiveSubscription () {
+        return await Subscription.aggregate([
+        {
+            $match:{
+                $or:[
+                    {subscription_status: {$eq: "trial"}},
+                    {subscription_status: {$eq: "billed"}},
+                    {subscription_status: {$eq: "graced"}}	
+                ]
+            }
+        },{
+            $project:{
+                _id: 1,
+                user_id: 1,
+                last_billing_timestamp: 1,
+                subscription_status: 1,
+                added_dtm: 1,
+                subscribed_package_id: 1
+            }
+        }]);
+    }
+
     async getAllSubscriptions(user_id)  {
         let result = await Subscription.find({user_id: user_id});
         return result;
