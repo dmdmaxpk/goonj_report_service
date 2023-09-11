@@ -271,8 +271,8 @@ const acqusitionRevenueReportWriter = createCsvWriter({
         {id: 'tid', title: 'Transaction Id'},
         {id: 'callback_sent', title: 'Affiliate Callback sent'},
         {id: 'firstChargingDate', title: 'First Charging Date'},
-        {id: 'expiryDate', title: 'Expiry Date'},
-        /*{id: 'sessionsInRangeThirty', title: 'Sessions In Range 30'},
+        /*{id: 'expiryDate', title: 'Expiry Date'},
+        {id: 'sessionsInRangeThirty', title: 'Sessions In Range 30'},
         {id: 'sessionsInRangeSixty', title: 'Sessions In Range 60'},
         {id: 'sessionsInRangeNinty', title: 'Sessions In Range 90'},*/
     ]
@@ -2928,7 +2928,7 @@ generateReportForAcquisitionRevenueAndSessions = async() => {
         console.log("### Sending email", finalResult);
         await acqusitionRevenueReportWriter.writeRecords(finalResult);
         let messageObj = {};
-        messageObj.to = ["farhan.ali@dmdmax.com"];
+        messageObj.to = ["farhan.ali@dmdmax.com", "usama.shamim@dmdmax.com"];
         messageObj.subject = `MSISDN list data`,
         messageObj.text =  `This report contains the details of msisdns sent us over email from Telenor`
         messageObj.attachments = {
