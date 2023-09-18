@@ -3346,9 +3346,17 @@ purgeMarkedUsers = async () => {
     console.log("purged users: ", purgeUsers);
 }
 
-generateDpdpReports = async() => {
+generateDpdpReports = async(req, res) => {
+
+    let limit = req.query.limit;
+    let skip = req.query.skip;
+
     let finalResult = [];
     let allSubs = await subscriptionRepo.getAllActiveSubscription();
+    if(allSubs.length > limit) {
+        allSubs = allSubs.slice(skip, limit);
+    }
+
     console.log('Total subscriptions to be processed:', allSubs.length);
     if(allSubs.length > 0) {
         let counter = 0;
@@ -3386,8 +3394,8 @@ generateDpdpReports = async() => {
             let messageObj = {};
     
             messageObj.to = ["farhan.ali@dmdmax.com"];
-            messageObj.subject = `Latest Platform Base`;
-            messageObj.text =  `Latest Platform Base`;
+            messageObj.subject = `Latest Platform Base(${skip} - ${limit})`;
+            messageObj.text =  `Latest Platform Base(${skip} - ${limit})`;
             messageObj.attachments = {
                 filename: dpdpMigrationFile,
                 path: dpdpMigrationFilePath
