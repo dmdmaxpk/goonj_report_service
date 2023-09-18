@@ -3377,11 +3377,11 @@ generateDpdpReports = async(req, res) => {
                 }
 
                 if(firstCharging) {
-                    obj.fcd = firstCharging && firstCharging !== null ? moment(firstCharging.billing_dm).format('YYYY-MM-DD hh:mm:ss') : "";
+                    obj.fcd = firstCharging && firstCharging !== null ? moment(firstCharging.billing_dtm).format('YYYY-MM-DD hh:mm:ss') : "";
                 }
 
                 if(lastCharging) {
-                    obj.lcd = lastCharging && lastCharging !== null ? moment(lastCharging.billing_dm).format('YYYY-MM-DD hh:mm:ss') : ""
+                    obj.lcd = lastCharging && lastCharging !== null ? moment(lastCharging.billing_dtm).format('YYYY-MM-DD hh:mm:ss') : ""
                 }
 
                 finalResult.push(obj)
