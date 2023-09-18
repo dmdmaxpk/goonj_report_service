@@ -1003,6 +1003,16 @@ class BillingHistoryRepository {
 
     async getFirstSuccessCharge(user_id){
         try{
+            let result = await BillingHistory.findOne({user_id, billing_status: "Success"}).sort({billing_dtm: 1});
+            return result;
+        }
+        catch{
+            console.log("error finding trial data")
+        }
+    }
+
+    async getLastSuccessCharge(user_id){
+        try{
             let result = await BillingHistory.findOne({user_id, billing_status: "Success"}).sort({billing_dtm: -1});
             return result;
         }

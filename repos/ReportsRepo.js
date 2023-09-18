@@ -3370,6 +3370,7 @@ generateDpdpReports = async(req, res) => {
                 let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
                 let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
                 let firstCharging = await billinghistoryRepo.getFirstSuccessCharge(user._id);
+                let lastCharging = await billinghistoryRepo.getLastSuccessCharge(user._id);
 
                 finalResult.push({
                     msisdn: user.msisdn.substring(1),
@@ -3380,7 +3381,7 @@ generateDpdpReports = async(req, res) => {
                     status: status,
                     chargingPeriod: chargingPeriod,
                     firstChargingDate: firstCharging && firstCharging !== null ? moment(firstCharging.billing_dm).format('YYYY-MM-DD hh:mm:ss') : "",
-                    lastChargingDate: subscription.last_billing_timestamp ? moment(subscription.last_billing_timestamp).format('YYYY-MM-DD hh:mm:ss') : moment(subscription.added_dtm).subtract(7, "days").format('YYYY-MM-DD hh:mm:ss'),
+                    lastChargingDate: lastCharging && lastCharging !== null ? moment(lastCharging.billing_dm).format('YYYY-MM-DD hh:mm:ss') : "",
                     renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
                 });
             }
