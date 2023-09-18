@@ -3348,64 +3348,63 @@ purgeMarkedUsers = async () => {
 
 generateDpdpReports = async(req, res) => {
 
-    let chunkSize = req.query.chunkSize;
+    let limit = req.query.limit;
+    let skip = req.query.skip;
+
+    let allSubs = await subscriptionRepo.getAllActiveSubscription();
+    console.log('Total length: ' + allSubs.length);
+    console.log('Limit: ' + limit)
+    console.log('Skip: ' + skip)
 
     let finalResult = [];
-    let allSubs = await subscriptionRepo.getAllActiveSubscription();
-    let totalChunks = allSubs.length / chunkSize;
-    let remainders = allSubs.length % chunkSize;
-    console.log('Total length: ' + allSubs.length)
-    console.log('Total chunks: ' + totalChunks)
-    console.log('Total remainders: ' + remainders)
+    allSubs = allSubs.slice(skip, limit);
+    console.log('Processing ', skip, 'to', limit);
 
-    for(let i = 0; i <= totalChunks; i++) {
-        let until = i === totalChunks ? allSubs.length : ((i+1)*chunkSize);
-        let chunk = allSubs.slice((i*chunkSize), until);
-        console.log('Processing ', (i*chunkSize), 'to', until);
+    let count = 0;
+    for(let subscription of allSubs) {
+        let user = await usersRepo.getUserById(subscription.user_id);
+        if(user) {
+            let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
+            let firstCharging = await billinghistoryRepo.getFirstSuccessCharge(user._id);
+            let lastCharging = await billinghistoryRepo.getLastSuccessCharge(user._id);
 
-        for(let subscription of chunk) {
-            let user = await usersRepo.getUserById(subscription.user_id);
-            if(user) {
-                let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
-                let firstCharging = await billinghistoryRepo.getFirstSuccessCharge(user._id);
-                let lastCharging = await billinghistoryRepo.getLastSuccessCharge(user._id);
-
-                let obj = {
-                    msisdn: user.msisdn.substring(1),
-                    activationDate: moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
-                    status: status
-                }
-
-                if(firstCharging) {
-                    obj.fcd = firstCharging && firstCharging !== null ? moment(firstCharging.billing_dtm).format('YYYY-MM-DD hh:mm:ss') : "";
-                }
-
-                if(lastCharging) {
-                    obj.lcd = lastCharging && lastCharging !== null ? moment(lastCharging.billing_dtm).format('YYYY-MM-DD hh:mm:ss') : ""
-                }
-
-                finalResult.push(obj)
+            let obj = {
+                msisdn: user.msisdn.substring(1),
+                activationDate: moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
+                status: status
             }
-        }
 
-        if(finalResult.length > 0){
-            console.log("### Sending email");
-            await dpdpMigrationWriter.writeRecords(finalResult);
-            let messageObj = {};
-    
-            messageObj.to = ["farhan.ali@dmdmax.com"];
-            messageObj.subject = `Latest Platform Base(${(i*chunkSize)} - ${until})`;
-            messageObj.text =  `Latest Platform Base(${(i*chunkSize)} - ${until})`;
-            messageObj.attachments = {
-                filename: dpdpMigrationFile,
-                path: dpdpMigrationFilePath
-            };
-    
-            let uploadRes = await uploadFileAtS3(dpdpMigrationFile);
-            if (uploadRes.status) {
-                messageObj.attachments.path = uploadRes.data.Location;
-                helper.sendToQueue(messageObj);
+            if(firstCharging) {
+                obj.fcd = firstCharging && firstCharging !== null ? moment(firstCharging.billing_dtm).format('YYYY-MM-DD hh:mm:ss') : "";
             }
+
+            if(lastCharging) {
+                obj.lcd = lastCharging && lastCharging !== null ? moment(lastCharging.billing_dtm).format('YYYY-MM-DD hh:mm:ss') : ""
+            }
+
+            finalResult.push(obj)
+        }  
+        count += 1;          
+        console.log('Current count: ' + count)
+    }
+
+    if(finalResult.length > 0){
+        console.log("### Sending email");
+        await dpdpMigrationWriter.writeRecords(finalResult);
+        let messageObj = {};
+
+        messageObj.to = ["farhan.ali@dmdmax.com", "usama.shamim@dmdmax.com", "nauman@dmdmax.com"];
+        messageObj.subject = `Latest Platform Base(${skip} - ${limit})`;
+        messageObj.text =  `Latest Platform Base(${skip} - ${limit})`;
+        messageObj.attachments = {
+            filename: dpdpMigrationFile,
+            path: dpdpMigrationFilePath
+        };
+
+        let uploadRes = await uploadFileAtS3(dpdpMigrationFile);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
         }
     }
 }
