@@ -22,7 +22,7 @@ exports.generateMonthlyReports = async (req,res) =>  {
 }
 
 exports.generateRandomReports = async (req,res) =>  {
-    reportsService.generateRandomReports();
+    reportsService.generateRandomReports(req, res);
     res.send("GenerateRandomReports - Executed\n");
 }
 
