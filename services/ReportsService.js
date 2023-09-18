@@ -156,7 +156,7 @@ generateMonthlyReports =  async() => {
     reportsRepo.weeklyTransactingCustomers(weekFromArray, weekToArray, ['farhan.ali@dmdmax.com']);*/
 }
 
-generateRandomReports =  async() => {
+generateRandomReports =  async(req, res) => {
     //reportsRepo.getOnlySubscriberIds("app", "2020-08-01T00:00:00.000Z", "2020-09-01T00:00:00.000Z");
     // reportsRepo.generateReportForAcquisitionSourceAndNoOfTimeUserBilled();
     //reportsRepo.getNextBillingDtm();
@@ -175,7 +175,7 @@ generateRandomReports =  async() => {
     // reportsRepo.computeDoubleChargeUsers();
     // reportsRepo.generateReportForAcquisitionRevenueAndSessions();
 
-    reportsRepo.generateDpdpReports();
+    reportsRepo.generateDpdpReports(req, res);
 }
 
 billingInLastHour = async() => {
