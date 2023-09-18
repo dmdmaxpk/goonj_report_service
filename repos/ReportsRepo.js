@@ -3348,27 +3348,27 @@ purgeMarkedUsers = async () => {
 
 generateDpdpReports = async(req, res) => {
 
-    let limit = req.query.limit;
-    let skip = req.query.skip;
+    let chunkSize = req.query.chunkSize;
 
     let finalResult = [];
     let allSubs = await subscriptionRepo.getAllActiveSubscription();
-    if(allSubs.length > limit) {
-        allSubs = allSubs.slice(skip, limit);
-    }
+    let totalChunks = allSubs.length / chunkSize;
+    let remainders = allSubs.length % chunkSize;
+    console.log('Total length: ' + allSubs.length)
+    console.log('Total chunks: ' + totalChunks)
+    console.log('Total remainders: ' + remainders)
 
-    console.log('Total subscriptions to be processed:', allSubs.length);
-    if(allSubs.length > 0) {
-        let counter = 0;
-        for(let subscription of allSubs) {
+    for(let i = 0; i <= totalChunks; i++) {
+        let until = i === totalChunks ? allSubs.length : ((i+1)*chunkSize);
+        let chunk = allSubs.slice((i*chunkSize), until);
+        console.log('Processing ', (i*chunkSize), 'to', until);
+
+        for(let subscription of chunk) {
             let user = await usersRepo.getUserById(subscription.user_id);
             if(user) {
-                console.log('Currently processing index:', counter);
-                
                 let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
                 let firstCharging = await billinghistoryRepo.getFirstSuccessCharge(user._id);
                 let lastCharging = await billinghistoryRepo.getLastSuccessCharge(user._id);
-                console.log(firstCharging, lastCharging);
 
                 let obj = {
                     msisdn: user.msisdn.substring(1),
@@ -3386,18 +3386,16 @@ generateDpdpReports = async(req, res) => {
 
                 finalResult.push(obj)
             }
-
-            counter += 1;
         }
-    
+
         if(finalResult.length > 0){
             console.log("### Sending email");
             await dpdpMigrationWriter.writeRecords(finalResult);
             let messageObj = {};
     
             messageObj.to = ["farhan.ali@dmdmax.com"];
-            messageObj.subject = `Latest Platform Base(${skip} - ${limit})`;
-            messageObj.text =  `Latest Platform Base(${skip} - ${limit})`;
+            messageObj.subject = `Latest Platform Base(${(i*chunkSize)} - ${until})`;
+            messageObj.text =  `Latest Platform Base(${(i*chunkSize)} - ${until})`;
             messageObj.attachments = {
                 filename: dpdpMigrationFile,
                 path: dpdpMigrationFilePath
