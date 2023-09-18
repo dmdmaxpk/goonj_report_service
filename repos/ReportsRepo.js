@@ -3362,7 +3362,6 @@ generateDpdpReports = async(req, res) => {
         let counter = 0;
         for(let subscription of allSubs) {
             let user = await usersRepo.getUserById(subscription.user_id);
-            
             if(user) {
                 console.log('Currently processing index:', counter);
                 
@@ -3371,6 +3370,8 @@ generateDpdpReports = async(req, res) => {
                 let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
                 let firstCharging = await billinghistoryRepo.getFirstSuccessCharge(user._id);
                 let lastCharging = await billinghistoryRepo.getLastSuccessCharge(user._id);
+
+                console.log(firstCharging, lastCharging);
 
                 finalResult.push({
                     msisdn: user.msisdn.substring(1),
