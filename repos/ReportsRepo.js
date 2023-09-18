@@ -46,7 +46,7 @@ let paywallRevFilePath = `./${paywallRevFileName}`;
 let paywallUnsubReport = currentDate+"_UnsubReport.csv";
 let paywallUnsubFilePath = `./${paywallUnsubReport}`;
 
-let dpdpMigrationFile = currentDate+"_Goonj_DPDP_Migration.csv";
+let dpdpMigrationFile = currentDate+"_Goonj_Platform_Base.csv";
 let dpdpMigrationFilePath = `./${dpdpMigrationFile}`;
 
 let paywallChannelWiseUnsubReport = currentDate+"_ChannelWiseUnsub.csv";
@@ -116,14 +116,9 @@ const dpdpMigrationWriter = createCsvWriter({
     path: dpdpMigrationFilePath,
     header: [
         {id: 'msisdn', title: 'MSISDN'},
-        {id: 'serviceName', title: 'Service Name'},
-        {id: "varient", title: "Varient" },
-        {id: "channel", title: "Subscription Channel"},
-        {id: "activationDate", title: "Activation date" },
-        {id: "renewalReq", title: "Renewal Required" },
-        {id: "lastSuccessDate", title: "Last SUCCESSFUL Charging Date"},
-        {id: "chargingPeriod", title: "Charging Period" },
-        {id: "status", title: "Status"}
+        {id: "activationDate", title: "First Subscription Date" },
+        {id: "status", title: "Status"},
+        {id: "lastChargeDate", title: "Last Charge Date"}
     ]
 });
 
@@ -3353,16 +3348,6 @@ purgeMarkedUsers = async () => {
 generateDpdpReports = async() => {
     let finalResult = [];
     let allSubs = await subscriptionRepo.getAllActiveSubscription();
-    /**
-     * id: 'msisdn', title: 'MSISDN'},
-        {id: 'serviceName', title: 'Service Name'},
-        {id: "varient", title: "Varient" },
-        {id: "channel", title: "Subscription date" },
-        {id: "renewalReq", title: "Renewal Required" },
-        {id: "lastSuccessDate", title: "Last SUCCESSFUL Charging Date"},
-        {id: "chargingPeriod", title: "Charging Period" },
-        {id: "status", title: "Status"}
-     */
     console.log('Total subscriptions to be processed:', allSubs.length);
     if(allSubs.length > 0) {
         let counter = 0;
@@ -3375,7 +3360,8 @@ generateDpdpReports = async() => {
                 //var momentdate = moment(subscription.next_billing_timestamp);
                 let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
                 let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
-                
+                // let firstCharging = await billinghistoryRepo.getFirstSuccessCharge(user._id);
+
                 finalResult.push({
                     msisdn: user.msisdn.substring(1),
                     serviceName: 'Goonj',
@@ -3384,7 +3370,8 @@ generateDpdpReports = async() => {
                     activationDate: moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
                     status: status,
                     chargingPeriod: chargingPeriod,
-                    lastSuccessDate: subscription.last_billing_timestamp ? moment(subscription.last_billing_timestamp).format('YYYY-MM-DD hh:mm:ss') : moment(subscription.added_dtm).subtract(7, "days").format('YYYY-MM-DD hh:mm:ss'),
+                    // firstChargingDate: moment(firstCharging.billing_dm).format('YYYY-MM-DD hh:mm:ss'),
+                    lastChargingDate: subscription.last_billing_timestamp ? moment(subscription.last_billing_timestamp).format('YYYY-MM-DD hh:mm:ss') : moment(subscription.added_dtm).subtract(7, "days").format('YYYY-MM-DD hh:mm:ss'),
                     renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
                 });
             }
@@ -3398,8 +3385,8 @@ generateDpdpReports = async() => {
             let messageObj = {};
     
             messageObj.to = ["farhan.ali@dmdmax.com"];
-            messageObj.subject = `DPDP Migration All Records`;
-            messageObj.text =  `DPDP Migration All Records`;
+            messageObj.subject = `Platform Base`;
+            messageObj.text =  `Platform Base`;
             messageObj.attachments = {
                 filename: dpdpMigrationFile,
                 path: dpdpMigrationFilePath
