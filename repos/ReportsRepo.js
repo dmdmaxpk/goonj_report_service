@@ -118,8 +118,8 @@ const dpdpMigrationWriter = createCsvWriter({
         {id: 'msisdn', title: 'Msisdn'},
         {id: "activationDate", title: "Acquisition Date" },
         {id: "status", title: "Status"},
-        {id: "firstChargingDate", title: "First Charging Date"},
-        {id: "lastChargeDate", title: "Last Charge Date"}
+        {id: "fcd", title: "First Charge Date"},
+        {id: "lcd", title: "Last Charge Date"}
     ]
 });
 
@@ -3365,26 +3365,26 @@ generateDpdpReports = async(req, res) => {
             if(user) {
                 console.log('Currently processing index:', counter);
                 
-                //var momentdate = moment(subscription.next_billing_timestamp);
-                let chargingPeriod = subscription.subscribed_package_id === 'QDfC' ? 1 : 7;
                 let status = subscription.subscription_status === 'billed' ? 'ACTIVE' : (subscription.subscription_status === 'graced' ? 'GRACE' : (subscription.subscription_status === 'trial' ? 'PRE_ACTIVE' : 'INACTIVE'));
                 let firstCharging = await billinghistoryRepo.getFirstSuccessCharge(user._id);
                 let lastCharging = await billinghistoryRepo.getLastSuccessCharge(user._id);
-
                 console.log(firstCharging, lastCharging);
 
-                finalResult.push({
+                let obj = {
                     msisdn: user.msisdn.substring(1),
-                    serviceName: 'Goonj',
-                    varient: subscription.subscribed_package_id === 'QDfC' ? 'Daily' : 'Weekly',
-                    channel: 'API',
                     activationDate: moment(subscription.added_dtm).format('YYYY-MM-DD hh:mm:ss'),
-                    status: status,
-                    chargingPeriod: chargingPeriod,
-                    firstChargingDate: firstCharging && firstCharging !== null ? moment(firstCharging.billing_dm).format('YYYY-MM-DD hh:mm:ss') : "",
-                    lastChargingDate: lastCharging && lastCharging !== null ? moment(lastCharging.billing_dm).format('YYYY-MM-DD hh:mm:ss') : "",
-                    renewalReq: status === 'INACTIVE' ? 'NO' : 'YES'
-                });
+                    status: status
+                }
+
+                if(firstCharging) {
+                    obj.fcd = firstCharging && firstCharging !== null ? moment(firstCharging.billing_dm).format('YYYY-MM-DD hh:mm:ss') : "";
+                }
+
+                if(lastCharging) {
+                    obj.lcd = lastCharging && lastCharging !== null ? moment(lastCharging.billing_dm).format('YYYY-MM-DD hh:mm:ss') : ""
+                }
+
+                finalResult.push(obj)
             }
 
             counter += 1;
