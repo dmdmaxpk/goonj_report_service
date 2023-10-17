@@ -3436,7 +3436,7 @@ getCount = (arr, billedOrTrialKey) => {
 
 generateAffiliateReport = async(req, res) => {
     
-    let data = await subscriptionRepo.getAffiliateData("2023-08-16T00:00:00.000Z", "2023-10-17T00:00:00.000Z");
+    let data = await subscriptionRepo.getAffiliateData("2023-08-01T00:00:00.000Z", "2023-08-16T00:00:00.000Z");
     console.log('Count: ', data.length);
 
     let finalResult = [];
