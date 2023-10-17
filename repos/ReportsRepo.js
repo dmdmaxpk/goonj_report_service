@@ -3422,11 +3422,14 @@ generateDpdpReports = async(req, res) => {
 }
 
 getCount = (arr, billedOrTrialKey) => {
-    Object.keys(arr).forEach(key => {
-        if(key === billedOrTrialKey) {
-            return obj[key]
+    for (var i = 0; i < arr.length; i++) {
+        var obj = arr[i];
+        for (var key in obj) {
+            if(key === billedOrTrialKey) {
+                console.log(obj[key])
+            }
         }
-    });
+    }
 
     return 0;
 }
