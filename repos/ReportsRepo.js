@@ -3426,7 +3426,7 @@ getCount = (arr, billedOrTrialKey) => {
         var obj = arr[i];
         for (var key in obj) {
             if(key === billedOrTrialKey) {
-                console.log(obj[key])
+                return obj[key]
             }
         }
     }
