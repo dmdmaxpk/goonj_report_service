@@ -3440,8 +3440,8 @@ generateAffiliateReport = async(req, res) => {
     data.forEach((elem) => {
         finalResult.push({
             date: elem._id,
-            trial: this.getCount(elem.stats, 'trial'),
-            billed: this.getCount(elem.stats, 'billed')
+            trial: getCount(elem.stats, 'trial'),
+            billed: getCount(elem.stats, 'billed')
         })
     })
 
