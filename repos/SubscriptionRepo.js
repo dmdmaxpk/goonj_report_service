@@ -29,6 +29,73 @@ class SubscriptionRepository {
         }]);
     }
 
+    async getAffiliateData(from, to) {
+        let result = await Subscription.aggregate([
+            {
+                $match:{
+                    "marketing_source": "gdn2",
+                    $and:[
+                        {added_dtm:{$gte: new Date(from)}}, 
+                        {added_dtm:{$lt: new Date(to)}}
+                    ]
+                }
+            },{
+                $lookup:{
+                    from: "billinghistories",
+                    let: {user_id: "$user_id"},
+                    pipeline:[
+                        {"$match":{"$expr":{"$eq":["$$user_id", "$user_id"]}}},
+                        {$sort: {"added_dtm": 1}},
+                        {$limit: 1}
+                    ],
+                    as: "subs"
+                }
+            },{
+                $project:{
+                    subscription_id: "$_id",
+                    added_dtm: "$added_dtm",
+                    first_history: {$arrayElemAt: ["$subs", 0]}
+                }
+            },{
+                $project:{
+                    subscription_id: "$_id",
+                    added_dtm: "$added_dtm",
+                    first_billing_status: "$first_history.billing_status"
+                }
+            },{
+                $group:{
+                    _id: { date: {$dateToString: { format: "%Y-%m-%d", date: "$added_dtm"}}, status: "$first_billing_status"},
+                    sum: {$sum: 1}
+                }
+            },{
+                $project: {
+                    date: "$_id.date",
+                    billed: {$cond: { if: { $eq: [ "$_id.status", "Success" ] }, then: 'billed', else: 'trial' }},
+                    sum: "$sum",
+                    _id: 0,
+                }
+            },{
+                $group: {
+                    _id: {date: "$date", status: "$billed"},
+                    sum: {$sum: "$sum"},
+                }
+            },{
+                $project: {
+                    date: "$_id.date",
+                    status: "$_id.status",
+                    sum: "$sum",
+                    _id: 0
+                }
+            },{
+                $group: {
+                    _id: "$date",
+                    stats: { $push: { trial: {$cond: { if: { $eq: [ "$status", "trial" ] }, then: "$sum", else: "$$REMOVE" }}, billed: {$cond: { if: { $eq: [ "$status", "billed" ] }, then: "$sum", else: "$$REMOVE" }}}}
+                }
+            },{ $sort: { "_id": 1 } }
+            ]);
+        return result;
+    }
+
     async getAllSubscriptions(user_id)  {
         let result = await Subscription.find({user_id: user_id});
         return result;

@@ -49,6 +49,9 @@ let paywallUnsubFilePath = `./${paywallUnsubReport}`;
 let dpdpMigrationFile = currentDate+"_Goonj_Platform_Base.csv";
 let dpdpMigrationFilePath = `./${dpdpMigrationFile}`;
 
+let affDataFile = currentDate+"_Affiliate_Data.csv";
+let affDataFilePath = `./${affDataFile}`;
+
 let paywallChannelWiseUnsubReport = currentDate+"_ChannelWiseUnsub.csv";
 let paywallChannelWiseUnsubReportFilePath = `./${paywallChannelWiseUnsubReport}`;
 
@@ -120,6 +123,15 @@ const dpdpMigrationWriter = createCsvWriter({
         {id: "status", title: "Status"},
         {id: "fcd", title: "First Charge Date"},
         {id: "lcd", title: "Last Charge Date"}
+    ]
+});
+
+const affiliateDataWriter = createCsvWriter({
+    path: affDataFilePath,
+    header: [
+        {id: 'date', title: 'Date'},
+        {id: "trial", title: "Trial Count" },
+        {id: "billed", title: "Billed Count"}
     ]
 });
 
@@ -3409,6 +3421,51 @@ generateDpdpReports = async(req, res) => {
     }
 }
 
+getCount = (arr, billedOrTrialKey) => {
+    Object.keys(arr).forEach(key => {
+        if(key === billedOrTrialKey) {
+            return obj[key]
+        }
+    });
+
+    return 0;
+}
+
+generateAffiliateReport = async(req, res) => {
+    
+    let data = subscriptionRepo.affiliteData("2023-08-16T00:00:00.000Z", "2023-10-17T00:00:00.000Z");
+    console.log('Count: ', data.length);
+
+    let finalResult = [];
+    data.forEach((elem) => {
+        finalResult.push({
+            date: elem._id,
+            trial: this.getCount(elem.stats, 'trial'),
+            billed: this.getCount(elem.stats, 'billed')
+        })
+    })
+
+    if(finalResult.length > 0){
+        console.log("### Sending email");
+        await affiliateDataWriter.writeRecords(finalResult);
+        let messageObj = {};
+
+        messageObj.to = ["farhan.ali@dmdmax.com"];
+        messageObj.subject = `Affiliate Campaing Data`;
+        messageObj.text =  `Affiliate campaing data is attached`;
+        messageObj.attachments = {
+            filename: affDataFile,
+            path: affDataFilePath
+        };
+
+        let uploadRes = await uploadFileAtS3(affDataFile);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
+        }
+    }
+}
+
 generateReportForExpiredDueToNonPaymentInLast45Days = async() => {
     console.log("=> generateReportForExpiredDueToNonUsageInLast45Days");
 
@@ -3520,5 +3577,6 @@ module.exports = {
     expireList: expireList,
     generateDpdpReports: generateDpdpReports,
     blackListOrCreateViaAPI: blackListOrCreateViaAPI,
-    generateReportForExpiredDueToNonPaymentInLast45Days: generateReportForExpiredDueToNonPaymentInLast45Days
+    generateReportForExpiredDueToNonPaymentInLast45Days: generateReportForExpiredDueToNonPaymentInLast45Days,
+    generateAffiliateReport: generateAffiliateReport
 }
