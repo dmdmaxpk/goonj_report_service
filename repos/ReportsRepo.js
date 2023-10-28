@@ -52,6 +52,9 @@ let dpdpMigrationFilePath = `./${dpdpMigrationFile}`;
 let affDataFile = currentDate+"_Affiliate_Data.csv";
 let affDataFilePath = `./${affDataFile}`;
 
+let payingNonEngagedMsisdnFile = currentDate+"_PayingNonEngagedMsisdn.csv";
+let payingNonEngagedMsisdnFilePath = `./${payingNonEngagedMsisdnFile}`;
+
 let paywallChannelWiseUnsubReport = currentDate+"_ChannelWiseUnsub.csv";
 let paywallChannelWiseUnsubReportFilePath = `./${paywallChannelWiseUnsubReport}`;
 
@@ -132,6 +135,13 @@ const affiliateDataWriter = createCsvWriter({
         {id: 'date', title: 'Date'},
         {id: "trial", title: "Trial Count" },
         {id: "billed", title: "Billed Count"}
+    ]
+});
+
+const payingNonEngagedMsisdnWriter = createCsvWriter({
+    path: payingNonEngagedMsisdnFilePath,
+    header: [
+        {id: 'msisdn', title: 'Msisdn'},
     ]
 });
 
@@ -3469,6 +3479,47 @@ generateAffiliateReport = async(req, res) => {
     }
 }
 
+getNonActiveMsisdnsInLast90Days = async(req, res) => {
+    const from = "2023-07-28T00:00:00.000Z";
+    const to = "2023-10-28T00:00:00.000Z"
+    let data = await billinghistoryRepo.totalUniqueTransactingUsersMsisdn(from, to);
+    console.log('totalUniqueTransactingUsersMsisdn: ', data.length);
+
+    let finalResult = [];
+    data.forEach(async(elem) => {
+        let dou = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(elem._id, from, to);
+        if(!dou || dou.douTotal === 0) {
+            if(elem.msisdn) {
+                finalResult.push({
+                    date: elem.msisdn
+                })
+            }else{
+                console.log('Msisdn not found: ', elem._id)
+            }
+        }
+    })
+
+    if(finalResult.length > 0){
+        console.log("### Sending email, finalResult count is: ", finalResult.length);
+        await payingNonEngagedMsisdnWriter.writeRecords(finalResult);
+        let messageObj = {};
+
+        messageObj.to = ["farhan.ali@dmdmax.com"];
+        messageObj.subject = `Paying Non-Engaged Msisdn`;
+        messageObj.text =  `Paying Non-Engaged Msisdn for the last 90 days`;
+        messageObj.attachments = {
+            filename: payingNonEngagedMsisdnFile,
+            path: payingNonEngagedMsisdnFilePath
+        };
+
+        let uploadRes = await uploadFileAtS3(payingNonEngagedMsisdnFilePath);
+        if (uploadRes.status) {
+            messageObj.attachments.path = uploadRes.data.Location;
+            helper.sendToQueue(messageObj);
+        }
+    }
+}
+
 generateReportForExpiredDueToNonPaymentInLast45Days = async() => {
     console.log("=> generateReportForExpiredDueToNonUsageInLast45Days");
 
@@ -3581,5 +3632,6 @@ module.exports = {
     generateDpdpReports: generateDpdpReports,
     blackListOrCreateViaAPI: blackListOrCreateViaAPI,
     generateReportForExpiredDueToNonPaymentInLast45Days: generateReportForExpiredDueToNonPaymentInLast45Days,
-    generateAffiliateReport: generateAffiliateReport
+    generateAffiliateReport: generateAffiliateReport,
+    getNonActiveMsisdnsInLast90Days: getNonActiveMsisdnsInLast90Days
 }

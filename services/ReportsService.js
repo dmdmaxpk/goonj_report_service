@@ -175,7 +175,7 @@ generateRandomReports =  async(req, res) => {
     // reportsRepo.computeDoubleChargeUsers();
     // reportsRepo.generateReportForAcquisitionRevenueAndSessions();
     // reportsRepo.generateDpdpReports(req, res);
-    reportsRepo.generateAffiliateReport(req, res);
+    reportsRepo.getNonActiveMsisdnsInLast90Days(req, res);
 }
 
 billingInLastHour = async() => {

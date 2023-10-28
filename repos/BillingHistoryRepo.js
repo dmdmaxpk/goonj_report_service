@@ -363,6 +363,28 @@ class BillingHistoryRepository {
         return result;
     }
 
+    async totalUniqueTransactingUsersMsisdn (from, to) {
+        console.log("=> totalUniqueTransactingUsersMsisdn from ", from, "to", to);
+        let result = await BillingHistory.aggregate([
+            {
+                $match:{
+                    "billing_status": "Success",
+                    $and: [
+                        {billing_dtm:{$gte:new Date(from)}}, 
+                        {billing_dtm:{$lte:new Date(to)}}
+                    ]
+                    
+                }
+            },{
+                $group:{
+                    _id: "$user_id",
+                    msisdn: {$last: "$msisdn"}	
+                }
+            }
+            ]);
+        return result;
+    }
+
     async dailyReturningUsers (from, to) {
         console.log("=> dailyReturningUsers from ", from, "to", to);
         let result = await BillingHistory.aggregate([
