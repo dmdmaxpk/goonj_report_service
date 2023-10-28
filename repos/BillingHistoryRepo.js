@@ -365,7 +365,7 @@ class BillingHistoryRepository {
 
     async totalUniqueTransactingUsersMsisdn (from, to) {
         console.log("=> totalUniqueTransactingUsersMsisdn from ", from, "to", to);
-        let result = await BillingHistory.aggregate([
+        let aggregate = BillingHistory.aggregate([
             {
                 $match:{
                     "billing_status": "Success",
@@ -381,8 +381,9 @@ class BillingHistoryRepository {
                     msisdn: {$last: "$msisdn"}	
                 }
             }
-            ]);
-        return result;
+        ]);
+        aggregate.options = { allowDiskUse: true };
+        return await aggregate.exec();
     }
 
     async dailyReturningUsers (from, to) {

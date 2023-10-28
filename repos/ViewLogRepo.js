@@ -92,7 +92,7 @@ getDaysOfUseTotal = async(userId) => {
 
 getDaysOfUseTotalWithInDateRange = async(userId, from, to) => {
     try{
-        let result = await ViewLog.aggregate([
+        let aggregate = ViewLog.aggregate([
         {
             $match:{
                 user_id: userId,
@@ -109,7 +109,8 @@ getDaysOfUseTotalWithInDateRange = async(userId, from, to) => {
             source: {$last: "$source"}
         }},
         ]);
-        return result;
+        aggregate.options = { allowDiskUse: true };
+        return await aggregate.exec();
     }catch(e){
         console.log(e);
     }
