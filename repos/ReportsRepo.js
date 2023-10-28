@@ -3486,11 +3486,8 @@ getNonActiveMsisdnsInLast90Days = async(req, res) => {
     console.log('totalUniqueTransactingUsersMsisdn: ', data.length);
 
     let finalResult = [];
-    let counter = 0;
-    data.forEach(async(elem) => {
-        counter += 1;
-        console.log('Processed: ', counter)
-        
+    for(let i = 0; i < data.length; i++) {
+        let elem = data[i];
         let dou = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(elem._id, from, to);
         if(!dou || dou.douTotal === 0) {
             if(elem.msisdn) {
@@ -3501,8 +3498,10 @@ getNonActiveMsisdnsInLast90Days = async(req, res) => {
                 console.log('Msisdn not found: ', elem._id)
             }
         }
-    })
 
+        console.log('Processed: ', i)
+    }
+    
     if(finalResult.length > 0){
         console.log("### Sending email, finalResult count is: ", finalResult.length);
         await payingNonEngagedMsisdnWriter.writeRecords(finalResult);
