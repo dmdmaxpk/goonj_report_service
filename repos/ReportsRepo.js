@@ -3489,11 +3489,9 @@ getNonActiveMsisdnsInLast90Days = async(req, res) => {
     for(let i = 0; i < data.length; i++) {
         let elem = data[i];
         let dou = await viewLogsRepo.getDaysOfUseTotalWithInDateRange(elem._id, from, to);
-        console.log(dou);
-
         console.log('Count', i)
 
-        if(!dou || dou.douTotal === 0) {
+        if(dou.length === 0 || dou[0]?.douTotal === 0) {
             if(elem.msisdn) {
                 finalResult.push({
                     date: elem.msisdn
