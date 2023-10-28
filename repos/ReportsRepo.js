@@ -3494,7 +3494,7 @@ getNonActiveMsisdnsInLast90Days = async(req, res) => {
         if(dou.length === 0 || (dou[0] && dou[0].douTotal === 0)) {
             if(elem.msisdn) {
                 finalResult.push({
-                    date: elem.msisdn
+                    msisdn: elem.msisdn
                 })
             }else{
                 console.log('Msisdn not found: ', elem._id)
