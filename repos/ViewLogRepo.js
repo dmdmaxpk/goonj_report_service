@@ -104,9 +104,7 @@ getDaysOfUseTotalWithInDateRange = async(userId, from, to) => {
         },
         {$group: {
             _id: "null",
-            douTotal: {$sum: 1},
-            lastAccess: {$last: "$added_dtm"},
-            source: {$last: "$source"}
+            douTotal: {$sum: 1}
         }},
         ]);
         aggregate.options = { allowDiskUse: true };
