@@ -3480,8 +3480,8 @@ generateAffiliateReport = async(req, res) => {
 }
 
 getNonActiveMsisdnsInLast90Days = async(req, res) => {
-    const from = "2023-07-28T00:00:00.000Z";
-    const to = "2023-10-28T00:00:00.000Z"
+    const from = "2023-06-30T00:00:00.000Z";
+    const to = "2023-09-30T00:00:00.000Z"
     let data = await billinghistoryRepo.totalUniqueTransactingUsersMsisdn(from, to);
     console.log('totalUniqueTransactingUsersMsisdn: ', data.length);
 
