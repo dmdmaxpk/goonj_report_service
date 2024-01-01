@@ -50,11 +50,11 @@ var tpDashboardCron = new CronJob('0 1 * * *', async function() {
 }, null, true, 'Asia/Karachi');
 tpDashboardCron.start();
 
-// var tpDashboardCronMonthly = new CronJob('5 0 1 * *', async function() {
-//     await reportsService.tpDashboardReportMonthly();
-//     console.log('Monthly TP Dashboard cron executed');
-// }, null, true, 'Asia/Karachi');
-// tpDashboardCronMonthly.start();
+var tpDashboardCronMonthly = new CronJob('5 0 1 * *', async function() {
+    await reportsService.tpDashboardReportMonthly();
+    console.log('Monthly TP Dashboard cron executed');
+}, null, true, 'Asia/Karachi');
+tpDashboardCronMonthly.start();
 
 
 const RabbitMq = require('./rabbit/RabbitMq');
