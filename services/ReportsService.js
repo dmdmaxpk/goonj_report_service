@@ -316,8 +316,9 @@ tpDashboardReportMonthly = async(startDate, endDate) => {
         let startMonth = endMonth == 1 ? 12 : endMonth - 1;
         let startYear = endMonth == 1 ? endYear - 1 : endYear;
 
-        let from = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-25 00:00:00.000Z`;        
-        let to = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-25 00:00:00.000Z`;        
+        let from = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-01 00:00:00.000Z`;        
+        let to = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-01 00:00:00.000Z`; 
+
         console.log("from", from, "to", to);
 
         let getRevenue = await billingHistoryRepo.getRevenueInDateRange(from, to);
@@ -326,7 +327,7 @@ tpDashboardReportMonthly = async(startDate, endDate) => {
 
         let newPayingUsersAcquiredDaily = await subscriptionRepo.newPayingUsers(from, to, dailyPackage);
         let newPayingUsersAcquiredWeekly = await subscriptionRepo.newPayingUsers(from, to, weeklyPackage);
-        console.log("newPayingUsersAcquiredDaily", newPayingUsersAcquiredDaily, "newPayingUsersAcquiredWeekly", newPayingUsersAcquiredWeekly);
+        console.log("newPayingUsersAcquiredDaily", newPayitpDashboardReportMonthlyngUsersAcquiredDaily, "newPayingUsersAcquiredWeekly", newPayingUsersAcquiredWeekly);
 
         let totalChargedUsersDaily = await billingHistoryRepo.chargedUsersCountPackageWise(from, to, dailyPackage);
         let totalChargedUsersWeekly = await billingHistoryRepo.chargedUsersCountPackageWise(from, to, weeklyPackage);
