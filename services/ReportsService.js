@@ -312,12 +312,12 @@ tpDashboardReportMonthly = async(startDate, endDate) => {
 
         let endMonth = date.getMonth();
         let endYear = date.getFullYear();
-        endMonth = endMonth + 1;
+        endMonth = endMonth;
         let startMonth = endMonth == 1 ? 12 : endMonth - 1;
         let startYear = endMonth == 1 ? endYear - 1 : endYear;
 
-        let from = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-01 00:00:00.000Z`;        
-        let to = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-01 00:00:00.000Z`; 
+        let from = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-01T00:00:00.000Z`;        
+        let to = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-31T23:59:59.999Z`; 
 
         console.log("from", from, "to", to);
 
