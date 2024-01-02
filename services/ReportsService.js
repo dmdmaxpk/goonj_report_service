@@ -309,13 +309,13 @@ tpDashboardReportMonthly = async(startDate, endDate) => {
         let dailyPackage = 'QDfC';
         let weeklyPackage = 'QDfG'
 
+        var date = new Date();
         let endMonth = date.getMonth();
         let endYear = date.getFullYear();
         endMonth = endMonth + 1;
 
         let startMonth = endMonth == 1 ? 12 : endMonth - 1;
         let startYear = endMonth == 1 ? endYear - 1 : endYear;
-
 
         let from = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-01 00:00:00.000Z`;        
         let to = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-01 00:00:00.000Z`;
