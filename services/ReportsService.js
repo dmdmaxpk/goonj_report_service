@@ -1,6 +1,6 @@
 const reportsRepo = require('../repos/ReportsRepo');
 const helper = require('../helper/helper');
-const { three_months_report } = require('../controllers/BillingStatsController');
+const moment = require('moment');
 
 const BillingHistoryRepository = require('../repos/BillingHistoryRepo');
 const billingHistoryRepo = new BillingHistoryRepository();
@@ -308,16 +308,10 @@ tpDashboardReportMonthly = async(startDate, endDate) => {
     try{
         let dailyPackage = 'QDfC';
         let weeklyPackage = 'QDfG'
-        var date = new Date();
 
-        let endMonth = date.getMonth();
-        let endYear = date.getFullYear();
-        endMonth = endMonth + 1;
-        let startMonth = endMonth == 1 ? 12 : endMonth - 1;
-        let startYear = endMonth == 1 ? endYear - 1 : endYear;
 
-        let from = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-01T00:00:00.000Z`;        
-        let to = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-01T00:00:00.000Z`; 
+        const from = moment().subtract(1, 'months').startOf('month').format('DD-MM-YYYY hh:mm:ss');
+        const to = moment().subtract(1, 'months').endOf('month').format('DD-MM-YYYY hh:mm:ss')
 
         console.log("from", from, "to", to);
 
