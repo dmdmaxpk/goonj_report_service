@@ -1103,6 +1103,7 @@ class BillingHistoryRepository {
                 {$group: {_id: "$user_id"}},
                 {$count: "purgedUsers"}
             ]);
+            console.log(result);
             return result[0].purgedUsers;
         }
         catch(err){
