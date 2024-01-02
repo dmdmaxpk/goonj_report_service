@@ -359,6 +359,7 @@ class SubscriptionRepository {
             {$match: {timesPaid: {$gt: 0}}},
             {$count: "newPayingUsers"}
         ]);
+        console.log(result);
         return result[0] && result[0].newPayingUsers ? result[0].newPayingUsers : 0;
     }
 }
