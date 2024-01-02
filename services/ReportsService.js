@@ -315,7 +315,7 @@ tpDashboardReportMonthly = async(startDate, endDate) => {
 
         let to = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD').toString()
         to = to.concat(' 23:59:59.999Z')
-        
+
         console.log("from", from, "to", to);
 
         let getRevenue = await billingHistoryRepo.getRevenueInDateRange(from, to);
@@ -324,7 +324,7 @@ tpDashboardReportMonthly = async(startDate, endDate) => {
 
         let newPayingUsersAcquiredDaily = await subscriptionRepo.newPayingUsers(from, to, dailyPackage);
         let newPayingUsersAcquiredWeekly = await subscriptionRepo.newPayingUsers(from, to, weeklyPackage);
-        console.log("newPayingUsersAcquiredDaily", newPayitpDashboardReportMonthlyngUsersAcquiredDaily, "newPayingUsersAcquiredWeekly", newPayingUsersAcquiredWeekly);
+        console.log("newPayingUsersAcquiredDaily", newPayingUsersAcquiredDaily, "newPayingUsersAcquiredWeekly", newPayingUsersAcquiredWeekly);
 
         let totalChargedUsersDaily = await billingHistoryRepo.chargedUsersCountPackageWise(from, to, dailyPackage);
         let totalChargedUsersWeekly = await billingHistoryRepo.chargedUsersCountPackageWise(from, to, weeklyPackage);
