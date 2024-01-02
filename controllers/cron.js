@@ -18,7 +18,9 @@ exports.generateWeeklyReports = async (req,res) =>  {
 
 exports.generateMonthlyReports = async (req,res) =>  {
     // reportsService.generateMonthlyReports();
-    reportsService.tpDashboardReportMonthly();
+    
+    reportsService.tpDashboardReport()
+    // reportsService.tpDashboardReportMonthly();
     res.send("GenerateMonthlyReports - Executed\n");
 }
 

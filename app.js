@@ -28,7 +28,6 @@ app.use(logger('dev'));
 // Import routes
 app.use('/', require('./routes/index'));
 
-
 var CronJob = require('cron').CronJob;
 var job = new CronJob('30 5 * * *', function() {
     axios.get(config.base_path + "/cron/generateDailyReport")
@@ -40,7 +39,6 @@ var job = new CronJob('30 5 * * *', function() {
         });
 }, null, true, 'Asia/Karachi');
 job.start();
-
 
 const reportsService = require('./services/ReportsService');
 var CronJob = require('cron').CronJob;

@@ -1104,7 +1104,7 @@ class BillingHistoryRepository {
                 {$count: "purgedUsers"}
             ]);
             console.log(result);
-            return result[0].purgedUsers;
+            return result && result[0] ? result[0].purgedUsers : 0;
         }
         catch(err){
             console.log("err", err)
