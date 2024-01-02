@@ -310,8 +310,8 @@ tpDashboardReportMonthly = async(startDate, endDate) => {
         let weeklyPackage = 'QDfG'
 
 
-        const from = moment().subtract(1, 'months').startOf('month').format('DD-MM-YYYY hh:mm:ss');
-        const to = moment().subtract(1, 'months').endOf('month').format('DD-MM-YYYY hh:mm:ss')
+        const from = moment().subtract(1, 'months').startOf('month').format('DD-MM-YYYY hh:mm:ss.000Z');
+        const to = moment().subtract(1, 'months').endOf('month').format('DD-MM-YYYY hh:mm:ss.999Z')
 
         console.log("from", from, "to", to);
 
